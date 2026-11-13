@@ -85,18 +85,45 @@ Bottom tabs, with the mic in the middle so recording is one thumb-press away fro
   **Fix manually**.
 
 ## Privacy
-Speech is recognised on-device and **no audio is stored**. Only the transcript text is sent to the
-chosen LLM provider and to your own Firebase project. API keys live in Android secure storage.
+
+Speech is recognised **on the phone** and **no audio is ever stored**. Only the transcript text is
+sent to the AI provider you choose and to your own Firebase project. API keys stay in Android
+secure storage — never in the cloud or in git.
+
+## Tech
+
+| | |
+|---|---|
+| App | React Native + Expo SDK 58, TypeScript, Expo Router — Android only |
+| Speech | `expo-speech-recognition`, on-device (English and Urdu) |
+| AI | Open-source models via Groq or OpenRouter (switchable, with fallback) |
+| Data | Firebase Auth + Firestore (native SDK, offline persistence) |
+| Validation | Zod; a 42-sentence eval suite checks the AI's accuracy (`npm run eval`) |
+
+## Scope
+
+Built for **one person** (personal use). Not in scope: multiple users, sharing, budgets,
+bank sync, iOS. A web dashboard for bulk review, reports and export is planned separately
+(`DASHBOARD_PLAN.md`).
+
+## Status
+
+Phases 0–4 (setup, speech, AI extraction, Firebase, offline queue) and the tab UI are built and
+pass typecheck and lint; on-device testing and prompt tuning are next. Live checklist:
+[`docs/TASKS.md`](docs/TASKS.md).
 
 ## Getting started
+
 1. Install and build: [`COMMANDS.md`](COMMANDS.md)
-2. Firebase, keys, phone: [`docs/SETUP.md`](docs/SETUP.md)
+2. Firebase, API keys, phone setup: [`docs/SETUP.md`](docs/SETUP.md)
 
 ## Docs
+
 | | |
 |---|---|
 | Product spec | `VOICE_EXPENSE_APP_PLAN (2).md` |
-| Agent guide and git rules | `CLAUDE.md` |
+| Future web dashboard | `DASHBOARD_PLAN.md` |
+| Agent guide, git and PR rules | `CLAUDE.md` |
 | Tasks / progress / issues | `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/ISSUES.md` |
-| Data model (shared with future dashboard) | `docs/DATA_MODEL.md` |
+| Data model (shared with the dashboard) | `docs/DATA_MODEL.md` |
 | Decisions and assumptions | `docs/DECISIONS.md`, `docs/ASSUMPTIONS.md` |
