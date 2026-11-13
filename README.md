@@ -27,6 +27,31 @@ Make logging take **under 5 seconds and zero typing**:
 
 No forms, no confirmations. If the AI gets something wrong, tap the entry and fix it.
 
+## What you can record
+
+Every entry has a **type** and a **direction** (money coming to you, or leaving you):
+
+| Type | Money out | Money in | You might say |
+|---|---|---|---|
+| Expense | spent | — | "1200 for petrol from cash" |
+| Savings | put into savings | withdrew from savings | "saved 2000 in the bank" |
+| Loan | gave a loan / repaid one | took a loan / got repaid | "gave Ali 5000 loan", "Ali returned 2000" |
+| Committee | paid an installment | received the payout | "paid 5000 committee", "got my committee 50000" |
+| Other | money out | money in | "received salary 150000" |
+
+It understands spoken numbers (*"twelve hundred"*, *"5k"*, *"1.5 lakh"*, *"dhai sau"*), sources
+(*"from salary"*, *"jazzcash"*), categories, and dates (*"yesterday"*, *"kal"*, *"on Monday"*).
+Currency is always PKR.
+
+## Principles
+
+- **Least effort.** Open → hold → speak → release. Nothing else is required.
+- **Never lose data.** The transcript is saved the moment you stop speaking — even offline, even if
+  the app is killed — before the AI is asked anything. Every raw AI response is kept too.
+- **Easy to fix.** Any entry can be edited or deleted; the AI's original answer is preserved.
+- **Calm and fast.** Big targets, haptics, clear feedback, no clutter.
+- **No backend.** Just the app and your own Firebase project. No servers to run or pay for.
+
 ## Privacy
 Speech is recognised on-device and **no audio is stored**. Only the transcript text is sent to the
 chosen LLM provider and to your own Firebase project. API keys live in Android secure storage.
