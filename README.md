@@ -52,6 +52,38 @@ Currency is always PKR.
 - **Calm and fast.** Big targets, haptics, clear feedback, no clutter.
 - **No backend.** Just the app and your own Firebase project. No servers to run or pay for.
 
+## The app
+
+Bottom tabs, with the mic in the middle so recording is one thumb-press away from anywhere:
+
+**Home · Activity · 🎙 · Insights · Profile**
+
+- **Home** — spent today and this month, money in, anything that needs attention (a note that
+  couldn't be processed yet), and your latest entries by day.
+- **Activity** — full history month by month, with filters (spent, money in, loans, savings,
+  committee, needs review) and search.
+- **Insights** — where the money went: spending by category and by source, daily average,
+  money in vs out, totals per type.
+- **Profile** — account and settings: hold-to-talk or tap-to-talk, speech language
+  (English / Urdu), sources, categories, AI provider and keys.
+
+## How it works
+
+```
+ hold mic ──▶ on-device speech-to-text ──▶ command saved (status: pending)
+                                                  │  works offline, survives app kill
+                                                  ▼
+                                 AI (Groq or OpenRouter) ──▶ { entries: [...] }
+                                                  │  validated, one batched write
+                                                  ▼
+                                 entries in Firestore ──▶ app updates in real time
+```
+
+- If you're offline, notes wait in a queue and are processed automatically when you reconnect.
+- If the AI fails (bad key, timeout), it retries with backoff, can fall back to the other provider,
+  and never silently drops the note — it shows up under *Needs attention* with **Retry** and
+  **Fix manually**.
+
 ## Privacy
 Speech is recognised on-device and **no audio is stored**. Only the transcript text is sent to the
 chosen LLM provider and to your own Firebase project. API keys live in Android secure storage.
