@@ -28,10 +28,9 @@ export default function RootLayout() {
         {user && <AppRuntime key={user.uid} uid={user.uid} />}
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Protected guard={!!user}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="speech-setup" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="debug" />
+            <Stack.Screen name="debug" options={{ animation: 'slide_from_right' }} />
           </Stack.Protected>
           <Stack.Protected guard={!user}>
             <Stack.Screen name="sign-in" />
