@@ -83,9 +83,9 @@ function normaliseEntry(raw: Record<string, unknown>, opts: NormaliseOptions): P
 
   const source = cleanString(raw.source)?.toLowerCase() ?? null;
 
-  let category = cleanString(raw.category)?.toLowerCase() ?? null;
-  if (category !== null && !opts.categories.includes(category)) category = 'other';
-  if (category === null && type === 'expense') category = 'other';
+  // Category is always one of the user's list; anything else (or missing) becomes "other".
+  const rawCategory = cleanString(raw.category)?.toLowerCase();
+  const category = rawCategory && opts.categories.includes(rawCategory) ? rawCategory : 'other';
 
   let spentAt = cleanString(raw.spent_at ?? raw.spentAt);
   if (spentAt !== null) {
