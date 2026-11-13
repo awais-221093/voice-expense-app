@@ -115,8 +115,9 @@ export function useProcessingQueue(uid: string, open: Command[]) {
 
   // After a key/model change, re-run failed and entry-less needs_review commands once.
   const configVersion = useSettings((s) => s.llmConfigVersion);
+  const mountedVersion = useRef(configVersion);
   useEffect(() => {
-    if (configVersion === 0) return;
+    if (configVersion === mountedVersion.current) return;
     openRef.current
       .filter((c) => c.status === 'failed' || c.status === 'needs_review')
       .forEach((c) => requeueCommand(uid, c.id));
