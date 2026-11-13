@@ -1,63 +1,77 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AppText, Chip } from '@/components/ui';
 import { formatPKR } from '@/lib/money';
-import { MIN_TOUCH, spacing, useTheme } from '@/theme';
+import { radius, spacing, useTheme } from '@/theme';
 
-/** Today's expense total (large), this month below, offline chip and the settings gear. */
+/** Home hero: today's expense total, this month's, money in this month, offline chip. */
 export function TotalsHeader({
   today,
   month,
+  inflow,
   online,
+  now,
 }: {
+  now: Date;
   today: number;
   month: number;
+  inflow: number;
   online: boolean;
 }) {
   const c = useTheme();
+  const date = now.toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
   return (
     <View style={styles.wrap}>
       <View style={styles.top}>
-        <AppText variant="label" muted>
+        <AppText muted>{date}</AppText>
+        {!online && <Chip label="Offline — will sync" color={c.review} />}
+      </View>
+      <View style={[styles.card, { backgroundColor: c.primary }]}>
+        <AppText variant="label" color={c.primaryText} style={styles.dim}>
           SPENT TODAY
         </AppText>
-        <View style={styles.right}>
-          {!online && <Chip label="Offline — will sync" color={c.review} />}
-          <Pressable
-            onPress={() => router.push('/settings')}
-            // Hidden debug screen (plan §9).
-            onLongPress={() => router.push('/debug')}
-            accessibilityRole="button"
-            accessibilityLabel="Settings"
-            hitSlop={8}
-            style={styles.gear}>
-            <MaterialCommunityIcons name="cog-outline" size={24} color={c.textMuted} />
-          </Pressable>
+        <AppText
+          variant="hero"
+          color={c.primaryText}
+          accessibilityLabel={`Spent today ${formatPKR(today)}`}>
+          {formatPKR(today)}
+        </AppText>
+        <View style={styles.row}>
+          <Stat label="This month" value={formatPKR(month)} color={c.primaryText} />
+          <Stat label="Money in" value={`+${formatPKR(inflow)}`} color={c.primaryText} />
         </View>
       </View>
-      <AppText variant="hero" accessibilityLabel={`Spent today ${formatPKR(today)}`}>
-        {formatPKR(today)}
+    </View>
+  );
+}
+
+function Stat({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <View style={styles.stat}>
+      <AppText variant="small" color={color} style={styles.dim}>
+        {label}
       </AppText>
-      <AppText muted>This month {formatPKR(month)}</AppText>
+      <AppText variant="bodyStrong" color={color}>
+        {value}
+      </AppText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-    gap: spacing.xs,
-  },
-  top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  right: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  gear: {
-    minWidth: MIN_TOUCH,
-    minHeight: MIN_TOUCH,
+  wrap: { gap: spacing.md, paddingTop: spacing.md },
+  top: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    minHeight: 32,
   },
+  card: { borderRadius: radius.lg, padding: spacing.xl, gap: spacing.xs },
+  row: { flexDirection: 'row', marginTop: spacing.md, gap: spacing.xl },
+  stat: { gap: 2 },
+  dim: { opacity: 0.85 },
 });
