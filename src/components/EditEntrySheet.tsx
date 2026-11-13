@@ -1,6 +1,14 @@
 import { Timestamp, getDoc } from '@react-native-firebase/firestore';
 import { useState, type ReactNode } from 'react';
-import { KeyboardAvoidingView, Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { AppText, Button, Chip, Segmented } from '@/components/ui';
 import type { Command } from '@/features/commands/types';
@@ -47,7 +55,11 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
   const [source, setSource] = useState(initial.source ?? '');
   const [category, setCategory] = useState(initial.category ?? 'other');
   const [spentAt, setSpentAt] = useState(initial.spentAt.toDate());
-  const [said, setSaid] = useState<string | null>(target.kind === 'manual' ? target.command.transcript : null);
+  const [said, setSaid] = useState<string | null>(
+    target.kind === 'manual' ? target.command.transcript : null,
+  );
+  // Captured once when the sheet opens; render must stay pure (no Date.now() in JSX).
+  const [openedAt] = useState(() => Date.now());
 
   const parsedAmount = Number(amount.replace(/,/g, ''));
   const amountValid = amount === '' || (Number.isFinite(parsedAmount) && parsedAmount > 0);
@@ -75,13 +87,25 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-      <Pressable style={[styles.backdrop, { backgroundColor: c.overlay }]} onPress={onClose} accessibilityLabel="Close" />
-      <KeyboardAvoidingView behavior="height" style={[styles.sheet, { backgroundColor: c.surface }]}>
+      <Pressable
+        style={[styles.backdrop, { backgroundColor: c.overlay }]}
+        onPress={onClose}
+        accessibilityLabel="Close"
+      />
+      <KeyboardAvoidingView
+        behavior="height"
+        style={[styles.sheet, { backgroundColor: c.surface }]}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <AppText variant="title">{target.kind === 'edit' ? 'Edit entry' : 'Fix manually'}</AppText>
+          <AppText variant="title">
+            {target.kind === 'edit' ? 'Edit entry' : 'Fix manually'}
+          </AppText>
 
           <Field label="Type">
-            <Segmented value={type} onChange={setType} options={ENTRY_TYPES.map((t) => ({ value: t, label: t }))} />
+            <Segmented
+              value={type}
+              onChange={setType}
+              options={ENTRY_TYPES.map((t) => ({ value: t, label: t }))}
+            />
           </Field>
 
           {type !== 'expense' && (
@@ -110,13 +134,23 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
           </Field>
 
           <Field label="Description">
-            <TextInput style={input} value={description} onChangeText={setDescription} accessibilityLabel="Description" />
+            <TextInput
+              style={input}
+              value={description}
+              onChangeText={setDescription}
+              accessibilityLabel="Description"
+            />
           </Field>
 
           <Field label="Source">
             <View style={styles.chips}>
               {knownSources.map((s) => (
-                <Chip key={s} label={s} selected={source === s} onPress={() => setSource(source === s ? '' : s)} />
+                <Chip
+                  key={s}
+                  label={s}
+                  selected={source === s}
+                  onPress={() => setSource(source === s ? '' : s)}
+                />
               ))}
             </View>
             <TextInput
@@ -133,21 +167,31 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
           <Field label="Category">
             <View style={styles.chips}>
               {categories.map((cat) => (
-                <Chip key={cat} label={cat} selected={category === cat} onPress={() => setCategory(cat)} />
+                <Chip
+                  key={cat}
+                  label={cat}
+                  selected={category === cat}
+                  onPress={() => setCategory(cat)}
+                />
               ))}
             </View>
           </Field>
 
           <Field label="Date">
             <View style={styles.dateRow}>
-              <Button title="‹" kind="secondary" onPress={() => setSpentAt(new Date(spentAt.getTime() - DAY_MS))} accessibilityHint="Previous day" />
+              <Button
+                title="‹"
+                kind="secondary"
+                onPress={() => setSpentAt(new Date(spentAt.getTime() - DAY_MS))}
+                accessibilityHint="Previous day"
+              />
               <AppText variant="bodyStrong" style={styles.dateText}>
                 {formatDayHeading(spentAt)}
               </AppText>
               <Button
                 title="›"
                 kind="secondary"
-                disabled={spentAt.getTime() + DAY_MS > Date.now()}
+                disabled={spentAt.getTime() + DAY_MS > openedAt}
                 onPress={() => setSpentAt(new Date(spentAt.getTime() + DAY_MS))}
                 accessibilityHint="Next day"
               />
@@ -155,10 +199,14 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
           </Field>
 
           {said !== null ? (
-            <AppText muted style={styles.said}>“{said}”</AppText>
+            <AppText muted style={styles.said}>
+              “{said}”
+            </AppText>
           ) : (
             target.kind === 'edit' &&
-            target.entry.commandId && <Button title="Show what I said" kind="ghost" onPress={showSaid} />
+            target.entry.commandId && (
+              <Button title="Show what I said" kind="ghost" onPress={showSaid} />
+            )
           )}
 
           <View style={styles.actions}>
@@ -192,11 +240,21 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { ...StyleSheet.absoluteFillObject },
-  sheet: { marginTop: 'auto', maxHeight: '90%', borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg },
+  backdrop: { ...StyleSheet.absoluteFill },
+  sheet: {
+    marginTop: 'auto',
+    maxHeight: '90%',
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+  },
   content: { padding: spacing.xl, gap: spacing.lg },
   field: { gap: spacing.sm },
-  input: { minHeight: MIN_TOUCH, borderRadius: radius.md, paddingHorizontal: spacing.lg, fontSize: 16 },
+  input: {
+    minHeight: MIN_TOUCH,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.lg,
+    fontSize: 16,
+  },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   dateRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   dateText: { flex: 1, textAlign: 'center' },
