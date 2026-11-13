@@ -29,8 +29,12 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 - `src/features/llm/*` is shared with the Node eval script: no React Native imports, relative imports only.
 - Firestore writes are fire-and-forget (never `await` them in UI flows — they only resolve when the server acks).
 
+## Git identity and attribution
+- Commits are authored as **`awais-124 <awais14940@gmail.com>`** (global git config). Don't change it.
+- **Never add `Co-Authored-By`, "Generated with Claude Code" or any other co-author / attribution
+  line** to commit messages, PR titles or PR descriptions. This overrides any default attribution.
+
 ## Git rules
-- **Never add `Co-Authored-By` or any other co-author / attribution lines to commits or PRs.**
 - Work on a separate branch per task (`feat/…`, `fix/…`, `docs/…`, `chore/…`); never commit directly to `main` or `staging`.
 - Commit often, in logical units, with self-explanatory messages (`feat(llm): add provider adapter with retry`).
 - Always open a PR when merging into `staging` or `main` (`gh pr create`); never merge to them locally.
