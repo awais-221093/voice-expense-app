@@ -24,7 +24,7 @@ users/{uid}/entries/{entryId}
 | createdAt | Timestamp | device clock, **immutable** |
 | syncedAt | Timestamp \| null | serverTimestamp, audit only |
 | updatedAt | Timestamp | |
-| dismissedAt | Timestamp \| null (optional) | user hid a failed / entry-less row (DECISIONS #7) |
+| dismissedAt | Timestamp \| null | written as null on create; set when the user hides a failed / entry-less row (DECISIONS #7, #15) |
 | meta | `{sttEngine, locale, recordingMode, appVersion}` | `sttEngine`: `on-device` \| `online` |
 
 ## entries/{entryId}
