@@ -12,7 +12,12 @@ const RECENT_LIMIT = 100;
 export function useRecentEntries(uid: string | null) {
   return useCollection<Entry>(`recent:${uid}`, () =>
     uid
-      ? query(paths.entries(uid), where('deleted', '==', false), orderBy('spentAt', 'desc'), limit(RECENT_LIMIT))
+      ? query(
+          paths.entries(uid),
+          where('deleted', '==', false),
+          orderBy('spentAt', 'desc'),
+          limit(RECENT_LIMIT),
+        )
       : null,
   );
 }

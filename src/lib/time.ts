@@ -1,6 +1,7 @@
 // All "today", "month" and relative-date logic uses the device time zone (plan §9).
 
-export const deviceTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC';
+export const deviceTimeZone = (): string =>
+  Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 

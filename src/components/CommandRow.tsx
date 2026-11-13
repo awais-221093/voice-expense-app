@@ -26,7 +26,10 @@ export function CommandRow({ command, onRetry, onFix, onDismiss }: Props) {
 
   return (
     <View
-      style={[styles.row, { backgroundColor: c.surface, borderLeftColor: pending ? c.border : tone }]}
+      style={[
+        styles.row,
+        { backgroundColor: c.surface, borderLeftColor: pending ? c.border : tone },
+      ]}
       accessibilityLabel={`Voice note: ${command.transcript}. ${label}`}>
       <View style={styles.top}>
         {pending && <ActivityIndicator size="small" color={c.textMuted} />}

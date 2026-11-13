@@ -80,17 +80,23 @@ export async function callChat(req: ChatRequest): Promise<{ rawText: string; mod
   const status = res.ok && json?.error ? Number(json.error.code) || 502 : res.status;
   if (status >= 200 && status < 300) {
     const content: unknown = json?.choices?.[0]?.message?.content;
-    if (typeof content !== 'string' || !content.trim()) throw new LlmCallError('invalid_json', 'empty response');
+    if (typeof content !== 'string' || !content.trim())
+      throw new LlmCallError('invalid_json', 'empty response');
     return { rawText: content, model: json?.model ?? model };
   }
 
   const detail = String(json?.error?.message ?? text).slice(0, 160);
-  if (status === 400 && (json?.error?.code === 'json_validate_failed' || detail.includes('json_validate_failed'))) {
+  if (
+    status === 400 &&
+    (json?.error?.code === 'json_validate_failed' || detail.includes('json_validate_failed'))
+  ) {
     // Groq JSON mode rejected the model's output; keep what it generated.
     throw new LlmCallError('invalid_json', 'invalid JSON', json?.error?.failed_generation ?? null);
   }
-  if (status === 401 || status === 403) throw new LlmCallError('fatal', `invalid API key (HTTP ${status})`);
-  if (status === 429 || status === 408 || status >= 500) throw new LlmCallError('transient', `HTTP ${status}`);
+  if (status === 401 || status === 403)
+    throw new LlmCallError('fatal', `invalid API key (HTTP ${status})`);
+  if (status === 429 || status === 408 || status >= 500)
+    throw new LlmCallError('transient', `HTTP ${status}`);
   // 400/404 here almost always means a wrong model id.
   throw new LlmCallError('fatal', `HTTP ${status}: ${detail}`);
 }

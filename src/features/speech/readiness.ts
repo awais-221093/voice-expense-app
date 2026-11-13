@@ -18,7 +18,8 @@ export async function checkSpeechReadiness(
   const perm = askPermission
     ? await ExpoSpeechRecognitionModule.requestPermissionsAsync()
     : await ExpoSpeechRecognitionModule.getPermissionsAsync();
-  if (!perm.granted) return { ok: false, problem: 'permission', locale: preferred, canAskAgain: perm.canAskAgain };
+  if (!perm.granted)
+    return { ok: false, problem: 'permission', locale: preferred, canAskAgain: perm.canAskAgain };
 
   if (!ExpoSpeechRecognitionModule.supportsOnDeviceRecognition()) {
     return allowOnline

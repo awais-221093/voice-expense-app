@@ -50,7 +50,12 @@ export function createCommand(
  * One batched write: append attempts, set the status, create entries with deterministic ids
  * (`${commandId}_${index}`), so a repeated write can never create duplicates.
  */
-export function commitProcessingResult(uid: string, cmd: Command, attempts: AttemptRecord[], plan: CommandPlan) {
+export function commitProcessingResult(
+  uid: string,
+  cmd: Command,
+  attempts: AttemptRecord[],
+  plan: CommandPlan,
+) {
   const now = Timestamp.now();
   const createdAt = cmd.createdAt.toDate();
   const batch = writeBatch(db);
@@ -113,7 +118,9 @@ export function requeueCommand(uid: string, id: string) {
 /** Hide a failed / entry-less row. Nothing is deleted (DECISIONS #7). */
 export function dismissCommand(uid: string, id: string) {
   const now = Timestamp.now();
-  updateDoc(paths.command(uid, id), { dismissedAt: now, updatedAt: now }).catch(logOnFail('dismiss command'));
+  updateDoc(paths.command(uid, id), { dismissedAt: now, updatedAt: now }).catch(
+    logOnFail('dismiss command'),
+  );
 }
 
 /** "Fix manually": an entry typed by the user, linked to the command. */

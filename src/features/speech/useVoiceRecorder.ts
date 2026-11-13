@@ -150,10 +150,13 @@ export function useVoiceRecorder(callbacks: Callbacks) {
     else cb.current.onEmpty();
   });
 
-  useEffect(() => () => {
-    clearTimer();
-    ExpoSpeechRecognitionModule.abort();
-  }, []);
+  useEffect(
+    () => () => {
+      clearTimer();
+      ExpoSpeechRecognitionModule.abort();
+    },
+    [],
+  );
 
   return { phase, liveText, start, stop, release, cancel };
 }

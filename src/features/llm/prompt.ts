@@ -86,17 +86,26 @@ const FEW_SHOTS: FewShot[] = [
   {
     now: '2026-03-04 Wednesday',
     transcript: 'ali returned 2000',
-    output: { entries: [e('loan', 'inflow', 2000, 'repayment from ali', null, 'other', null, 0.85)], notes: null },
+    output: {
+      entries: [e('loan', 'inflow', 2000, 'repayment from ali', null, 'other', null, 0.85)],
+      notes: null,
+    },
   },
   {
     now: '2026-03-04 Wednesday',
     transcript: 'got my committee 50000',
-    output: { entries: [e('committee', 'inflow', 50000, 'committee payout', null, 'other')], notes: null },
+    output: {
+      entries: [e('committee', 'inflow', 50000, 'committee payout', null, 'other')],
+      notes: null,
+    },
   },
   {
     now: '2026-03-04 Wednesday',
     transcript: 'withdrew 3k from savings',
-    output: { entries: [e('savings', 'inflow', 3000, 'savings withdrawal', null, 'other')], notes: null },
+    output: {
+      entries: [e('savings', 'inflow', 3000, 'savings withdrawal', null, 'other')],
+      notes: null,
+    },
   },
   {
     now: '2026-03-04 Wednesday',

@@ -43,10 +43,15 @@ const argValue = (name: string) => {
 const file: FixtureFile = JSON.parse(readFileSync(join(__dirname, 'fixtures.json'), 'utf8'));
 const only = Number(argValue('only')) || file.fixtures.length;
 const fixtures = file.fixtures.slice(0, only);
-const keyEnv: Record<ProviderId, string> = { groq: 'GROQ_API_KEY', openrouter: 'OPENROUTER_API_KEY' };
+const keyEnv: Record<ProviderId, string> = {
+  groq: 'GROQ_API_KEY',
+  openrouter: 'OPENROUTER_API_KEY',
+};
 const modelEnv: Record<ProviderId, string> = { groq: 'GROQ_MODEL', openrouter: 'OPENROUTER_MODEL' };
 const requested = argValue('provider') as ProviderId | undefined;
-const providers = PROVIDER_IDS.filter((p) => (!requested || p === requested) && process.env[keyEnv[p]]);
+const providers = PROVIDER_IDS.filter(
+  (p) => (!requested || p === requested) && process.env[keyEnv[p]],
+);
 
 async function main() {
   if (!providers.length) {
@@ -71,14 +76,20 @@ async function main() {
       });
       const ms = Date.now() - started;
       const problems =
-        outcome.kind === 'parsed' ? compare(fx.expected, outcome.entries) : [`${outcome.kind}: ${outcome.reason}`];
+        outcome.kind === 'parsed'
+          ? compare(fx.expected, outcome.entries)
+          : [`${outcome.kind}: ${outcome.reason}`];
       if (!problems.length) passed++;
       const mark = problems.length ? 'FAIL' : 'pass';
-      console.log(`${mark} #${String(fx.id).padStart(2)} ${String(ms).padStart(5)}ms  ${fx.transcript}`);
+      console.log(
+        `${mark} #${String(fx.id).padStart(2)} ${String(ms).padStart(5)}ms  ${fx.transcript}`,
+      );
       problems.forEach((p) => console.log(`        - ${p}`));
     }
     const pct = Math.round((passed / fixtures.length) * 100);
-    console.log(`\n${provider}: ${passed}/${fixtures.length} passed (${pct}%) ${pct >= 90 ? '✓' : '✗ below 90%'}`);
+    console.log(
+      `\n${provider}: ${passed}/${fixtures.length} passed (${pct}%) ${pct >= 90 ? '✓' : '✗ below 90%'}`,
+    );
   }
 }
 
@@ -90,7 +101,8 @@ function compare(expected: Expected[], actual: ParsedEntry[]): string[] {
   expected.forEach((exp, i) => {
     const got = actual[i];
     const check = (field: string, e: unknown, a: unknown) => {
-      if (e !== a) problems.push(`[${i}] ${field}: expected ${JSON.stringify(e)}, got ${JSON.stringify(a)}`);
+      if (e !== a)
+        problems.push(`[${i}] ${field}: expected ${JSON.stringify(e)}, got ${JSON.stringify(a)}`);
     };
     check('type', exp.type, got.type);
     check('direction', exp.direction, got.direction);
@@ -98,8 +110,14 @@ function compare(expected: Expected[], actual: ParsedEntry[]): string[] {
     check('source', exp.source, got.source);
     check('category', exp.category, got.category);
     check('spent_at', exp.spent_at, got.spentAt);
-    const ok = exp.description === null ? got.description === null : exp.description.some((d) => sameWords(d, got.description));
-    if (!ok) problems.push(`[${i}] description: expected one of ${JSON.stringify(exp.description)}, got ${JSON.stringify(got.description)}`);
+    const ok =
+      exp.description === null
+        ? got.description === null
+        : exp.description.some((d) => sameWords(d, got.description));
+    if (!ok)
+      problems.push(
+        `[${i}] description: expected one of ${JSON.stringify(exp.description)}, got ${JSON.stringify(got.description)}`,
+      );
   });
   return problems;
 }
@@ -108,7 +126,12 @@ function compare(expected: Expected[], actual: ParsedEntry[]): string[] {
 function sameWords(a: string, b: string | null): boolean {
   if (b === null) return false;
   const norm = (s: string) =>
-    s.toLowerCase().trim().split(/\s+/).map((w) => w.replace(/(es|s)$/, '')).join(' ');
+    s
+      .toLowerCase()
+      .trim()
+      .split(/\s+/)
+      .map((w) => w.replace(/(es|s)$/, ''))
+      .join(' ');
   return norm(a) === norm(b);
 }
 

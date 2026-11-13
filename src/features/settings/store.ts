@@ -62,7 +62,10 @@ export const useSettings = create<SettingsState>()((set, get) => ({
     const modelsChanged =
       patch.llmModels && JSON.stringify(patch.llmModels) !== JSON.stringify(settings.llmModels);
     // Optimistic: the snapshot listener confirms it a moment later (even offline, from cache).
-    set({ settings: { ...settings, ...patch }, llmConfigVersion: llmConfigVersion + (modelsChanged ? 1 : 0) });
+    set({
+      settings: { ...settings, ...patch },
+      llmConfigVersion: llmConfigVersion + (modelsChanged ? 1 : 0),
+    });
     setDoc(paths.settings(uid), patch, { merge: true }).catch(logOnFail('save settings'));
   },
 
@@ -70,7 +73,10 @@ export const useSettings = create<SettingsState>()((set, get) => ({
     const value = key.trim();
     if (value) await SecureStore.setItemAsync(keyName(provider), value);
     else await SecureStore.deleteItemAsync(keyName(provider));
-    set((s) => ({ keys: { ...s.keys, [provider]: value || null }, llmConfigVersion: s.llmConfigVersion + 1 }));
+    set((s) => ({
+      keys: { ...s.keys, [provider]: value || null },
+      llmConfigVersion: s.llmConfigVersion + 1,
+    }));
   },
 }));
 
@@ -81,7 +87,10 @@ export function startSettingsSync(uid: string): () => void {
   Promise.all([
     SecureStore.getItemAsync(keyName('groq')),
     SecureStore.getItemAsync(keyName('openrouter')),
-  ]).then(([groq, openrouter]) => useSettings.setState({ keys: { groq, openrouter } }), logOnFail('load keys'));
+  ]).then(
+    ([groq, openrouter]) => useSettings.setState({ keys: { groq, openrouter } }),
+    logOnFail('load keys'),
+  );
 
   return onSnapshot(
     paths.settings(uid),
@@ -91,7 +100,9 @@ export function startSettingsSync(uid: string): () => void {
         // First run: write defaults so the dashboard sees the same lists. Only when the server
         // confirms the doc is missing — an empty offline cache must not overwrite real settings.
         if (snap?.metadata.fromCache) return;
-        setDoc(paths.settings(uid), DEFAULT_SETTINGS, { merge: true }).catch(logOnFail('init settings'));
+        setDoc(paths.settings(uid), DEFAULT_SETTINGS, { merge: true }).catch(
+          logOnFail('init settings'),
+        );
         return;
       }
       useSettings.setState({

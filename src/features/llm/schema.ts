@@ -12,8 +12,7 @@ const responseSchema = z.object({
 });
 
 export type ParseResult =
-  | { ok: true; entries: ParsedEntry[]; notes: string | null }
-  | { ok: false; reason: string };
+  { ok: true; entries: ParsedEntry[]; notes: string | null } | { ok: false; reason: string };
 
 export interface NormaliseOptions {
   categories: string[];

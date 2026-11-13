@@ -66,7 +66,9 @@ export function MicButton({ mode, phase, understanding, onStart, onRelease, onSt
         <Pressable
           {...handlers}
           accessibilityRole="button"
-          accessibilityLabel={listening ? 'Recording. Release or tap to finish' : 'Record a money note'}
+          accessibilityLabel={
+            listening ? 'Recording. Release or tap to finish' : 'Record a money note'
+          }
           accessibilityHint={
             mode === 'hold'
               ? 'Double tap and hold, say for example: 100 rupees for eggs from salary, then release'
@@ -80,7 +82,11 @@ export function MicButton({ mode, phase, understanding, onStart, onRelease, onSt
           {phase === 'stopping' ? (
             <ActivityIndicator color={c.primaryText} size="large" />
           ) : (
-            <MaterialCommunityIcons name={listening ? 'waveform' : 'microphone'} size={48} color={c.primaryText} />
+            <MaterialCommunityIcons
+              name={listening ? 'waveform' : 'microphone'}
+              size={48}
+              color={c.primaryText}
+            />
           )}
         </Pressable>
       </View>
@@ -93,7 +99,12 @@ export function MicButton({ mode, phase, understanding, onStart, onRelease, onSt
 
 const styles = StyleSheet.create({
   wrap: { alignItems: 'center', gap: spacing.sm },
-  circleWrap: { width: SIZE * 1.3, height: SIZE * 1.3, alignItems: 'center', justifyContent: 'center' },
+  circleWrap: {
+    width: SIZE * 1.3,
+    height: SIZE * 1.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   ring: { position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2 },
   circle: {
     width: SIZE,
