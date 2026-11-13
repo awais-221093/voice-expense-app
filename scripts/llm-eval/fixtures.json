@@ -1,0 +1,812 @@
+{
+ "now": "2026-11-13T20:21:00+05:00",
+ "timeZone": "Asia/Karachi",
+ "fixtures": [
+  {
+   "id": 1,
+   "transcript": "add 100 rupees for eggs from salary",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 100,
+     "description": [
+      "eggs"
+     ],
+     "source": "salary",
+     "category": "groceries",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "transcript": "add 100 rupees for eggs from salary and 50 for bread",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 100,
+     "description": [
+      "eggs"
+     ],
+     "source": "salary",
+     "category": "groceries",
+     "spent_at": null
+    },
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 50,
+     "description": [
+      "bread"
+     ],
+     "source": "salary",
+     "category": "groceries",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "transcript": "twelve hundred for petrol",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 1200,
+     "description": [
+      "petrol",
+      "fuel"
+     ],
+     "source": null,
+     "category": "transport",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "transcript": "one fifty rickshaw",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 150,
+     "description": [
+      "rickshaw",
+      "rickshaw fare",
+      "rickshaw ride"
+     ],
+     "source": null,
+     "category": "transport",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "transcript": "electricity bill 5k from bank",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 5000,
+     "description": [
+      "electricity bill",
+      "electricity"
+     ],
+     "source": "bank",
+     "category": "bills",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "transcript": "paid 2 thousand for internet bill",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 2000,
+     "description": [
+      "internet bill",
+      "internet"
+     ],
+     "source": null,
+     "category": "bills",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "transcript": "spent 1.5 lakh on a new laptop from bank",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 150000,
+     "description": [
+      "laptop",
+      "new laptop"
+     ],
+     "source": "bank",
+     "category": "shopping",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "transcript": "bought medicines for 850 rupees cash",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 850,
+     "description": [
+      "medicines",
+      "medicine"
+     ],
+     "source": "cash",
+     "category": "health",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "transcript": "school fee 12000",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 12000,
+     "description": [
+      "school fee",
+      "school fees"
+     ],
+     "source": null,
+     "category": "education",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "transcript": "lunch 600 cash",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 600,
+     "description": [
+      "lunch"
+     ],
+     "source": "cash",
+     "category": "food",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "transcript": "yesterday dinner 2500 from salary",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 2500,
+     "description": [
+      "dinner"
+     ],
+     "source": "salary",
+     "category": "food",
+     "spent_at": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "transcript": "on monday i paid 3000 for gas bill",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 3000,
+     "description": [
+      "gas bill",
+      "gas"
+     ],
+     "source": null,
+     "category": "bills",
+     "spent_at": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "transcript": "gave ali 5000 loan",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "outflow",
+     "amount": 5000,
+     "description": [
+      "loan to ali",
+      "ali"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "transcript": "took 10000 loan from brother",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "inflow",
+     "amount": 10000,
+     "description": [
+      "loan from brother",
+      "brother"
+     ],
+     "source": null,
+     "category": "family",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "transcript": "ali returned 2000",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "inflow",
+     "amount": 2000,
+     "description": [
+      "repayment from ali",
+      "ali",
+      "ali repayment",
+      "loan repayment from ali"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "transcript": "returned 3000 to my brother that i borrowed",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "outflow",
+     "amount": 3000,
+     "description": [
+      "repayment to brother",
+      "loan repayment to brother",
+      "brother"
+     ],
+     "source": null,
+     "category": "family",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "transcript": "paid 5000 committee",
+   "expected": [
+    {
+     "type": "committee",
+     "direction": "outflow",
+     "amount": 5000,
+     "description": [
+      "committee installment",
+      "committee"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "transcript": "got my committee 50000",
+   "expected": [
+    {
+     "type": "committee",
+     "direction": "inflow",
+     "amount": 50000,
+     "description": [
+      "committee payout",
+      "committee"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "transcript": "saved 2000 in the bank",
+   "expected": [
+    {
+     "type": "savings",
+     "direction": "outflow",
+     "amount": 2000,
+     "description": [
+      "savings deposit",
+      "savings"
+     ],
+     "source": "bank",
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "transcript": "withdrew 3000 from savings",
+   "expected": [
+    {
+     "type": "savings",
+     "direction": "inflow",
+     "amount": 3000,
+     "description": [
+      "savings withdrawal",
+      "withdrawal"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "transcript": "paid 5000 committee and saved 2000 in the bank",
+   "expected": [
+    {
+     "type": "committee",
+     "direction": "outflow",
+     "amount": 5000,
+     "description": [
+      "committee installment",
+      "committee"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    },
+    {
+     "type": "savings",
+     "direction": "outflow",
+     "amount": 2000,
+     "description": [
+      "savings deposit",
+      "savings"
+     ],
+     "source": "bank",
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "transcript": "received salary 150000",
+   "expected": [
+    {
+     "type": "other",
+     "direction": "inflow",
+     "amount": 150000,
+     "description": [
+      "salary"
+     ],
+     "source": "salary",
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "transcript": "gave 1000 to the mosque",
+   "expected": [
+    {
+     "type": "other",
+     "direction": "outflow",
+     "amount": 1000,
+     "description": [
+      "donation to mosque",
+      "mosque donation",
+      "mosque",
+      "donation"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "transcript": "bought vegetables for 400 and fruit for 600 and milk 220 cash",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 400,
+     "description": [
+      "vegetables"
+     ],
+     "source": "cash",
+     "category": "groceries",
+     "spent_at": null
+    },
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 600,
+     "description": [
+      "fruit",
+      "fruits"
+     ],
+     "source": "cash",
+     "category": "groceries",
+     "spent_at": null
+    },
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 220,
+     "description": [
+      "milk"
+     ],
+     "source": "cash",
+     "category": "groceries",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "transcript": "bought shoes",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": null,
+     "description": [
+      "shoes"
+     ],
+     "source": null,
+     "category": "shopping",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "transcript": "uber 750 from jazzcash",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 750,
+     "description": [
+      "uber",
+      "uber ride"
+     ],
+     "source": "jazzcash",
+     "category": "transport",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "transcript": "sent mom 10000",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 10000,
+     "description": [
+      "money to mom",
+      "mom"
+     ],
+     "source": null,
+     "category": "family",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "transcript": "سو روپے کے انڈے سیلری سے",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 100,
+     "description": [
+      "eggs"
+     ],
+     "source": "salary",
+     "category": "groceries",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "transcript": "پانچ سو کا پیٹرول",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 500,
+     "description": [
+      "petrol"
+     ],
+     "source": null,
+     "category": "transport",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "transcript": "علی کو پانچ ہزار ادھار دیا",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "outflow",
+     "amount": 5000,
+     "description": [
+      "loan to ali",
+      "ali"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "transcript": "بھائی سے دس ہزار ادھار لیا",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "inflow",
+     "amount": 10000,
+     "description": [
+      "loan from brother",
+      "brother"
+     ],
+     "source": null,
+     "category": "family",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "transcript": "کمیٹی کی قسط دس ہزار دی",
+   "expected": [
+    {
+     "type": "committee",
+     "direction": "outflow",
+     "amount": 10000,
+     "description": [
+      "committee installment",
+      "committee"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "transcript": "kal 500 ka petrol dalwaya cash se",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 500,
+     "description": [
+      "petrol"
+     ],
+     "source": "cash",
+     "category": "transport",
+     "spent_at": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "transcript": "dhai sau ki sabzi li",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 250,
+     "description": [
+      "vegetables"
+     ],
+     "source": null,
+     "category": "groceries",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "transcript": "bijli ka bill aath hazar bank se",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 8000,
+     "description": [
+      "electricity bill"
+     ],
+     "source": "bank",
+     "category": "bills",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "transcript": "committee mil gayi pachas hazar",
+   "expected": [
+    {
+     "type": "committee",
+     "direction": "inflow",
+     "amount": 50000,
+     "description": [
+      "committee payout",
+      "committee"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "transcript": "savings mein 5000 dale",
+   "expected": [
+    {
+     "type": "savings",
+     "direction": "outflow",
+     "amount": 5000,
+     "description": [
+      "savings deposit",
+      "savings"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "transcript": "parson doctor ki fees 2000",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 2000,
+     "description": [
+      "doctor fee",
+      "doctor fees",
+      "doctor"
+     ],
+     "source": null,
+     "category": "health",
+     "spent_at": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "transcript": "ahmed ne 1500 wapis kiye",
+   "expected": [
+    {
+     "type": "loan",
+     "direction": "inflow",
+     "amount": 1500,
+     "description": [
+      "repayment from ahmed",
+      "ahmed"
+     ],
+     "source": null,
+     "category": "other",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "transcript": "derh hazar ka khana",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 1500,
+     "description": [
+      "food",
+      "meal"
+     ],
+     "source": null,
+     "category": "food",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "transcript": "add 100 rupees for eggs from celery",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 100,
+     "description": [
+      "eggs"
+     ],
+     "source": "salary",
+     "category": "groceries",
+     "spent_at": null
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "transcript": "paid hundred for bread and fifty for tea from cash",
+   "expected": [
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 100,
+     "description": [
+      "bread"
+     ],
+     "source": "cash",
+     "category": "groceries",
+     "spent_at": null
+    },
+    {
+     "type": "expense",
+     "direction": "outflow",
+     "amount": 50,
+     "description": [
+      "tea"
+     ],
+     "source": "cash",
+     "category": "food",
+     "spent_at": null
+    }
+   ]
+  }
+ ]
+}
