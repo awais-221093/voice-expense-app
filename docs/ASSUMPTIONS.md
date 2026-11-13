@@ -4,7 +4,6 @@ Made without explicit confirmation. Confirm (move to DECISIONS) or correct.
 
 | # | Assumption | Where it matters |
 |---|---|---|
-| 1 | Android package name `com.awais.voiceexpense` | app.json, Firebase Android app registration — change both together **before** registering |
 | 2 | Default LLM provider is Groq; OpenRouter is the fallback | settings defaults |
 | 3 | Urdu = `ur-PK`; any installed `ur-*` model is acceptable | speech readiness |
 | 4 | Roman Urdu "kal" in a spending note means yesterday | prompt |

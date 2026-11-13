@@ -10,7 +10,7 @@ Things only you can do (console clicks, keys, phone). Commands referenced here a
 
 ## 2. Register the Android app
 1. Project settings → **Add app → Android**.
-2. Package name: **`com.awais.voiceexpense`** (must match `android.package` in `app.json`; change both together if you want another).
+2. Package name: **`com.voiceexpense.app`** (must match `android.package` in `app.json`; change both together if you want another).
 3. Download **`google-services.json`** and put it in the repo root (`D:\DEVELOPMENT\RN\voice-expense-app\google-services.json`). It is git-ignored.
 4. SHA-1 is not needed (no Google sign-in).
 
