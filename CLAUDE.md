@@ -60,5 +60,17 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 - PR body: short "What" list and a "Verify" step. No attribution lines.
 - Never force-push or rewrite history of anything already merged. Before merge, only with the user's OK.
 
+## Project facts
+- Android package: **`com.voiceexpense.app`** (must match the Firebase Android app). Android only, min SDK 33.
+- Navigation: bottom tabs **Home · Activity · [raised mic] · Insights · Profile** (`src/app/(tabs)/`).
+  Settings live in Profile. Recording, result card, toasts and the entry sheet live in
+  `RecorderProvider` above the tabs.
+- Secrets never go in git: `google-services.json` and `.env` (LLM keys for `npm run eval`) are ignored.
+  In the app, API keys live in SecureStore only.
+- Dev machine is Windows: no Python; Bash is Git Bash. Prefer Node one-liners for scripted edits.
+
 ## Before declaring a task done
-Ask the user to run `npx tsc --noEmit` and `npx expo lint` (see `COMMANDS.md`) if packages aren't installed yet; then update `TASKS.md`, `PROGRESS.md` and `ISSUES.md`.
+1. `npm run typecheck` (app + eval script) and `npx expo lint` — both must be clean.
+2. For UI/route changes, `npx expo export --platform android --output-dir <scratchpad>` to prove the bundle builds.
+3. Update `docs/TASKS.md`, `PROGRESS.md`, `ISSUES.md` (and `DECISIONS.md` for deviations).
+4. Commit, push, create the PR, check it is mergeable, and share the link.
