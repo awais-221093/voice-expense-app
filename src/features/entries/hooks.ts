@@ -1,28 +1,26 @@
 import { Timestamp, limit, orderBy, query, where } from '@react-native-firebase/firestore';
 
 import { paths } from '@/lib/firebase';
+import { addMonths, startOfDay, startOfMonth } from '@/lib/time';
 import { useCollection } from '@/lib/useCollection';
-import { startOfDay, startOfMonth } from '@/lib/time';
 
 import type { Entry } from './types';
 
-const RECENT_LIMIT = 100;
-
-/** Latest non-deleted entries for the list. Index: deleted ASC, spentAt DESC. */
-export function useRecentEntries(uid: string | null) {
-  return useCollection<Entry>(`recent:${uid}`, () =>
+/** Latest non-deleted entries. Index: deleted ASC, spentAt DESC. */
+export function useRecentEntries(uid: string | null, max = 100) {
+  return useCollection<Entry>(`recent:${uid}:${max}`, () =>
     uid
       ? query(
           paths.entries(uid),
           where('deleted', '==', false),
           orderBy('spentAt', 'desc'),
-          limit(RECENT_LIMIT),
+          limit(max),
         )
       : null,
   );
 }
 
-/** All non-deleted entries this month, for totals. `monthKey` re-subscribes when the month changes. */
+/** Non-deleted entries in the calendar month starting at `monthStart` (same index). */
 export function useMonthEntries(uid: string | null, monthStart: Date) {
   return useCollection<Entry>(`month:${uid}:${monthStart.getTime()}`, () =>
     uid
@@ -30,9 +28,17 @@ export function useMonthEntries(uid: string | null, monthStart: Date) {
           paths.entries(uid),
           where('deleted', '==', false),
           where('spentAt', '>=', Timestamp.fromDate(monthStart)),
+          where('spentAt', '<', Timestamp.fromDate(addMonths(monthStart, 1))),
           orderBy('spentAt', 'desc'),
         )
       : null,
+  );
+}
+
+/** Entries created from one command — drives the result card. Single-field index only. */
+export function useCommandEntries(uid: string, commandId: string | null) {
+  return useCollection<Entry>(`cmd:${uid}:${commandId}`, () =>
+    commandId ? query(paths.entries(uid), where('commandId', '==', commandId)) : null,
   );
 }
 

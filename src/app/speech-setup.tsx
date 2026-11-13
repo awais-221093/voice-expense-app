@@ -67,7 +67,7 @@ export default function SpeechSetupScreen() {
           />
         )}
         {problem === 'unsupported' && (
-          <Button title="Open settings" onPress={() => router.replace('/settings')} />
+          <Button title="Open settings" onPress={() => router.replace('/profile')} />
         )}
         <Button title="Try again" kind="secondary" onPress={() => retry(false)} />
         <Button title="Close" kind="ghost" onPress={() => router.back()} />

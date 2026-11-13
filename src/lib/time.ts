@@ -42,3 +42,13 @@ export function formatDayHeading(d: Date, now = new Date()): string {
   if (days === 1) return 'Yesterday';
   return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 }
+
+/** First day of the month `n` months after `d` (negative goes back). */
+export function addMonths(d: Date, n: number): Date {
+  return new Date(d.getFullYear(), d.getMonth() + n, 1);
+}
+
+/** "November 2026" */
+export function formatMonth(d: Date): string {
+  return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+}

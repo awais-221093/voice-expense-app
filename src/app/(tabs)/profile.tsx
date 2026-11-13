@@ -1,13 +1,14 @@
 import { signOut } from '@react-native-firebase/auth';
 import { router } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
-import { ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Chip, Segmented } from '@/components/ui';
 import { PROVIDER_IDS, type ProviderId } from '@/features/llm/types';
 import { useSettings } from '@/features/settings/store';
 import { installedLocales, matchLocale } from '@/features/speech/readiness';
+import { appVersion } from '@/lib/appInfo';
 import { auth } from '@/lib/firebase';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
@@ -18,23 +19,39 @@ const LANGUAGES = [
 
 const PROVIDER_LABEL: Record<ProviderId, string> = { groq: 'Groq', openrouter: 'OpenRouter' };
 
-/** Every setting from plan §6.5 and nothing else. */
-export default function SettingsScreen() {
+/** Account + every setting from plan §6.5. Long-press the avatar for the debug log. */
+export default function ProfileScreen() {
   const c = useTheme();
   const { settings, keys, update, setKey } = useSettings();
   const [installed, setInstalled] = useState<string[] | null>(null);
+  const email = auth.currentUser?.email ?? '';
 
   useEffect(() => {
     installedLocales().then(setInstalled);
   }, []);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: c.background }]}>
-      <View style={styles.header}>
-        <Button title="‹ Back" kind="ghost" onPress={() => router.back()} />
-        <AppText variant="title">Settings</AppText>
-      </View>
+    <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: c.background }]}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Pressable
+          onLongPress={() => router.push('/debug')}
+          accessibilityHint="Long press to open the debug log"
+          style={styles.profile}>
+          <View style={[styles.avatar, { backgroundColor: c.primary }]}>
+            <AppText variant="title" color={c.primaryText}>
+              {(email[0] ?? '?').toUpperCase()}
+            </AppText>
+          </View>
+          <View style={styles.flex}>
+            <AppText variant="title" numberOfLines={1}>
+              {email.split('@')[0] || 'Profile'}
+            </AppText>
+            <AppText muted numberOfLines={1}>
+              {email}
+            </AppText>
+          </View>
+        </Pressable>
+
         <Section title="Recording">
           <Segmented
             value={settings.recordingMode}
@@ -126,9 +143,11 @@ export default function SettingsScreen() {
         </Section>
 
         <Section title="Account">
-          <AppText muted>{auth.currentUser?.email}</AppText>
           <Button title="Sign out" kind="danger" onPress={() => signOut(auth)} />
         </Section>
+        <AppText variant="small" muted style={styles.version}>
+          Voice Expense {appVersion}
+        </AppText>
       </ScrollView>
     </SafeAreaView>
   );
@@ -247,13 +266,21 @@ function ListEditor({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: {
+  content: { padding: spacing.lg, paddingBottom: spacing.xxl * 2, gap: spacing.lg },
+  profile: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.sm,
+    gap: spacing.lg,
+    paddingVertical: spacing.md,
   },
-  content: { padding: spacing.lg, gap: spacing.lg },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  version: { textAlign: 'center' },
   section: { padding: spacing.lg, borderRadius: radius.md, gap: spacing.md },
   provider: { gap: spacing.sm },
   toggle: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: MIN_TOUCH },
