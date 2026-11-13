@@ -41,6 +41,12 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [ ] U  Airplane mode → speak → force kill → reopen → reconnect: parsed once, no duplicates
 - [ ] U  Wrong API key → `failed` with clear reason, no retry loop
 
+## Navigation (user request)
+- [x] A  Package renamed to `com.voiceexpense.app`
+- [~] A  Bottom tabs with raised centre mic; RecorderProvider for all tabs
+- [~] A  Home tab redesign, Activity tab, Insights tab, Profile tab (settings moved)
+- [ ] U  Check on device: holding the tab-bar mic feels right; overlay never hides important content
+
 ## Phase 5 — Polish
 - [ ] A  App icon + splash artwork
 - [ ] A  Onboarding: first-run permission + model check flow review
