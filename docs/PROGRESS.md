@@ -2,6 +2,14 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-13 — Package rename + bottom tab navigation
+
+Branches: `chore/rename-package` → `feat/tab-navigation` (stacked on `chore/install-deps`).
+- Android package is now `com.voiceexpense.app` (register this in Firebase).
+- Tabs: Home · Activity · [raised mic] · Insights · Profile. Recording, result card, toasts and the edit sheet moved into an app-wide `RecorderProvider`, so the mic works from every tab.
+- New: Activity (month history, filters, search), Insights (spent, daily average, in/out/net, category & source bars, per type). Settings moved into Profile.
+- Verified: `npm run typecheck` ✓, `npx expo lint` ✓, `npx expo export --platform android` bundles ✓. Not yet run on a device.
+
 ## 2026-11-13 — Packages installed, typecheck + lint green
 
 Branch `chore/install-deps` (from `docs/agent-tracking`). User asked the agent to run installs this time.

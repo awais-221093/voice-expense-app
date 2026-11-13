@@ -9,9 +9,12 @@ Package installs and builds are run by the user from `COMMANDS.md`.
 src/app/                 Expo Router routes only
   _layout.tsx            providers, auth gate (Stack.Protected), queue runner
   sign-in.tsx            email/password
-  index.tsx              home: totals, list, mic, result card
-  settings.tsx           all settings (gear icon); long-press gear → debug
-  speech-setup.tsx       permission / offline-model explanation screen
+  (tabs)/_layout.tsx     JS tabs + custom AppTabBar, wrapped in RecorderProvider
+  (tabs)/index.tsx       Home: totals hero, needs attention, latest entries
+  (tabs)/activity.tsx    month history, filters, search
+  (tabs)/insights.tsx    monthly breakdown
+  (tabs)/profile.tsx     account + all settings; long-press avatar → debug
+  speech-setup.tsx       permission / offline-model explanation (modal)
   debug.tsx              in-memory debug log
 src/features/
   llm/                   SHARED with Node eval (no RN imports, relative imports only)
@@ -20,8 +23,9 @@ src/features/
   commands/              Firestore repo, status logic (pure), processor, queue hook
   entries/               Firestore repo, hooks, totals (pure)
   settings/              defaults, zustand store (Firestore doc + SecureStore keys)
-src/components/          MicButton, LiveTranscript, EntryRow, CommandRow, TotalsHeader,
-                         ResultCard, Snackbar, EditEntrySheet, ui primitives
+  recording/             RecorderProvider: app-wide recorder, result card, toasts, entry sheet
+src/components/          AppTabBar, MicButton, RecordingOverlay, EntryList, EntryRow, CommandRow,
+                         TotalsHeader, MonthSwitcher, Toast, EditEntrySheet, ui primitives
 src/lib/                 firebase, time, money, haptics, network, debugLog, appInfo
 src/theme/               colors, spacing, typography, useTheme
 firebase/                firestore.rules, firestore.indexes.json (+ rules tests in Phase 6)
