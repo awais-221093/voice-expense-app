@@ -38,6 +38,24 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 - Work on a separate branch per task (`feat/…`, `fix/…`, `docs/…`, `chore/…`); never commit directly to `main` or `staging`.
 - Commit often, in logical units, with self-explanatory messages (`feat(llm): add provider adapter with retry`).
 - Always open a PR when merging into `staging` or `main` (`gh pr create`); never merge to them locally.
+- Make as many PRs as is sensible: **one task = one branch = one PR**. When the user lists several
+  tasks, each gets its own branch and PR.
+
+## Pull request workflow
+- **The agent creates every PR itself** with the GitHub CLI, then shares the links. The user merges.
+  - CLI path (not on PATH): `"/c/Program Files/GitHub CLI/gh.exe"` in Bash,
+    `& "C:\Program Files\GitHub CLI\gh.exe"` in PowerShell. Logged in as **`awais-124`**.
+  - Repo: `awais-221093/voice-expense-app`. The user merges from the owner account `awais-221093`.
+- **Base:** feature PRs target `staging`. Releases are a separate PR `staging` → `main`.
+- **Branch from the newest unmerged tip** (the latest open PR's branch) while earlier PRs are still
+  open, so every PR contains what it depends on and merges cleanly in creation order. Once
+  `staging` has caught up, branch from `staging`.
+- The user merges PRs **in the order they were created**, always with **"Create a merge commit"**
+  (never squash or rebase — that would make the following PRs conflict). Say this in the PR body.
+- After creating PRs, check them with `gh pr list --json number,headRefName,mergeable` and report
+  any that aren't `MERGEABLE`.
+- PR body: short "What" list and a "Verify" step. No attribution lines.
+- Never force-push or rewrite history of anything already merged. Before merge, only with the user's OK.
 
 ## Before declaring a task done
 Ask the user to run `npx tsc --noEmit` and `npx expo lint` (see `COMMANDS.md`) if packages aren't installed yet; then update `TASKS.md`, `PROGRESS.md` and `ISSUES.md`.
