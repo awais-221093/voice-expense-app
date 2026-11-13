@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// Owner-only access with integrity checks (plan §4). Shared by the app and the future dashboard.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function unchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    match /users/{uid} {
+      allow read, create, update: if isOwner(uid);
+
+      match /settings/{docId} {
+        allow read, create, update: if isOwner(uid) && docId == 'app';
+      }
+
+      match /commands/{commandId} {
+        allow read: if isOwner(uid);
+
+        allow create: if isOwner(uid)
+          && request.resource.data.id == commandId
+          && request.resource.data.transcript is string
+          && request.resource.data.transcript.size() > 0
+          && request.resource.data.status == 'pending'
+          && request.resource.data.llmAttempts == []
+          && request.resource.data.entryIds == [];
+
+        // transcript and createdAt are immutable; llmAttempts is append-only
+        // (grows by one or more, existing items unchanged — DECISIONS #4).
+        allow update: if isOwner(uid)
+          && unchanged(['id', 'transcript', 'createdAt'])
+          && request.resource.data.status in ['pending', 'ok', 'needs_review', 'failed']
+          && request.resource.data.llmAttempts.size() >= resource.data.llmAttempts.size()
+          && request.resource.data.llmAttempts[0:resource.data.llmAttempts.size()] == resource.data.llmAttempts;
+      }
+
+      match /entries/{entryId} {
+        function validEntry(e) {
+          return e.type in ['expense', 'savings', 'loan', 'committee', 'other']
+            && e.direction in ['inflow', 'outflow']
+            && (e.type != 'expense' || e.direction == 'outflow')
+            && e.currency == 'PKR'
+            && (e.amount == null || (e.amount is number && e.amount > 0))
+            && e.deleted is bool
+            && e.edited is bool
+            && e.spentAt is timestamp;
+        }
+
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && request.resource.data.id == entryId
+          && validEntry(request.resource.data);
+        allow update: if isOwner(uid)
+          && validEntry(request.resource.data)
+          && unchanged(['id', 'commandId', 'createdAt', 'original']);
+      }
+    }
+
+    // No rule grants delete anywhere: soft delete only.
+  }
+}
