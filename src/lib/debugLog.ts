@@ -10,12 +10,14 @@ export interface LogLine {
 const MAX = 300;
 const lines: LogLine[] = [];
 const listeners = new Set<() => void>();
+let version = 0;
 
 function push(level: LogLine['level'], msg: string, detail?: unknown) {
   const text = detail === undefined ? msg : `${msg} ${stringify(detail)}`;
   lines.push({ at: Date.now(), level, msg: text });
   if (lines.length > MAX) lines.shift();
   if (__DEV__) console[level === 'info' ? 'log' : level](`[app] ${text}`);
+  version++;
   listeners.forEach((l) => l());
 }
 
@@ -33,6 +35,8 @@ export const log = {
   warn: (msg: string, detail?: unknown) => push('warn', msg, detail),
   error: (msg: string, detail?: unknown) => push('error', msg, detail),
   lines: () => lines.slice().reverse(),
+  /** Changes on every new line (for useSyncExternalStore). */
+  version: () => version,
   subscribe: (fn: () => void) => {
     listeners.add(fn);
     return () => void listeners.delete(fn);
