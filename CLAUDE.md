@@ -18,11 +18,14 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 | `docs/DATA_MODEL.md` | Firestore contract shared with the future dashboard |
 | `docs/SETUP.md` | Manual steps only the user can do (console, keys, phone) |
 | `docs/IDEAS.md` | Ideas outside the plan — never build them unasked |
-| `COMMANDS.md` | Every install/build/deploy command — **the user runs these, not the agent** |
+| `COMMANDS.md` | Every install/build/deploy command, kept runnable in order |
 
 ## Working rules
-- **Do not run package installs or builds.** Add the command to `COMMANDS.md` and tell the user.
-- Focus on code, requirement analysis and design. Ask the user when a requirement is unclear.
+- **Installs and builds:** by default the user runs them — add the command to `COMMANDS.md` and
+  tell the user. Run them yourself only when the user asks (as they did for the first install),
+  and still record every command in `COMMANDS.md`. Use `npx expo install` for packages.
+- Focus on code, requirement analysis and design. Ask the user when a requirement is unclear —
+  but for "it's on you" decisions (e.g. UX choices), decide, explain briefly, and record in `DECISIONS.md`.
 - Write the least code that does the job well: don't write 500 lines when 100 will do.
 - Keep code and structure clean; add comments that explain *why*, not *what*.
 - TypeScript strict. Routes only in `src/app/`; everything else in `src/features`, `src/components`, `src/lib`, `src/theme`.
