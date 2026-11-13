@@ -33,8 +33,13 @@ const UNDERSTANDING_TIMEOUT_MS = 12_000;
 type Row = { kind: 'command'; command: Command } | { kind: 'entry'; entry: Entry };
 
 export default function HomeScreen() {
+  // The auth gate normally guarantees a user; this covers the frame right after sign-out.
+  const uid = auth.currentUser?.uid;
+  return uid ? <Home uid={uid} /> : null;
+}
+
+function Home({ uid }: { uid: string }) {
   const c = useTheme();
-  const uid = auth.currentUser!.uid; // the auth gate guarantees a user here
   const settings = useSettings((s) => s.settings);
   const online = useIsOnline();
   const inFlight = useInFlight((s) => s.ids);
