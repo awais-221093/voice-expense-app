@@ -20,7 +20,7 @@ Branch `chore/install-deps` (from `docs/agent-tracking`). User asked the agent t
 
 **Done**
 - Repo set up: CLAUDE.md (agent + git rules), COMMANDS.md (user-run commands), docs/ (plan, decisions, setup, data model, tasks, issues, assumptions, ideas).
-- app.json: Android only, package `com.awais.voiceexpense`, RN Firebase / speech / secure-store / build-properties plugins.
+- app.json: Android only, package `com.voiceexpense.app`, RN Firebase / speech / secure-store / build-properties plugins.
 - Auth: email sign-in, session gate, splash held until session restored.
 - Speech: recorder hook (both modes), readiness checks, setup screen, mic button.
 - LLM: shared prompt/parser/client/orchestrator, 42 eval fixtures, `npm run eval`.
