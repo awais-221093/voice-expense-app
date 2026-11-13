@@ -76,7 +76,10 @@ export default function SettingsScreen() {
         </Section>
 
         <Section title="Sources">
-          <ListEditor items={settings.knownSources} onChange={(knownSources) => update({ knownSources })} />
+          <ListEditor
+            items={settings.knownSources}
+            onChange={(knownSources) => update({ knownSources })}
+          />
         </Section>
 
         <Section title="Categories">
@@ -106,7 +109,9 @@ export default function SettingsScreen() {
               <SavedInput
                 label={`${PROVIDER_LABEL[p]} model`}
                 value={settings.llmModels[p]}
-                onSave={(v) => v.trim() && update({ llmModels: { ...settings.llmModels, [p]: v.trim() } })}
+                onSave={(v) =>
+                  v.trim() && update({ llmModels: { ...settings.llmModels, [p]: v.trim() } })
+                }
               />
             </View>
           ))}
@@ -141,7 +146,15 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
     <View style={styles.toggle}>
       <AppText style={styles.flex}>{label}</AppText>
@@ -212,7 +225,9 @@ function ListEditor({
           <Chip
             key={item}
             label={locked.includes(item) ? item : `${item}  ✕`}
-            onPress={locked.includes(item) ? undefined : () => onChange(items.filter((i) => i !== item))}
+            onPress={
+              locked.includes(item) ? undefined : () => onChange(items.filter((i) => i !== item))
+            }
           />
         ))}
       </View>
@@ -232,12 +247,22 @@ function ListEditor({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.sm },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.sm,
+  },
   content: { padding: spacing.lg, gap: spacing.lg },
   section: { padding: spacing.lg, borderRadius: radius.md, gap: spacing.md },
   provider: { gap: spacing.sm },
   toggle: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: MIN_TOUCH },
   flex: { flex: 1 },
-  input: { minHeight: MIN_TOUCH, borderRadius: radius.md, paddingHorizontal: spacing.lg, fontSize: 16 },
+  input: {
+    minHeight: MIN_TOUCH,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.lg,
+    fontSize: 16,
+  },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
 });

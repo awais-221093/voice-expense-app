@@ -1,40 +1,41 @@
-import { onSnapshot, type FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import { onSnapshot, type Query } from '@react-native-firebase/firestore';
 import { useEffect, useState } from 'react';
 
 import { log } from '@/lib/debugLog';
 
-type Query = FirebaseFirestoreTypes.Query;
+interface Snapshot<T> {
+  key: string;
+  data: T[];
+  error: string | null;
+}
 
 /**
  * Realtime listener for a query. `makeQuery` is rebuilt only when `key` changes;
- * return null to stay idle (e.g. signed out).
+ * return null to stay idle (e.g. signed out). Loading = no snapshot yet for the current key.
  */
 export function useCollection<T>(key: string, makeQuery: () => Query | null) {
-  const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [snap, setSnap] = useState<Snapshot<T> | null>(null);
 
   useEffect(() => {
     const q = makeQuery();
     if (!q) return;
-    setLoading(true);
     return onSnapshot(
       q,
-      (snap) => {
-        setData(snap.docs.map((d) => d.data() as T));
-        setLoading(false);
-        setError(null);
-      },
+      (s) => setSnap({ key, data: s.docs.map((d) => d.data() as T), error: null }),
       (e) => {
         // Most likely a missing composite index right after deploy, or rules.
         log.error(`listener ${key}`, e);
-        setError(e.message);
-        setLoading(false);
+        setSnap({ key, data: [], error: e.message });
       },
     );
     // makeQuery is intentionally keyed by `key`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
-  return { data, loading, error };
+  const current = snap?.key === key ? snap : null;
+  // A shared empty array keeps `data` referentially stable while loading (safe for memo deps).
+  const data: T[] = current?.data ?? EMPTY;
+  return { data, loading: !current, error: current?.error ?? null };
 }
+
+const EMPTY: never[] = [];

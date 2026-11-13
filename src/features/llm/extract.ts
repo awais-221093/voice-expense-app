@@ -1,7 +1,13 @@
 import { buildMessages } from './prompt';
 import { LlmCallError, callChat } from './providers';
 import { parseLlmResponse } from './schema';
-import type { AttemptRecord, ExtractionContext, ExtractionOutcome, ExtractionResult, ProviderId } from './types';
+import type {
+  AttemptRecord,
+  ExtractionContext,
+  ExtractionOutcome,
+  ExtractionResult,
+  ProviderId,
+} from './types';
 
 export interface ProviderConfig {
   id: ProviderId;
@@ -25,7 +31,11 @@ const TRANSIENT_RETRY_DELAY_MS = 800;
  *  - transient (offline/timeout/5xx/429): retry once, then try the fallback provider
  *  - fatal (bad key/model, missing key): go straight to the fallback provider
  */
-export async function extractEntries({ ctx, providers, fetchImpl }: ExtractOptions): Promise<ExtractionResult> {
+export async function extractEntries({
+  ctx,
+  providers,
+  fetchImpl,
+}: ExtractOptions): Promise<ExtractionResult> {
   const attempts: AttemptRecord[] = [];
   const failures: { kind: 'transient' | 'fatal'; reason: string }[] = [];
   const messages = buildMessages(ctx);
@@ -42,16 +52,40 @@ export async function extractEntries({ ctx, providers, fetchImpl }: ExtractOptio
     while (true) {
       const at = new Date().toISOString();
       try {
-        const { rawText, model } = await callChat({ provider: p.id, apiKey: p.apiKey, model: p.model, messages, fetchImpl });
+        const { rawText, model } = await callChat({
+          provider: p.id,
+          apiKey: p.apiKey,
+          model: p.model,
+          messages,
+          fetchImpl,
+        });
         const parsed = parseLlmResponse(rawText, { categories: ctx.categories, todayISODate });
-        attempts.push({ at, provider: p.id, model, rawText, error: parsed.ok ? null : parsed.reason });
-        if (parsed.ok) return { attempts, outcome: { kind: 'parsed', entries: parsed.entries, notes: parsed.notes } };
-        if (++invalid >= 2) return { attempts, outcome: { kind: 'invalid_json', reason: 'invalid JSON' } };
+        attempts.push({
+          at,
+          provider: p.id,
+          model,
+          rawText,
+          error: parsed.ok ? null : parsed.reason,
+        });
+        if (parsed.ok)
+          return {
+            attempts,
+            outcome: { kind: 'parsed', entries: parsed.entries, notes: parsed.notes },
+          };
+        if (++invalid >= 2)
+          return { attempts, outcome: { kind: 'invalid_json', reason: 'invalid JSON' } };
       } catch (e) {
         const err = e instanceof LlmCallError ? e : new LlmCallError('transient', String(e));
-        attempts.push({ at, provider: p.id, model: p.model, rawText: err.rawText, error: err.message });
+        attempts.push({
+          at,
+          provider: p.id,
+          model: p.model,
+          rawText: err.rawText,
+          error: err.message,
+        });
         if (err.kind === 'invalid_json') {
-          if (++invalid >= 2) return { attempts, outcome: { kind: 'invalid_json', reason: 'invalid JSON' } };
+          if (++invalid >= 2)
+            return { attempts, outcome: { kind: 'invalid_json', reason: 'invalid JSON' } };
         } else if (err.kind === 'transient' && !transientRetried) {
           transientRetried = true;
           await sleep(TRANSIENT_RETRY_DELAY_MS);
@@ -67,9 +101,13 @@ export async function extractEntries({ ctx, providers, fetchImpl }: ExtractOptio
 }
 
 /** Any transient failure means "try again later"; only all-fatal means the user must act. */
-function combineFailures(failures: { kind: 'transient' | 'fatal'; reason: string }[]): ExtractionOutcome {
+function combineFailures(
+  failures: { kind: 'transient' | 'fatal'; reason: string }[],
+): ExtractionOutcome {
   const reason = failures.map((f) => f.reason).join('; ') || 'no provider configured';
-  return failures.some((f) => f.kind === 'transient') ? { kind: 'transient', reason } : { kind: 'fatal', reason };
+  return failures.some((f) => f.kind === 'transient')
+    ? { kind: 'transient', reason }
+    : { kind: 'fatal', reason };
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

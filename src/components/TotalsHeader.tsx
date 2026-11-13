@@ -7,7 +7,15 @@ import { formatPKR } from '@/lib/money';
 import { MIN_TOUCH, spacing, useTheme } from '@/theme';
 
 /** Today's expense total (large), this month below, offline chip and the settings gear. */
-export function TotalsHeader({ today, month, online }: { today: number; month: number; online: boolean }) {
+export function TotalsHeader({
+  today,
+  month,
+  online,
+}: {
+  today: number;
+  month: number;
+  online: boolean;
+}) {
   const c = useTheme();
   return (
     <View style={styles.wrap}>
@@ -38,8 +46,18 @@ export function TotalsHeader({ today, month, online }: { today: number; month: n
 }
 
 const styles = StyleSheet.create({
-  wrap: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, paddingBottom: spacing.lg, gap: spacing.xs },
+  wrap: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    gap: spacing.xs,
+  },
   top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   right: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  gear: { minWidth: MIN_TOUCH, minHeight: MIN_TOUCH, alignItems: 'center', justifyContent: 'center' },
+  gear: {
+    minWidth: MIN_TOUCH,
+    minHeight: MIN_TOUCH,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

@@ -12,7 +12,12 @@ import { TotalsHeader } from '@/components/TotalsHeader';
 import { AppText } from '@/components/ui';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { useInFlight } from '@/features/commands/queue';
-import { createCommand, createManualEntry, dismissCommand, requeueCommand } from '@/features/commands/repo';
+import {
+  createCommand,
+  createManualEntry,
+  dismissCommand,
+  requeueCommand,
+} from '@/features/commands/repo';
 import type { Command } from '@/features/commands/types';
 import { expenseTotals, useMonthEntries, useRecentEntries } from '@/features/entries/hooks';
 import { setEntriesDeleted, updateEntry } from '@/features/entries/repo';
@@ -52,8 +57,13 @@ function Home({ uid }: { uid: string }) {
   const [toast, setToast] = useState<ToastData | null>(null);
   const [sheet, setSheet] = useState<SheetTarget | null>(null);
   /** The command just spoken; its outcome becomes the result card. */
-  const [watching, setWatching] = useState<{ id: string; since: number } | null>(null);
-  const hideToast = useCallback(() => setToast(null), []);
+  const [watching, setWatching] = useState<Watching | null>(null);
+
+  /** A new message replaces any result card still on screen. */
+  const showToast = (t: ToastData) => {
+    setWatching(null);
+    setToast(t);
+  };
 
   // Speech readiness is checked up front so pressing the mic starts instantly.
   const [ready, setReady] = useState<SpeechReadiness | null>(null);
@@ -70,14 +80,28 @@ function Home({ uid }: { uid: string }) {
         locale: o.locale,
         recordingMode: o.mode,
       });
-      setWatching({ id, since: Date.now() });
+      setWatching({ id, timedOut: false });
     },
-    onEmpty: () => setToast({ key: `empty${Date.now()}`, title: "Didn't catch that, try again", tone: 'info', durationMs: 2500 }),
+    onEmpty: () =>
+      showToast({
+        key: `empty${Date.now()}`,
+        title: "Didn't catch that, try again",
+        tone: 'info',
+        durationMs: 2500,
+      }),
     onError: (kind, message) => {
       if (kind === 'permission' || kind === 'model-missing') {
-        router.push({ pathname: '/speech-setup', params: { problem: kind, locale: settings.sttLocale } });
+        router.push({
+          pathname: '/speech-setup',
+          params: { problem: kind, locale: settings.sttLocale },
+        });
       } else {
-        setToast({ key: `err${Date.now()}`, title: 'Speech recognition stopped', lines: [message], tone: 'review' });
+        showToast({
+          key: `err${Date.now()}`,
+          title: 'Speech recognition stopped',
+          lines: [message],
+          tone: 'review',
+        });
       }
     },
   });
@@ -86,7 +110,10 @@ function Home({ uid }: { uid: string }) {
     if (!ready?.ok) {
       router.push({
         pathname: '/speech-setup',
-        params: { problem: ready?.ok === false ? ready.problem : 'permission', locale: settings.sttLocale },
+        params: {
+          problem: ready?.ok === false ? ready.problem : 'permission',
+          locale: settings.sttLocale,
+        },
       });
       return;
     }
@@ -98,56 +125,37 @@ function Home({ uid }: { uid: string }) {
     });
   }
 
-  // Turn the watched command's outcome into the result card (plan §6.2).
-  useEffect(() => {
-    if (!watching) return;
-    const entries = recent.data.filter((e) => e.commandId === watching.id);
-    const cmd = open.data.find((x) => x.id === watching.id);
-    const processing = inFlight.includes(watching.id);
-    const timedOut = Date.now() - watching.since > UNDERSTANDING_TIMEOUT_MS;
+  // The result card is derived from live data while a command is watched (plan §6.2).
+  const result = watching
+    ? resultCard(watching, recent.data, open.data, inFlight.includes(watching.id), online, uid)
+    : null;
+  const shownToast = result ?? toast;
+  const hideShown = useCallback(() => (result ? setWatching(null) : setToast(null)), [result]);
 
-    let next: ToastData | null = null;
-    if (entries.length) {
-      const review = entries.some((e) => e.needsReview);
-      next = {
-        key: watching.id,
-        title: review ? 'Saved — check later' : 'Saved',
-        tone: review ? 'review' : 'success',
-        lines: entries.map(describeEntry),
-        action: { label: 'Undo', onPress: () => setEntriesDeleted(uid, entries.map((e) => e.id), true) },
-      };
-      if (review) haptics.warning();
-      else haptics.success();
-    } else if (cmd && !processing && (cmd.status !== 'pending' || cmd.attemptCount > 0 || !online || timedOut)) {
-      next = {
-        key: watching.id,
-        title: cmd.status === 'pending' ? 'Saved — will process when online' : 'Saved — check later',
-        tone: 'review',
-        lines: [`“${cmd.transcript}”`],
-      };
-    } else if (!cmd && timedOut) {
-      // Entries exist but fall outside the recent list (e.g. dated last month).
-      next = { key: watching.id, title: 'Saved', tone: 'success' };
-    }
-    if (next) {
-      setToast(next);
-      setWatching(null);
-    }
-  }, [watching, recent.data, open.data, inFlight, online, uid]);
-
-  // Re-evaluate the timeout even if nothing else changes.
+  // After a while without an answer, say it's saved and will finish in the background.
+  const watchedId = watching?.id;
   useEffect(() => {
-    if (!watching) return;
-    const t = setTimeout(() => setWatching((w) => (w ? { ...w } : w)), UNDERSTANDING_TIMEOUT_MS + 100);
+    if (!watchedId) return;
+    const t = setTimeout(
+      () => setWatching((w) => (w?.id === watchedId ? { ...w, timedOut: true } : w)),
+      UNDERSTANDING_TIMEOUT_MS,
+    );
     return () => clearTimeout(t);
-  }, [watching]);
+  }, [watchedId]);
+
+  // Haptic once per result state, not per render.
+  const resultTone = result?.tone;
+  useEffect(() => {
+    if (resultTone === 'success') haptics.success();
+    else if (resultTone === 'review') haptics.warning();
+  }, [watchedId, resultTone]);
 
   const sections = useMemo(() => buildSections(open.data, recent.data), [open.data, recent.data]);
   const loading = recent.loading && !recent.data.length;
 
   function deleteEntry(entry: Entry) {
     setEntriesDeleted(uid, [entry.id], true);
-    setToast({
+    showToast({
       key: `del${entry.id}${Date.now()}`,
       title: 'Entry deleted',
       lines: [describeEntry(entry)],
@@ -184,7 +192,10 @@ function Home({ uid }: { uid: string }) {
                 onDismiss={() => dismissCommand(uid, item.command.id)}
               />
             ) : (
-              <EntryRow entry={item.entry} onPress={() => setSheet({ kind: 'edit', entry: item.entry })} />
+              <EntryRow
+                entry={item.entry}
+                onPress={() => setSheet({ kind: 'edit', entry: item.entry })}
+              />
             )
           }
           ListEmptyComponent={
@@ -193,7 +204,8 @@ function Home({ uid }: { uid: string }) {
                 <AppText color={c.danger}>Could not load entries: {recent.error}</AppText>
               ) : (
                 <AppText muted style={styles.emptyText}>
-                  {settings.recordingMode === 'hold' ? 'Hold the mic' : 'Tap the mic'} and say:{'\n'}
+                  {settings.recordingMode === 'hold' ? 'Hold the mic' : 'Tap the mic'} and say:
+                  {'\n'}
                   “add 100 rupees for eggs from salary”
                 </AppText>
               )}
@@ -204,11 +216,15 @@ function Home({ uid }: { uid: string }) {
 
       <View style={styles.bottom}>
         {recorder.liveText ? (
-          <AppText variant="bodyStrong" style={styles.live} numberOfLines={4} accessibilityLiveRegion="polite">
+          <AppText
+            variant="bodyStrong"
+            style={styles.live}
+            numberOfLines={4}
+            accessibilityLiveRegion="polite">
             {recorder.liveText}
           </AppText>
         ) : (
-          <Toast toast={toast} onHide={hideToast} />
+          <Toast toast={shownToast} onHide={hideShown} />
         )}
         <MicButton
           mode={settings.recordingMode}
@@ -227,7 +243,9 @@ function Home({ uid }: { uid: string }) {
           target={sheet}
           onClose={() => setSheet(null)}
           onSave={(fields) =>
-            sheet.kind === 'edit' ? updateEntry(uid, sheet.entry.id, fields) : createManualEntry(uid, sheet.command, fields)
+            sheet.kind === 'edit'
+              ? updateEntry(uid, sheet.entry.id, fields)
+              : createManualEntry(uid, sheet.command, fields)
           }
           onDelete={sheet.kind === 'edit' ? () => deleteEntry(sheet.entry) : undefined}
         />
@@ -236,8 +254,64 @@ function Home({ uid }: { uid: string }) {
   );
 }
 
+interface Watching {
+  id: string;
+  timedOut: boolean;
+}
+
+/** Result card for the command just spoken, or null while it is still being understood. */
+function resultCard(
+  w: Watching,
+  recent: Entry[],
+  open: Command[],
+  processing: boolean,
+  online: boolean,
+  uid: string,
+): ToastData | null {
+  const entries = recent.filter((e) => e.commandId === w.id);
+  if (entries.length) {
+    const review = entries.some((e) => e.needsReview);
+    return {
+      key: w.id,
+      title: review ? 'Saved — check later' : 'Saved',
+      tone: review ? 'review' : 'success',
+      lines: entries.map(describeEntry),
+      action: {
+        label: 'Undo',
+        onPress: () =>
+          setEntriesDeleted(
+            uid,
+            entries.map((e) => e.id),
+            true,
+          ),
+      },
+    };
+  }
+  const cmd = open.find((x) => x.id === w.id);
+  if (
+    cmd &&
+    !processing &&
+    (cmd.status !== 'pending' || cmd.attemptCount > 0 || !online || w.timedOut)
+  ) {
+    return {
+      key: w.id,
+      title: cmd.status === 'pending' ? 'Saved — will process when online' : 'Saved — check later',
+      tone: 'review',
+      lines: [`“${cmd.transcript}”`],
+    };
+  }
+  // Entries exist but fall outside the recent list (e.g. dated last month).
+  if (!cmd && w.timedOut) return { key: w.id, title: 'Saved', tone: 'success' };
+  return null;
+}
+
 function describeEntry(e: Entry): string {
-  return [formatPKR(e.amount), e.description, e.source && `from ${e.source}`, e.type !== 'expense' && e.type]
+  return [
+    formatPKR(e.amount),
+    e.description,
+    e.source && `from ${e.source}`,
+    e.type !== 'expense' && e.type,
+  ]
     .filter(Boolean)
     .join(' · ');
 }
@@ -245,7 +319,8 @@ function describeEntry(e: Entry): string {
 /** Open commands first (no header), then entries grouped by local day. */
 function buildSections(open: Command[], entries: Entry[]) {
   const sections: { title: string | null; data: Row[] }[] = [];
-  if (open.length) sections.push({ title: null, data: open.map((command) => ({ kind: 'command', command })) });
+  if (open.length)
+    sections.push({ title: null, data: open.map((command) => ({ kind: 'command', command })) });
   let currentDay = '';
   for (const entry of entries) {
     const d = entry.spentAt.toDate();

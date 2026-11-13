@@ -27,7 +27,10 @@ export function EntryRow({ entry, onPress }: { entry: Entry; onPress: () => void
         .filter(Boolean)
         .join(', ')}
       accessibilityHint="Opens edit"
-      style={({ pressed }) => [styles.row, { backgroundColor: pressed ? c.surfaceAlt : c.surface }]}>
+      style={({ pressed }) => [
+        styles.row,
+        { backgroundColor: pressed ? c.surfaceAlt : c.surface },
+      ]}>
       <View style={styles.main}>
         <View style={styles.titleLine}>
           {entry.needsReview && <View style={[styles.dot, { backgroundColor: c.review }]} />}

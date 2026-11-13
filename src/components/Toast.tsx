@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
@@ -18,22 +18,34 @@ export interface ToastData {
 /** Result card and Undo snackbar in one: auto-dismisses, never blocks (plan §6.2). */
 export function Toast({ toast, onHide }: { toast: ToastData | null; onHide: () => void }) {
   const c = useTheme();
-
+  const hide = useRef(onHide);
   useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(onHide, toast.durationMs ?? 5000);
+    hide.current = onHide;
+  });
+
+  // Toast objects may be rebuilt every render (derived result card), so the timer restarts
+  // only when the toast's identity or state (title) changes.
+  const key = toast ? `${toast.key}:${toast.title}` : null;
+  const durationMs = toast?.durationMs ?? 5000;
+  useEffect(() => {
+    if (!key) return;
+    const t = setTimeout(() => hide.current(), durationMs);
     return () => clearTimeout(t);
-  }, [toast, onHide]);
+  }, [key, durationMs]);
 
   if (!toast) return null;
-  const accent = toast.tone === 'review' ? c.review : toast.tone === 'success' ? c.inflow : c.textMuted;
+  const accent =
+    toast.tone === 'review' ? c.review : toast.tone === 'success' ? c.inflow : c.textMuted;
 
   return (
     <Animated.View
       key={toast.key}
       entering={FadeInDown.duration(200)}
       exiting={FadeOutDown.duration(150)}
-      style={[styles.card, { backgroundColor: c.surface, borderColor: c.border, borderLeftColor: accent }]}
+      style={[
+        styles.card,
+        { backgroundColor: c.surface, borderColor: c.border, borderLeftColor: accent },
+      ]}
       accessibilityLiveRegion="polite">
       <View style={styles.body}>
         <AppText variant="bodyStrong">{toast.title}</AppText>
@@ -73,5 +85,10 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   body: { flex: 1, gap: spacing.xs },
-  action: { minHeight: MIN_TOUCH, minWidth: MIN_TOUCH, justifyContent: 'center', paddingHorizontal: spacing.sm },
+  action: {
+    minHeight: MIN_TOUCH,
+    minWidth: MIN_TOUCH,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+  },
 });

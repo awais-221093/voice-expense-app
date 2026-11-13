@@ -4,7 +4,11 @@ import { Linking, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '@/components/ui';
-import { checkSpeechReadiness, triggerModelDownload, type SpeechProblem } from '@/features/speech/readiness';
+import {
+  checkSpeechReadiness,
+  triggerModelDownload,
+  type SpeechProblem,
+} from '@/features/speech/readiness';
 import { useSettings } from '@/features/settings/store';
 import { spacing, useTheme } from '@/theme';
 
@@ -26,13 +30,20 @@ const COPY: Record<SpeechProblem, { title: string; body: string }> = {
 /** One clear explanation screen for anything that blocks recording (plan §6.2). */
 export default function SpeechSetupScreen() {
   const c = useTheme();
-  const { problem = 'permission', locale = 'en-US' } = useLocalSearchParams<{ problem: SpeechProblem; locale: string }>();
+  const { problem = 'permission', locale = 'en-US' } = useLocalSearchParams<{
+    problem: SpeechProblem;
+    locale: string;
+  }>();
   const settings = useSettings((s) => s.settings);
   const [status, setStatus] = useState<string | null>(null);
   const copy = COPY[problem] ?? COPY.permission;
 
   async function retry(askPermission: boolean) {
-    const r = await checkSpeechReadiness(settings.sttLocale, settings.allowOnlineSttFallback, askPermission);
+    const r = await checkSpeechReadiness(
+      settings.sttLocale,
+      settings.allowOnlineSttFallback,
+      askPermission,
+    );
     if (r.ok) return router.back();
     if (r.problem === 'permission' && !r.canAskAgain) return Linking.openSettings();
     setStatus(r.problem === problem ? 'Still not ready.' : COPY[r.problem].title);
@@ -46,11 +57,18 @@ export default function SpeechSetupScreen() {
         {status && <AppText color={c.review}>{status}</AppText>}
       </View>
       <View style={styles.actions}>
-        {problem === 'permission' && <Button title="Allow microphone" onPress={() => retry(true)} />}
-        {problem === 'model-missing' && (
-          <Button title="Download" onPress={async () => setStatus(`Download: ${await triggerModelDownload(locale)}`)} />
+        {problem === 'permission' && (
+          <Button title="Allow microphone" onPress={() => retry(true)} />
         )}
-        {problem === 'unsupported' && <Button title="Open settings" onPress={() => router.replace('/settings')} />}
+        {problem === 'model-missing' && (
+          <Button
+            title="Download"
+            onPress={async () => setStatus(`Download: ${await triggerModelDownload(locale)}`)}
+          />
+        )}
+        {problem === 'unsupported' && (
+          <Button title="Open settings" onPress={() => router.replace('/settings')} />
+        )}
         <Button title="Try again" kind="secondary" onPress={() => retry(false)} />
         <Button title="Close" kind="ghost" onPress={() => router.back()} />
       </View>

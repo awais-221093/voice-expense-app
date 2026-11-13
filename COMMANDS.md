@@ -19,7 +19,7 @@ npx expo install expo-speech-recognition expo-secure-store expo-haptics expo-dev
 npx expo install zustand zod
 
 # Dev tools: tsx runs the LLM eval script; prettier for formatting
-npm install --save-dev tsx prettier eslint-config-prettier
+npm install --save-dev tsx prettier eslint-config-prettier @types/node@24
 ```
 
 If `npx expo install expo-speech-recognition` picks a version for an older SDK, check
@@ -36,7 +36,7 @@ npx expo lint          # first run creates eslint.config.js — answer "yes"
 ```powershell
 npx expo-doctor
 npx expo install --fix   # only if expo-doctor reports version mismatches
-npx tsc --noEmit         # typecheck
+npm run typecheck        # app + eval script
 npx expo lint            # lint
 ```
 

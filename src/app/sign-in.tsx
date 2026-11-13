@@ -28,7 +28,10 @@ export default function SignInScreen() {
     }
   }
 
-  const input = [styles.input, { backgroundColor: c.surface, borderColor: c.border, color: c.text }];
+  const input = [
+    styles.input,
+    { backgroundColor: c.surface, borderColor: c.border, color: c.text },
+  ];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: c.background }]}>
@@ -64,7 +67,11 @@ export default function SignInScreen() {
             {error}
           </AppText>
         )}
-        <Button title={busy ? 'Signing in…' : 'Sign in'} onPress={submit} disabled={busy || !email || !password} />
+        <Button
+          title={busy ? 'Signing in…' : 'Sign in'}
+          onPress={submit}
+          disabled={busy || !email || !password}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -72,7 +79,11 @@ export default function SignInScreen() {
 
 function friendlyAuthError(e: unknown): string {
   const code = (e as { code?: string })?.code ?? '';
-  if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found'))
+  if (
+    code.includes('invalid-credential') ||
+    code.includes('wrong-password') ||
+    code.includes('user-not-found')
+  )
     return 'Email or password is wrong.';
   if (code.includes('network')) return 'No internet. Signing in needs a connection the first time.';
   if (code.includes('too-many-requests')) return 'Too many tries. Wait a minute and try again.';

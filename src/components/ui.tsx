@@ -14,7 +14,10 @@ export function AppText({
 }: TextProps & { variant?: TextVariant; muted?: boolean; color?: string }) {
   const c = useTheme();
   return (
-    <Text style={[type[variant], { color: color ?? (muted ? c.textMuted : c.text) }, style]} {...rest} />
+    <Text
+      style={[type[variant], { color: color ?? (muted ? c.textMuted : c.text) }, style]}
+      {...rest}
+    />
   );
 }
 
@@ -34,8 +37,15 @@ export function Button({
   accessibilityHint?: string;
 }) {
   const c = useTheme();
-  const bg = { primary: c.primary, secondary: c.surfaceAlt, danger: c.surfaceAlt, ghost: 'transparent' }[kind];
-  const fg = { primary: c.primaryText, secondary: c.text, danger: c.danger, ghost: c.primary }[kind];
+  const bg = {
+    primary: c.primary,
+    secondary: c.surfaceAlt,
+    danger: c.surfaceAlt,
+    ghost: 'transparent',
+  }[kind];
+  const fg = { primary: c.primaryText, secondary: c.text, danger: c.danger, ghost: c.primary }[
+    kind
+  ];
   return (
     <Pressable
       accessibilityRole="button"
@@ -73,7 +83,10 @@ export function Chip({
     <View
       style={[
         styles.chip,
-        { backgroundColor: selected ? c.primary : c.surfaceAlt, borderColor: color ?? 'transparent' },
+        {
+          backgroundColor: selected ? c.primary : c.surfaceAlt,
+          borderColor: color ?? 'transparent',
+        },
       ]}>
       <AppText variant="small" color={selected ? c.primaryText : (color ?? c.text)}>
         {label}
@@ -106,7 +119,12 @@ export function Segmented<T extends string>({
   return (
     <View style={styles.row} accessibilityRole="radiogroup">
       {options.map((o) => (
-        <Chip key={o.value} label={o.label} selected={o.value === value} onPress={() => onChange(o.value)} />
+        <Chip
+          key={o.value}
+          label={o.label}
+          selected={o.value === value}
+          onPress={() => onChange(o.value)}
+        />
       ))}
     </View>
   );

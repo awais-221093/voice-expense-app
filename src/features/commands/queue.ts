@@ -40,7 +40,10 @@ async function processCommand(uid: string, cmd: Command) {
     providers,
   });
   const plan = planCommandResult(outcome, cmd.attemptCount, Date.now());
-  log.info(`command ${cmd.id} → ${plan.status}`, plan.statusReason ?? `${plan.entries.length} entries`);
+  log.info(
+    `command ${cmd.id} → ${plan.status}`,
+    plan.statusReason ?? `${plan.entries.length} entries`,
+  );
   commitProcessingResult(uid, cmd, attempts, plan);
 }
 

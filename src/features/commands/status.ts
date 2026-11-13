@@ -21,7 +21,11 @@ export interface CommandPlan {
   entries: EntryDraft[];
 }
 
-export function planCommandResult(outcome: ExtractionOutcome, prevAttempts: number, now: number): CommandPlan {
+export function planCommandResult(
+  outcome: ExtractionOutcome,
+  prevAttempts: number,
+  now: number,
+): CommandPlan {
   const attemptCount = prevAttempts + 1;
   const base = { attemptCount, nextRetryAt: null, entries: [] as EntryDraft[] };
 
@@ -32,7 +36,11 @@ export function planCommandResult(outcome: ExtractionOutcome, prevAttempts: numb
         return { ...e, needsReview: reasons.length > 0, reviewReason: reasons.join('; ') || null };
       });
       if (!entries.length) {
-        return { ...base, status: 'needs_review', statusReason: outcome.notes ?? 'no entries found' };
+        return {
+          ...base,
+          status: 'needs_review',
+          statusReason: outcome.notes ?? 'no entries found',
+        };
       }
       const flagged = entries.find((e) => e.needsReview);
       return {
@@ -48,7 +56,11 @@ export function planCommandResult(outcome: ExtractionOutcome, prevAttempts: numb
       return { ...base, status: 'failed', statusReason: outcome.reason };
     case 'transient':
       if (attemptCount >= MAX_ATTEMPTS) {
-        return { ...base, status: 'failed', statusReason: `gave up after ${attemptCount} tries: ${outcome.reason}` };
+        return {
+          ...base,
+          status: 'failed',
+          statusReason: `gave up after ${attemptCount} tries: ${outcome.reason}`,
+        };
       }
       return {
         ...base,

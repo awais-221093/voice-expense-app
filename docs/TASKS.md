@@ -9,7 +9,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [x] A  app.json (Android package, plugins, minSdk 33), eas.json, firebase.json, .gitignore secrets
 - [x] A  Remove template demo screens
 - [x] A  Theme, UI primitives, Firebase module, auth hook, sign-in, Stack.Protected gate
-- [ ] U  Install packages (COMMANDS §1–3), report typecheck/lint errors
+- [x] A  Install packages (COMMANDS §1–3); typecheck, lint and expo-doctor pass
 - [ ] U  Firebase project, Android app, `google-services.json`, auth user (SETUP §1–2)
 - [ ] U  Push repo to GitHub (needed for PRs) — see ISSUES #6
 - [ ] U  Dev build on phone; sign in; restart app → still signed in
