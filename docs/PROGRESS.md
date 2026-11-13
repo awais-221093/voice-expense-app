@@ -2,6 +2,16 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-13 — Packages installed, typecheck + lint green
+
+Branch `chore/install-deps` (from `docs/agent-tracking`). User asked the agent to run installs this time.
+- Installed everything in COMMANDS §1 (versions in package.json); added `@types/node` + `scripts/tsconfig.json`.
+- Fixed RN Firebase v27 type imports; fixed 3 React Compiler lint errors (result card now derived in render).
+- ESLint + Prettier configured; sources formatted.
+- `npm run typecheck` ✓, `npx expo lint` ✓, `npx expo-doctor` 20/20 ✓.
+- Offline smoke test with tsx: parser handles fenced/bare-array/garbage output; fallback after invalid JSON + 401 works.
+- Next (user): Firebase setup + `google-services.json` → `npx expo prebuild` → `npx expo run:android --device`; `.env` keys → `npm run eval`.
+
 ## 2026-11-13 — Phases 0–4 code written (unverified)
 
 **Branches** (stacked, each from the previous one):
