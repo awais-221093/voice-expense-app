@@ -16,3 +16,5 @@
 | 12 | Min Android | `minSdkVersion 33` via `expo-build-properties` | Plan: on-device recognition + continuous mode need Android 13. |
 | 13 | Icons | `@expo/vector-icons` (MaterialCommunityIcons) | Not bundled in this template; small JS-only dependency. |
 | 14 | Bottom sheet | Built on RN `Modal` (slide), no extra library | Keeps dependencies minimal. |
+| 15 | Open-commands query | Home + queue use one query: `entryIds == []`, `dismissedAt == null`, `createdAt desc`, limit 50 | needs_review commands that have entries would otherwise pile up in a status-based query. `dismissedAt` is written as `null` on create so the equality filter matches. |
+| 16 | Tracking docs | TASKS, PROGRESS, ISSUES, ASSUMPTIONS in `docs/`, rules in `CLAUDE.md` | User request for agentic development. |

@@ -1,56 +1,25 @@
-# Welcome to your Expo app 👋
+# Voice Expense
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Personal Android app: hold the mic, say *"add 100 rupees for eggs from salary"*, done.
+Speech → text **on the phone** → an open-source LLM (Groq or OpenRouter) extracts one or more entries → Firestore.
 
-## Get started
+- Works offline: the transcript is saved locally and processed when the phone is back online.
+- Nothing is lost: every transcript and every raw LLM response is kept; entries are soft-deleted only.
+- Edit or delete any entry in the app.
 
-1. Install dependencies
+## Privacy
+Speech is recognised on-device and **no audio is stored**. Only the transcript text is sent to the
+chosen LLM provider and to your own Firebase project. API keys live in Android secure storage.
 
-   ```bash
-   npm install
-   ```
+## Getting started
+1. Install and build: [`COMMANDS.md`](COMMANDS.md)
+2. Firebase, keys, phone: [`docs/SETUP.md`](docs/SETUP.md)
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Docs
+| | |
+|---|---|
+| Product spec | `VOICE_EXPENSE_APP_PLAN (2).md` |
+| Agent guide and git rules | `CLAUDE.md` |
+| Tasks / progress / issues | `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/ISSUES.md` |
+| Data model (shared with future dashboard) | `docs/DATA_MODEL.md` |
+| Decisions and assumptions | `docs/DECISIONS.md`, `docs/ASSUMPTIONS.md` |
