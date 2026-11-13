@@ -1,8 +1,6 @@
-import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import type { Timestamp } from '@react-native-firebase/firestore';
 
 import type { Direction, EntryType } from '@/features/llm/types';
-
-type Timestamp = FirebaseFirestoreTypes.Timestamp;
 
 /** The fields a user (or the LLM) can set. */
 export interface EntryFields {

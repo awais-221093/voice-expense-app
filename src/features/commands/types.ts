@@ -1,8 +1,6 @@
-import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import type { Timestamp } from '@react-native-firebase/firestore';
 
 import type { ProviderId } from '@/features/llm/types';
-
-type Timestamp = FirebaseFirestoreTypes.Timestamp;
 
 export type CommandStatus = 'pending' | 'ok' | 'needs_review' | 'failed';
 
