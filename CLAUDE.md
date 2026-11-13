@@ -45,15 +45,20 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
   tasks, each gets its own branch and PR.
 
 ## Pull request workflow
-- **The agent creates every PR itself** with the GitHub CLI, then shares the links. The user merges.
+- **The agent creates every PR itself** with the GitHub CLI, then shares the links.
+- **The agent also merges them** from the CLI (`awais-124` has write access; `staging` has no protection
+  rules), in creation order: wait until `gh pr view <n> --json mergeable` is `MERGEABLE`, then
+  `gh pr merge <n> --merge`. Stop and report on the first conflict or failure. The user may also
+  merge some PRs themselves from `awais-221093`; check `gh pr list --state all` before merging.
+  Never merge `staging` → `main` without the user asking for a release.
   - CLI path (not on PATH): `"/c/Program Files/GitHub CLI/gh.exe"` in Bash,
     `& "C:\Program Files\GitHub CLI\gh.exe"` in PowerShell. Logged in as **`awais-124`**.
-  - Repo: `awais-221093/voice-expense-app`. The user merges from the owner account `awais-221093`.
+  - Repo: `awais-221093/voice-expense-app` (owner `awais-221093`).
 - **Base:** feature PRs target `staging`. Releases are a separate PR `staging` → `main`.
 - **Branch from the newest unmerged tip** (the latest open PR's branch) while earlier PRs are still
   open, so every PR contains what it depends on and merges cleanly in creation order. Once
   `staging` has caught up, branch from `staging`.
-- The user merges PRs **in the order they were created**, always with **"Create a merge commit"**
+- PRs are merged **in the order they were created**, always with **"Create a merge commit"**
   (never squash or rebase — that would make the following PRs conflict). Say this in the PR body.
 - After creating PRs, check them with `gh pr list --json number,headRefName,mergeable` and report
   any that aren't `MERGEABLE`.
