@@ -36,6 +36,8 @@ export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as cons
 export const radius = { sm: 8, md: 12, lg: 20, pill: 999 } as const;
 /** Minimum touch target (dp), per the accessibility spec. */
 export const MIN_TOUCH = 48;
+/** Bottom tab bar height above the safe-area inset (overlays sit above it). */
+export const TAB_BAR_HEIGHT = 68;
 
 export const type = {
   hero: { fontSize: 40, fontWeight: '700' as const, letterSpacing: -0.5 },

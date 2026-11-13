@@ -10,24 +10,15 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { AppText } from '@/components/ui';
-import type { RecorderPhase } from '@/features/speech/useVoiceRecorder';
-import { spacing, useTheme } from '@/theme';
+import { useRecorder } from '@/features/recording/RecorderProvider';
+import { useTheme } from '@/theme';
 
-const SIZE = 112;
+export const MIC_SIZE = 64;
 
-interface Props {
-  mode: 'hold' | 'tap';
-  phase: RecorderPhase;
-  /** LLM is working on the last command. Recording is still allowed. */
-  understanding: boolean;
-  onStart: () => void;
-  onRelease: () => void;
-  onStop: () => void;
-}
-
-export function MicButton({ mode, phase, understanding, onStart, onRelease, onStop }: Props) {
+/** The raised centre button of the tab bar. Hold or tap per settings; works from every tab. */
+export function MicButton() {
   const c = useTheme();
+  const { phase, understanding, mode, start, release, stop } = useRecorder();
   const reduceMotion = useReducedMotion();
   const pulse = useSharedValue(0);
   const listening = phase === 'listening';
@@ -42,74 +33,61 @@ export function MicButton({ mode, phase, understanding, onStart, onRelease, onSt
   }, [listening, reduceMotion, pulse]);
 
   const ring = useAnimatedStyle(() => ({
-    opacity: 0.25 + pulse.value * 0.25,
-    transform: [{ scale: 1 + pulse.value * 0.18 }],
+    opacity: 0.2 + pulse.value * 0.3,
+    transform: [{ scale: 1 + pulse.value * 0.35 }],
   }));
-
-  const label = listening
-    ? 'Listening…'
-    : phase === 'stopping' || understanding
-      ? 'Understanding…'
-      : mode === 'hold'
-        ? 'Hold to talk'
-        : 'Tap to talk';
 
   const handlers =
     mode === 'hold'
-      ? { onPressIn: onStart, onPressOut: onRelease }
-      : { onPress: () => (listening ? onStop() : phase === 'idle' && onStart()) };
+      ? { onPressIn: start, onPressOut: release }
+      : { onPress: () => (listening ? stop() : phase === 'idle' && start()) };
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.circleWrap}>
-        <Animated.View style={[styles.ring, { backgroundColor: c.primary }, ring]} />
-        <Pressable
-          {...handlers}
-          accessibilityRole="button"
-          accessibilityLabel={
-            listening ? 'Recording. Release or tap to finish' : 'Record a money note'
-          }
-          accessibilityHint={
-            mode === 'hold'
-              ? 'Double tap and hold, say for example: 100 rupees for eggs from salary, then release'
-              : 'Double tap, speak, and tap again or pause to finish'
-          }
-          accessibilityState={{ busy: understanding }}
-          style={({ pressed }) => [
-            styles.circle,
-            { backgroundColor: c.primary, transform: [{ scale: pressed || listening ? 0.96 : 1 }] },
-          ]}>
-          {phase === 'stopping' ? (
-            <ActivityIndicator color={c.primaryText} size="large" />
-          ) : (
-            <MaterialCommunityIcons
-              name={listening ? 'waveform' : 'microphone'}
-              size={48}
-              color={c.primaryText}
-            />
-          )}
-        </Pressable>
-      </View>
-      <AppText variant="label" muted accessibilityLiveRegion="polite">
-        {label}
-      </AppText>
+      <Animated.View style={[styles.ring, { backgroundColor: c.primary }, ring]} />
+      <Pressable
+        {...handlers}
+        accessibilityRole="button"
+        accessibilityLabel={
+          listening ? 'Recording. Release or tap to finish' : 'Record a money note'
+        }
+        accessibilityHint={
+          mode === 'hold'
+            ? 'Double tap and hold, say for example: 100 rupees for eggs from salary, then release'
+            : 'Double tap, speak, and tap again or pause to finish'
+        }
+        accessibilityState={{ busy: understanding }}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.circle,
+          {
+            backgroundColor: listening ? c.danger : c.primary,
+            borderColor: c.surface,
+            transform: [{ scale: pressed || listening ? 1.08 : 1 }],
+          },
+        ]}>
+        {phase === 'stopping' || understanding ? (
+          <ActivityIndicator color={c.primaryText} />
+        ) : (
+          <MaterialCommunityIcons
+            name={listening ? 'waveform' : 'microphone'}
+            size={30}
+            color={c.primaryText}
+          />
+        )}
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: 'center', gap: spacing.sm },
-  circleWrap: {
-    width: SIZE * 1.3,
-    height: SIZE * 1.3,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ring: { position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2 },
+  wrap: { width: MIC_SIZE + 16, alignItems: 'center', justifyContent: 'center' },
+  ring: { position: 'absolute', width: MIC_SIZE, height: MIC_SIZE, borderRadius: MIC_SIZE / 2 },
   circle: {
-    width: SIZE,
-    height: SIZE,
-    borderRadius: SIZE / 2,
+    width: MIC_SIZE,
+    height: MIC_SIZE,
+    borderRadius: MIC_SIZE / 2,
+    borderWidth: 4,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 6,
