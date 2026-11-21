@@ -32,7 +32,7 @@ Severity: **high** = loses data or breaks a core flow · **medium** = wrong beha
 | C7 | low | `src/app/debug.tsx:10`, `src/lib/debugLog.ts:1` | Comments say "long-press the gear", but the gear is gone; the debug log opens with a long press on the Profile avatar. | Fix the comments. | fixed (`docs/audit-hygiene`) |
 | C8 | low | `docs/ISSUES.md` #6 | Says "no git remote, PRs can't be opened". The remote exists and PRs work. | Close the issue. | fixed (`docs/audit-hygiene`) |
 | C9 | low | `package.json` | `expo-doctor`: `expo`, `expo-dev-client`, `expo-router` (+2) are one patch behind SDK 58's expected versions. | **User command:** `npx expo install --fix` (added to COMMANDS.md). | fixed (`chore/expo-patch-updates`); rebuild the dev build |
-| C10 | low | `docs/PR_LOG.md`, `docs/pr-log/*.md` (77 files) | PRs #24–#100 only added "housekeeping log" files. Nothing reads them; they're filler that buries real history. | Delete the files in one `chore/` PR. History isn't rewritten. **Needs your OK.** | waiting on user OK |
+| C10 | low | `docs/PR_LOG.md`, `docs/pr-log/*.md` (77 files) | PRs #24–#100 only added "housekeeping log" files. Nothing reads them; they're filler that buries real history. | Delete the files in one `chore/` PR. History isn't rewritten. **Needs your OK.** | fixed (`chore/remove-housekeeping-log`) |
 
 ## Checked and fine (no action)
 - Processing queue: no double processing (in-flight ref + `handled` map + deterministic entry ids), offline doesn't burn attempts, and backoff matches the plan (30 s / 2 min / 10 min / 1 h, give up after 5 attempts).
