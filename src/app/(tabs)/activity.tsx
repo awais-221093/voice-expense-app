@@ -1,3 +1,4 @@
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +12,7 @@ import type { Entry } from '@/features/entries/types';
 import { auth } from '@/lib/firebase';
 import { formatPKR } from '@/lib/money';
 import { startOfMonth } from '@/lib/time';
+import { useNow } from '@/lib/useNow';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
 const FILTERS = {
@@ -29,10 +31,17 @@ export default function ActivityScreen() {
   return uid ? <Activity uid={uid} /> : null;
 }
 
-/** Full history, one month at a time, with type filters and search. */
+/**
+ * Full history, one month at a time, with type filters and search. Month and category live in
+ * the route params, so Insights can link straight to "food in October".
+ */
 function Activity({ uid }: { uid: string }) {
   const c = useTheme();
-  const [month, setMonth] = useState(() => startOfMonth());
+  const now = useNow();
+  const params = useLocalSearchParams<{ month?: string; category?: string }>();
+  const month = params.month ? new Date(Number(params.month)) : startOfMonth(now);
+  const setMonth = (d: Date) => router.setParams({ month: String(d.getTime()) });
+  const category = params.category || null;
   const [filter, setFilter] = useState<Filter>('all');
   const [search, setSearch] = useState('');
   const { data, loading, error } = useMonthEntries(uid, month);
@@ -41,7 +50,9 @@ function Activity({ uid }: { uid: string }) {
   const entries = data.filter(
     (e) =>
       FILTERS[filter].match(e) &&
-      (!q || [e.description, e.source, e.category, e.type].some((v) => v?.toLowerCase().includes(q))),
+      (!category || (e.category ?? 'other') === category) &&
+      (!q ||
+        [e.description, e.source, e.category, e.type].some((v) => v?.toLowerCase().includes(q))),
   );
   const spent = entries.reduce((s, e) => (e.type === 'expense' && e.amount ? s + e.amount : s), 0);
 
@@ -66,6 +77,13 @@ function Activity({ uid }: { uid: string }) {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.chips}>
+        {category && (
+          <Chip
+            label={`${category}  ✕`}
+            selected
+            onPress={() => router.setParams({ category: undefined })}
+          />
+        )}
         {(Object.keys(FILTERS) as Filter[]).map((f) => (
           <Chip
             key={f}
