@@ -52,7 +52,13 @@ export function AppTabBar({ state, emitter, navigateToTab, insets }: BottomTabBa
             color={focused ? c.primary : c.textMuted}
           />
         </View>
-        <AppText variant="small" color={focused ? c.text : c.textMuted} style={styles.label}>
+        <AppText
+          variant="small"
+          color={focused ? c.text : c.textMuted}
+          style={styles.label}
+          // The bar has a fixed height; beyond 1.3× the labels clip.
+          maxFontSizeMultiplier={1.3}
+          numberOfLines={1}>
           {meta.label}
         </AppText>
       </Pressable>
