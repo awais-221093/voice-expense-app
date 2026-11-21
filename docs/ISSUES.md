@@ -11,7 +11,7 @@ Status: **open** · **blocked (user)** · **verify (device)** · **closed**. Clo
 | 9 | open | Home list shows the latest 100 entries; open commands are capped at 50. Full history is the dashboard's job. | Revisit if needed. |
 | 10 | open | App icon and splash are still Expo defaults (colour updated to teal). | Phase 5 artwork. |
 | 12 | open | npm 12 blocked postinstall scripts for `@firebase/util`, `protobufjs` (web Firebase SDK, not used on Android) and `esbuild` (tsx still works). | Only act if a build or `npm run eval` fails: `npm install-scripts approve <pkg>`. |
-| 13 | verify (device) | Hold-to-talk on the tab-bar mic: the 64 dp button is smaller than the old 112 dp one. hitSlop is 8 dp. | Try it one-handed; enlarge if presses miss. |
+| 13 | verify (device) | Hold-to-talk on the tab-bar mic: the 64 dp button is smaller than the old 112 dp one. hitSlop raised 8 → 14 dp (UX U6). | Try it one-handed; enlarge the circle if presses still miss. |
 | 14 | open | Activity/Insights load a whole month per query (no pagination). Fine for personal volume (hundreds of entries). | Revisit only if months get very large. |
 
 ## Closed
