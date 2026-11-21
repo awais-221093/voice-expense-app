@@ -7,7 +7,7 @@ import { AppText, Button } from '@/components/ui';
 import { log } from '@/lib/debugLog';
 import { spacing, useTheme } from '@/theme';
 
-/** Hidden screen (long-press the gear): live app log for diagnosing issues without a backend. */
+/** Hidden screen (long-press the Profile avatar): live app log for diagnosing issues without a backend. */
 export default function DebugScreen() {
   const c = useTheme();
   // Snapshot must be referentially stable between changes, so subscribe to a version counter.
