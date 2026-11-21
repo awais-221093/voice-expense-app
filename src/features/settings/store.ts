@@ -44,6 +44,8 @@ interface SettingsState {
   uid: string | null;
   settings: AppSettings;
   keys: Keys;
+  /** False until SecureStore has been read, so "no key" UI never flashes on start. */
+  keysLoaded: boolean;
   /** Bumped when a key or model changes; the queue re-runs failed commands once per bump. */
   llmConfigVersion: number;
   update: (patch: Partial<AppSettings>) => void;
@@ -54,6 +56,7 @@ export const useSettings = create<SettingsState>()((set, get) => ({
   uid: null,
   settings: DEFAULT_SETTINGS,
   keys: { groq: null, openrouter: null },
+  keysLoaded: false,
   llmConfigVersion: 0,
 
   update: (patch) => {
@@ -88,7 +91,7 @@ export function startSettingsSync(uid: string): () => void {
     SecureStore.getItemAsync(keyName('groq')),
     SecureStore.getItemAsync(keyName('openrouter')),
   ]).then(
-    ([groq, openrouter]) => useSettings.setState({ keys: { groq, openrouter } }),
+    ([groq, openrouter]) => useSettings.setState({ keys: { groq, openrouter }, keysLoaded: true }),
     logOnFail('load keys'),
   );
 
@@ -115,6 +118,15 @@ export function startSettingsSync(uid: string): () => void {
     },
     logOnFail('settings listener'),
   );
+}
+
+/** True when no provider that would be tried has a key, so every note would fail. */
+export function useNoUsableKey(): boolean {
+  return useSettings((s) => {
+    const { llmProvider, fallbackEnabled } = s.settings;
+    const other: ProviderId = llmProvider === 'groq' ? 'openrouter' : 'groq';
+    return s.keysLoaded && !s.keys[llmProvider] && !(fallbackEnabled && s.keys[other]);
+  });
 }
 
 /** Non-hook access for the processing queue. */
