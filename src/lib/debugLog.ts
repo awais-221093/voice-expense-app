@@ -1,5 +1,5 @@
 // In-memory ring buffer shown on the hidden debug screen (long-press the Profile avatar).
-// Not persisted — see DECISIONS #11.
+// Mirrored to a file by debugLogFile.ts so it survives app kills (DECISIONS #11 updated).
 
 export interface LogLine {
   at: number;
@@ -17,6 +17,10 @@ function push(level: LogLine['level'], msg: string, detail?: unknown) {
   lines.push({ at: Date.now(), level, msg: text });
   if (lines.length > MAX) lines.shift();
   if (__DEV__) console[level === 'info' ? 'log' : level](`[app] ${text}`);
+  notify();
+}
+
+function notify() {
   version++;
   listeners.forEach((l) => l());
 }
@@ -35,6 +39,19 @@ export const log = {
   warn: (msg: string, detail?: unknown) => push('warn', msg, detail),
   error: (msg: string, detail?: unknown) => push('error', msg, detail),
   lines: () => lines.slice().reverse(),
+  /** Oldest first, for saving. */
+  snapshot: () => lines.slice(),
+  /** Puts saved lines from an earlier session before the current ones (cap still applies). */
+  restore: (saved: LogLine[]) => {
+    if (!Array.isArray(saved) || !saved.length) return;
+    lines.unshift(...saved);
+    if (lines.length > MAX) lines.splice(0, lines.length - MAX);
+    notify();
+  },
+  clear: () => {
+    lines.length = 0;
+    notify();
+  },
   /** Changes on every new line (for useSyncExternalStore). */
   version: () => version,
   subscribe: (fn: () => void) => {

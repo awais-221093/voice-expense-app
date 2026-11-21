@@ -9,11 +9,13 @@ import { useAuth } from '@/features/auth/useAuth';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { useProcessingQueue } from '@/features/commands/queue';
 import { initNotifications } from '@/features/reminder/notifications';
+import { startDebugLogPersistence } from '@/lib/debugLogFile';
 import { useReminderRuntime } from '@/features/reminder/useReminderRuntime';
 import { startSettingsSync } from '@/features/settings/store';
 
 SplashScreen.preventAutoHideAsync();
 initNotifications();
+startDebugLogPersistence();
 
 export default function RootLayout() {
   const scheme = useColorScheme();

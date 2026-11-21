@@ -114,4 +114,5 @@ dev build afterwards (§4).
 ```powershell
 npx expo install expo-notifications          # I6 daily reminder
 npx expo install expo-local-authentication   # I7 app lock
+npx expo install expo-file-system            # persisted debug log (native)
 ```

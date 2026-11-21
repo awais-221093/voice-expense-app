@@ -12,7 +12,7 @@
 | 8 | Retry mechanism | Retry (button or after key/model change) sets status back to `pending`, `attemptCount 0`, `nextRetryAt null`; the normal queue then processes it | One code path for all processing. |
 | 9 | Writes are not awaited | Firestore writes are fire-and-forget with error logging | RN Firebase write promises resolve only after the server acks; awaiting would hang the UI offline. Local cache + listeners update instantly. |
 | 10 | `spent_at` | LLM returns a date (`YYYY-MM-DD`) only; app combines it with the current local time of day | Keeps sort order natural; plan only needs day-level dates. Dates > 1 day in the future or > 366 days old are rejected (entry flagged). |
-| 11 | Debug log | In-memory ring buffer (last 300 lines), not persisted | Avoids an extra storage dependency; enough for live diagnosis. |
+| 11 | Debug log | In-memory ring buffer (last 300 lines), mirrored to `debug-log.json` in the app's document directory (batched every 2 s) and restored on start; "Clear" on the debug screen | Updated 2026-11-21 (IDEAS dev list): survives app kills, which is when a log is most needed. `expo-file-system` is now a direct dependency. |
 | 12 | Min Android | `minSdkVersion 33` via `expo-build-properties` | Plan: on-device recognition + continuous mode need Android 13. |
 | 13 | Icons | `@expo/vector-icons` (MaterialCommunityIcons) | Not bundled in this template; small JS-only dependency. |
 | 14 | Bottom sheet | Built on RN `Modal` (slide), no extra library | Keeps dependencies minimal. |

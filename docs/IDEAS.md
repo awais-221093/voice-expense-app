@@ -38,3 +38,4 @@ so they need a new dev build.
 - **I7** done (`feat/app-lock`): expo-local-authentication; Profile → Security toggle; locks on start and after 30 s away; PIN fallback (DECISIONS #25). Needs a dev-build rebuild.
 - **I10** done (`feat/record-shortcut`): launcher shortcut 'Record a note' (config plugin) → /record → hands-free recording; instead of a widget/tile (DECISIONS #26). Needs prebuild + rebuild.
 - **Dev: token usage** done (`feat/llm-token-usage`): llmAttempts[].usage {promptTokens, completionTokens}; each attempt logged on the debug screen.
+- **Dev: persisted debug log** done (`feat/persist-debug-log`): log mirrored to debug-log.json (batched), restored on start, Clear button (DECISIONS #11 updated).

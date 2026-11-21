@@ -7,7 +7,7 @@ import { AppText, Button } from '@/components/ui';
 import { log } from '@/lib/debugLog';
 import { spacing, useTheme } from '@/theme';
 
-/** Hidden screen (long-press the Profile avatar): live app log for diagnosing issues without a backend. */
+/** Hidden screen (long-press the Profile avatar): app log, kept across restarts, for diagnosing issues without a backend. */
 export default function DebugScreen() {
   const c = useTheme();
   // Snapshot must be referentially stable between changes, so subscribe to a version counter.
@@ -19,7 +19,10 @@ export default function DebugScreen() {
     <SafeAreaView style={[styles.root, { backgroundColor: c.background }]}>
       <View style={styles.header}>
         <Button title="‹ Back" kind="ghost" onPress={() => router.back()} />
-        <AppText variant="title">Debug log</AppText>
+        <AppText variant="title" style={styles.title}>
+          Debug log
+        </AppText>
+        <Button title="Clear" kind="ghost" onPress={log.clear} />
       </View>
       <FlatList
         data={lines}
@@ -44,5 +47,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingHorizontal: spacing.sm,
   },
+  title: { flex: 1 },
   list: { padding: spacing.lg, gap: spacing.xs },
 });
