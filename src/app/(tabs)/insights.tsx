@@ -1,5 +1,6 @@
+import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MonthSwitcher } from '@/components/MonthSwitcher';
@@ -86,6 +87,12 @@ function Insights({ uid }: { uid: string }) {
               <Bars
                 items={ins.byCategory}
                 previous={prevMonth.loading ? undefined : prev.byCategory}
+                onPressLabel={(category) =>
+                  router.navigate({
+                    pathname: '/activity',
+                    params: { month: String(month.getTime()), category },
+                  })
+                }
                 empty="No expenses this month."
               />
             </Card>
@@ -152,10 +159,13 @@ function compareText(change: number, prevName: string, sameDays: boolean): strin
 function Bars({
   items,
   previous,
+  onPressLabel,
   empty,
 }: {
   items: Share[];
   previous?: Map<string, number>;
+  /** Makes each bar a button (e.g. open Activity filtered to that category). */
+  onPressLabel?: (label: string) => void;
   empty: string;
 }) {
   const c = useTheme();
@@ -166,10 +176,13 @@ function Bars({
       ? `${delta > 0 ? 'up' : 'down'} ${formatPKR(Math.abs(delta))} from last month`
       : '';
     return (
-      <View
+      <Pressable
         key={s.label}
-        style={styles.bar}
-        accessible
+        style={({ pressed }) => [styles.bar, pressed && styles.pressed]}
+        disabled={!onPressLabel}
+        onPress={() => onPressLabel?.(s.label)}
+        accessibilityRole={onPressLabel ? 'button' : undefined}
+        accessibilityHint={onPressLabel ? 'Shows these entries in Activity' : undefined}
         accessibilityLabel={`${s.label} ${formatPKR(s.amount)}, ${Math.round(s.share * 100)} percent${deltaText ? `, ${deltaText}` : ''}`}>
         <View style={styles.barLabels}>
           <AppText style={styles.flex}>{s.label}</AppText>
@@ -192,7 +205,7 @@ function Bars({
             ]}
           />
         </View>
-      </View>
+      </Pressable>
     );
   });
 }
@@ -208,6 +221,7 @@ const styles = StyleSheet.create({
   typeRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
   bar: { gap: spacing.xs },
+  pressed: { opacity: 0.6 },
   barLabels: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm },
   pct: { width: 40, textAlign: 'right' },
   track: { height: 8, borderRadius: 4, overflow: 'hidden' },
