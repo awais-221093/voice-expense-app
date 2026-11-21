@@ -16,6 +16,7 @@ import type { Entry } from '@/features/entries/types';
 import { useSettings } from '@/features/settings/store';
 import { checkSpeechReadiness, type SpeechReadiness } from '@/features/speech/readiness';
 import { useVoiceRecorder, type RecorderPhase } from '@/features/speech/useVoiceRecorder';
+import { log, logOnFail } from '@/lib/debugLog';
 import { haptics } from '@/lib/haptics';
 import { formatPKR } from '@/lib/money';
 import { useIsOnline } from '@/lib/network';
@@ -62,7 +63,11 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
   const [ready, setReady] = useState<SpeechReadiness | null>(null);
   const { sttLocale, allowOnlineSttFallback } = settings;
   useEffect(() => {
-    const check = () => checkSpeechReadiness(sttLocale, allowOnlineSttFallback).then(setReady);
+    const check = () =>
+      checkSpeechReadiness(sttLocale, allowOnlineSttFallback).then(
+        setReady,
+        logOnFail('speech readiness check'),
+      );
     check();
     // Re-check on return from Android settings (permission granted, model downloaded).
     const sub = AppState.addEventListener('change', (s) => s === 'active' && check());
@@ -118,7 +123,17 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     if (!r?.ok) {
       // The cached result can be stale (permission just granted on the setup screen, model just
       // downloaded, first check still running), so check again before sending the user there.
-      r = await checkSpeechReadiness(sttLocale, allowOnlineSttFallback);
+      try {
+        r = await checkSpeechReadiness(sttLocale, allowOnlineSttFallback);
+      } catch (e) {
+        log.error('speech readiness check failed', e);
+        return showToast({
+          key: `ready${Date.now()}`,
+          title: "Couldn't start speech recognition",
+          lines: ['Try again in a moment.'],
+          tone: 'review',
+        });
+      }
       setReady(r);
       if (!r.ok) return openSetup(r.problem);
       // The finger lifted while we checked: don't start a hands-free recording; the next press works.
