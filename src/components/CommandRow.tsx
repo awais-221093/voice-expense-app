@@ -1,6 +1,7 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { AppText, Button } from '@/components/ui';
+import { describeReason } from '@/features/commands/status';
 import type { Command } from '@/features/commands/types';
 import { radius, spacing, useTheme } from '@/theme';
 
@@ -21,8 +22,8 @@ export function CommandRow({ command, onRetry, onFix, onDismiss }: Props) {
       ? 'Saved — will process when online'
       : 'Understanding…'
     : command.status === 'failed'
-      ? `Couldn't process: ${command.statusReason ?? 'unknown error'}`
-      : `Check this: ${command.statusReason ?? 'needs review'}`;
+      ? `Couldn't process. ${describeReason(command.statusReason)}`
+      : `Check this: ${command.statusReason ? describeReason(command.statusReason) : 'needs review'}`;
 
   return (
     <View

@@ -43,3 +43,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U1** done (`feat/understanding-card`): 'Understanding…' card with transcript and spinner until the result card replaces it.
 - **U2** done (`feat/api-key-banner`): Home banner → Profile while neither the primary nor an enabled fallback provider has a key.
 - **U3** done (`feat/first-run-speech-setup`): speech setup opens once on first run if recording isn't ready; permission copy explains TalkBack use (closes ISSUES #8).
+- **U4** done (`feat/friendly-failure-reasons`): CommandRow shows plain-language reasons (describeReason); raw reasons stay in Firestore/debug log.
