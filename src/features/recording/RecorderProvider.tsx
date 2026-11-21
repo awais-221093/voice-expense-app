@@ -24,6 +24,12 @@ import { useIsOnline } from '@/lib/network';
 /** After this long without a result, say it's saved and will finish in the background. */
 const UNDERSTANDING_TIMEOUT_MS = 12_000;
 
+interface Watching {
+  id: string;
+  transcript: string;
+  timedOut: boolean;
+}
+
 interface RecorderContext {
   phase: RecorderPhase;
   /** The LLM is working on the command just spoken. */
@@ -55,7 +61,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
   const [toast, setToast] = useState<ToastData | null>(null);
   const [sheet, setSheet] = useState<SheetTarget | null>(null);
   /** The command just spoken; its outcome becomes the result card. */
-  const [watching, setWatching] = useState<{ id: string; timedOut: boolean } | null>(null);
+  const [watching, setWatching] = useState<Watching | null>(null);
   const watchedId = watching?.id ?? null;
   const watchedEntries = useCommandEntries(uid, watchedId);
 
@@ -90,7 +96,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
         recordingMode: o.mode,
       });
       setToast(null);
-      setWatching({ id, timedOut: false });
+      setWatching({ id, transcript, timedOut: false });
     },
     onEmpty: () =>
       showToast({
@@ -231,7 +237,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
 }
 
 function resultCard(
-  w: { id: string; timedOut: boolean },
+  w: Watching,
   entries: Entry[],
   cmd: { status: string; attemptCount: number; transcript: string } | undefined,
   processing: boolean,
@@ -265,7 +271,16 @@ function resultCard(
       lines: [`“${cmd.transcript}”`],
     };
   }
-  return null;
+  // Between release and the result (plan §6.2), so it never looks like nothing happened.
+  return {
+    key: w.id,
+    title: 'Understanding…',
+    tone: 'info',
+    busy: true,
+    lines: [`“${w.transcript}”`],
+    // Long enough for slow LLM retries; the title change to the result restarts the timer.
+    durationMs: 60_000,
+  };
 }
 
 export function describeEntry(e: Entry): string {
