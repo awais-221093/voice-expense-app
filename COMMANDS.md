@@ -73,6 +73,20 @@ systemProp.org.gradle.internal.repository.max.retries=10
 systemProp.org.gradle.internal.repository.initial.backoff=2000
 ```
 
+If a C++ step fails with `ninja: error: mkdir(…): No such file or directory` (seen in `react-native-reanimated`),
+a path passed Windows' 260-char limit. AGP uses CMake 3.22.1, whose ninja 1.10.2 ignores long paths even with
+`LongPathsEnabled=1`. Swap in ninja 1.12.1 (long-path aware, ships with CMake 4.1.0), keeping a backup:
+
+```powershell
+$b = "$env:LOCALAPPDATA\Android\Sdk\cmake\3.22.1\bin"
+Copy-Item "$b\ninja.exe" "$b\ninja-1.10.2.exe.bak"
+Copy-Item "$env:LOCALAPPDATA\Android\Sdk\cmake\4.1.0\bin\ninja.exe" "$b\ninja.exe" -Force
+& "$b\ninja.exe" --version   # 1.12.1
+```
+
+Needs `LongPathsEnabled = 1` under `HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem` (admin, then reboot).
+No CMake 4.1.0 yet? `sdkmanager --install "cmake;4.1.0"`.
+
 Later, with only JS changes, just start the dev server:
 
 ```powershell
