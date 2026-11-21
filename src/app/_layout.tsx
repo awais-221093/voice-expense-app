@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AppLockGate } from '@/components/AppLockGate';
 import { useAuth } from '@/features/auth/useAuth';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { useProcessingQueue } from '@/features/commands/queue';
@@ -39,6 +40,7 @@ export default function RootLayout() {
             <Stack.Screen name="sign-in" />
           </Stack.Protected>
         </Stack>
+        {user && <AppLockGate key={user.uid} />}
       </ThemeProvider>
     </SafeAreaProvider>
   );
