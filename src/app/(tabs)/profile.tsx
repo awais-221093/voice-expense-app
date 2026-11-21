@@ -5,6 +5,8 @@ import { Alert, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } fro
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Chip, Segmented } from '@/components/ui';
+import { describeReason } from '@/features/commands/status';
+import { pingProvider } from '@/features/llm/ping';
 import { PROVIDER_IDS, type ProviderId } from '@/features/llm/types';
 import { useRecorder } from '@/features/recording/RecorderProvider';
 import { useSettings } from '@/features/settings/store';
@@ -51,6 +53,34 @@ export default function ProfileScreen() {
         showToast({ key: `key${Date.now()}`, title: "Couldn't save the API key", tone: 'review' });
       },
     );
+  const [testing, setTesting] = useState<ProviderId | null>(null);
+  const testKey = async (p: ProviderId) => {
+    const key = keys[p];
+    if (!key) return;
+    setTesting(p);
+    const r = await pingProvider(p, key, settings.llmModels[p]);
+    setTesting(null);
+    showToast(
+      r.ok
+        ? {
+            key: `test-${p}-ok`,
+            title: `${PROVIDER_LABEL[p]} works`,
+            lines: [r.model],
+            tone: 'success',
+          }
+        : {
+            key: `test-${p}-fail`,
+            title: `${PROVIDER_LABEL[p]} test failed`,
+            lines: [
+              r.kind === 'transient'
+                ? `Couldn't reach ${PROVIDER_LABEL[p]} (${r.message}). Try again.`
+                : describeReason(`${p}: ${r.message}`),
+            ],
+            tone: 'review',
+          },
+    );
+  };
+
   const confirmRemoveKey = (p: ProviderId) =>
     Alert.alert(
       `Remove the ${PROVIDER_LABEL[p]} key?`,
@@ -163,7 +193,15 @@ export default function ProfileScreen() {
                 onSave={(v) => saveKey(p, v)}
               />
               {keys[p] && (
-                <Button title="Remove key" kind="ghost" onPress={() => confirmRemoveKey(p)} />
+                <View style={styles.keyActions}>
+                  <Button
+                    title={testing === p ? 'Testing…' : 'Test key'}
+                    kind="secondary"
+                    disabled={testing !== null}
+                    onPress={() => testKey(p)}
+                  />
+                  <Button title="Remove key" kind="ghost" onPress={() => confirmRemoveKey(p)} />
+                </View>
               )}
               <SavedInput
                 // Remount when the stored model changes (settings snapshot arriving after mount, or
@@ -345,6 +383,7 @@ const styles = StyleSheet.create({
   version: { textAlign: 'center' },
   section: { padding: spacing.lg, borderRadius: radius.md, gap: spacing.md },
   provider: { gap: spacing.sm },
+  keyActions: { flexDirection: 'row', gap: spacing.sm },
   toggle: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: MIN_TOUCH },
   flex: { flex: 1 },
   input: {
