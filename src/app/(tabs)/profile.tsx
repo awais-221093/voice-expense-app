@@ -9,6 +9,7 @@ import { describeReason } from '@/features/commands/status';
 import { pingProvider } from '@/features/llm/ping';
 import { PROVIDER_IDS, type ProviderId } from '@/features/llm/types';
 import { useRecorder } from '@/features/recording/RecorderProvider';
+import { ensurePermission, useReminderPrefs } from '@/features/reminder/notifications';
 import { useSettings } from '@/features/settings/store';
 import { installedLocales, matchLocale } from '@/features/speech/readiness';
 import { appVersion } from '@/lib/appInfo';
@@ -176,6 +177,8 @@ export default function ProfileScreen() {
           <ListEditor field="categories" locked={['other']} />
         </Section>
 
+        <ReminderSection />
+
         <Section title="Monthly budget">
           <SavedInput
             key={String(settings.monthlyBudget)}
@@ -251,6 +254,42 @@ export default function ProfileScreen() {
         </AppText>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+const REMINDER_HOURS = [19, 20, 21, 22];
+
+/** Daily "nothing logged today" reminder. Stored on this phone only (SecureStore). */
+function ReminderSection() {
+  const { enabled, hour, set } = useReminderPrefs();
+  const { showToast } = useRecorder();
+  const toggle = async (on: boolean) => {
+    if (on && !(await ensurePermission().catch(() => false))) {
+      showToast({
+        key: 'reminder-permission',
+        title: 'Notifications are off for this app',
+        lines: ['Allow them in Android Settings → Apps → Voice Expense → Notifications.'],
+        tone: 'review',
+      });
+      return;
+    }
+    set({ enabled: on, hour });
+  };
+  return (
+    <Section title="Daily reminder">
+      <Toggle
+        label="Remind me if I haven't logged anything today"
+        value={enabled}
+        onChange={toggle}
+      />
+      {enabled && (
+        <Segmented
+          value={String(hour)}
+          onChange={(v) => set({ enabled, hour: Number(v) })}
+          options={REMINDER_HOURS.map((h) => ({ value: String(h), label: `${h - 12} pm` }))}
+        />
+      )}
+    </Section>
   );
 }
 
