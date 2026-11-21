@@ -66,8 +66,13 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
 
   async function showSaid() {
     if (target.kind !== 'edit' || !target.entry.commandId) return;
-    const snap = await getDoc(paths.command(uid, target.entry.commandId));
-    setSaid((snap.data() as Command | undefined)?.transcript ?? '(not found)');
+    try {
+      const snap = await getDoc(paths.command(uid, target.entry.commandId));
+      setSaid((snap.data() as Command | undefined)?.transcript ?? '(not found)');
+    } catch {
+      // Offline and the command isn't in the local cache.
+      setSaid('(not available offline)');
+    }
   }
 
   function save() {
