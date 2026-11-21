@@ -45,6 +45,8 @@ export interface ParsedEntry {
   description: string | null;
   source: string | null;
   category: string | null;
+  /** Loans only: the other person, lowercase ("ali", "brother"); null otherwise. */
+  person: string | null;
   spentAt: string | null;
   confidence: number | null;
   /** Reasons this entry needs review (empty = fine). */

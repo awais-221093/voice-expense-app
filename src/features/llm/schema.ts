@@ -86,6 +86,9 @@ function normaliseEntry(raw: Record<string, unknown>, opts: NormaliseOptions): P
   const rawCategory = cleanString(raw.category)?.toLowerCase();
   const category = rawCategory && opts.categories.includes(rawCategory) ? rawCategory : 'other';
 
+  // Balances are only meaningful for loans, so a name on any other type is dropped.
+  const person = type === 'loan' ? (cleanString(raw.person)?.toLowerCase() ?? null) : null;
+
   let spentAt = cleanString(raw.spent_at ?? raw.spentAt);
   if (spentAt !== null) {
     const date = spentAt.slice(0, 10);
@@ -100,7 +103,18 @@ function normaliseEntry(raw: Record<string, unknown>, opts: NormaliseOptions): P
   let confidence = typeof raw.confidence === 'number' ? raw.confidence : null;
   if (confidence !== null && (confidence < 0 || confidence > 1)) confidence = null;
 
-  return { type, direction, amount, description, source, category, spentAt, confidence, issues };
+  return {
+    type,
+    direction,
+    amount,
+    description,
+    source,
+    category,
+    person,
+    spentAt,
+    confidence,
+    issues,
+  };
 }
 
 function cleanString(v: unknown): string | null {
