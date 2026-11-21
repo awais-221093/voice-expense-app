@@ -1,8 +1,9 @@
-import { StyleSheet, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Chip } from '@/components/ui';
 import { formatPKR } from '@/lib/money';
-import { radius, spacing, useTheme } from '@/theme';
+import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
 /** Home hero: today's expense total, this month's, money in this month, offline chip. */
 export function TotalsHeader({
@@ -11,7 +12,9 @@ export function TotalsHeader({
   inflow,
   online,
   now,
+  onTypeNote,
 }: {
+  onTypeNote: () => void;
   now: Date;
   today: number;
   month: number;
@@ -28,7 +31,16 @@ export function TotalsHeader({
     <View style={styles.wrap}>
       <View style={styles.top}>
         <AppText muted>{date}</AppText>
-        {!online && <Chip label="Offline — will sync" color={c.review} />}
+        <View style={styles.topActions}>
+          {!online && <Chip label="Offline — will sync" color={c.review} />}
+          <Pressable
+            onPress={onTypeNote}
+            accessibilityRole="button"
+            accessibilityLabel="Type a note instead of speaking"
+            style={styles.iconButton}>
+            <MaterialCommunityIcons name="keyboard-outline" size={24} color={c.textMuted} />
+          </Pressable>
+        </View>
       </View>
       <View style={[styles.card, { backgroundColor: c.primary }]}>
         <AppText variant="label" color={c.primaryText} style={styles.dim}>
@@ -71,6 +83,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     minHeight: 32,
+  },
+  topActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  iconButton: {
+    width: MIN_TOUCH,
+    height: MIN_TOUCH,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   card: { borderRadius: radius.lg, padding: spacing.xl, gap: spacing.xs },
   row: { flexDirection: 'row', marginTop: spacing.md, gap: spacing.xl },

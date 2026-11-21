@@ -6,6 +6,7 @@ import { AppState } from 'react-native';
 
 import { EditEntrySheet, type SheetTarget } from '@/components/EditEntrySheet';
 import { RecordingOverlay } from '@/components/RecordingOverlay';
+import { TypeNoteSheet } from '@/components/TypeNoteSheet';
 import type { ToastData } from '@/components/Toast';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { useInFlight } from '@/features/commands/queue';
@@ -41,6 +42,8 @@ interface RecorderContext {
   stop: () => void;
   showToast: (t: ToastData) => void;
   openSheet: (t: SheetTarget) => void;
+  /** Opens the keyboard alternative to speaking. */
+  typeNote: () => void;
   /** Soft delete with an Undo snackbar. */
   deleteEntry: (e: Entry) => void;
 }
@@ -61,6 +64,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
 
   const [toast, setToast] = useState<ToastData | null>(null);
   const [sheet, setSheet] = useState<SheetTarget | null>(null);
+  const [typing, setTyping] = useState(false);
   /** The command just spoken; its outcome becomes the result card. */
   const [watching, setWatching] = useState<Watching | null>(null);
   const watchedId = watching?.id ?? null;
@@ -100,19 +104,23 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     setToast(t);
   };
 
+  /** Spoken or typed: save the command, then watch it so its result card shows. */
+  function submitNote(transcript: string, meta: Parameters<typeof createCommand>[2]) {
+    const id = createCommand(uid, transcript, meta);
+    setToast(null);
+    setWatching({ id, transcript, timedOut: false });
+  }
+
   const openSetup = (problem: string) =>
     router.push({ pathname: '/speech-setup', params: { problem, locale: sttLocale } });
 
   const recorder = useVoiceRecorder({
-    onFinal: (transcript, o) => {
-      const id = createCommand(uid, transcript, {
+    onFinal: (transcript, o) =>
+      submitNote(transcript, {
         sttEngine: o.onDevice ? 'on-device' : 'online',
         locale: o.locale,
         recordingMode: o.mode,
-      });
-      setToast(null);
-      setWatching({ id, transcript, timedOut: false });
-    },
+      }),
     onEmpty: () =>
       showToast({
         key: `empty${Date.now()}`,
@@ -220,6 +228,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     stop: recorder.stop,
     showToast,
     openSheet: setSheet,
+    typeNote: () => setTyping(true),
     deleteEntry,
   };
 
@@ -233,6 +242,18 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
         toast={result ?? toast}
         onHideToast={() => (result ? setWatching(null) : setToast(null))}
       />
+      {typing && (
+        <TypeNoteSheet
+          onClose={() => setTyping(false)}
+          onSubmit={(text) =>
+            submitNote(text, {
+              sttEngine: 'typed',
+              locale: settings.sttLocale,
+              recordingMode: 'typed',
+            })
+          }
+        />
+      )}
       {sheet && (
         <EditEntrySheet
           key={sheet.kind === 'edit' ? sheet.entry.id : sheet.command.id}
