@@ -66,6 +66,9 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [ ] U  Rebuild the dev build (native `expo-dev-client` changed; COMMANDS §4)
 - [x] A  AUDIT C10: filler housekeeping log files removed (user OK 2026-11-21)
 - [x] A  UX audit U1–U18 built (#116–#135)
-- [ ] A  Ideas I1–I10 (docs/IDEAS.md)
+- [x] A  Ideas I1–I10 + developer ideas (#137–#149)
+- [ ] U  `npm run prebuild:clean` then rebuild the dev build: new native modules (notifications, local-authentication, file-system) and the launcher-shortcut plugin
+- [ ] U  Deploy Firestore rules (`npm run firebase:deploy`): entries.person (I9)
+- [ ] U  `npm run eval` on both providers: prompt v2 adds `person` (I9)
 - [ ] U  On device: check the UX changes (each PR has a Verify step)
 - [ ] U  On device: verify the C1–C6 fixes (each PR has a Verify step)

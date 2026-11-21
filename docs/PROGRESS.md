@@ -2,6 +2,16 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-21 — All IDEAS built (I1–I10 + developer ideas)
+
+PRs #137–#149 into `staging`, one per idea (Status list in `docs/IDEAS.md`).
+- I1 Test key · I2 type a note (meta 'typed') · I3 month comparison · I4 category → Activity · I5 add again today · I6 daily reminder · I7 app lock · I8 monthly budget · I9 loan balances (entries.person, prompt v2) · I10 launcher shortcut (instead of widget/tile) · token usage per attempt · persisted debug log.
+- Data model: `meta.sttEngine/recordingMode` 'typed', `settings.monthlyBudget`, `entries.person`, `llmAttempts[].usage` (DATA_MODEL; DECISIONS #21–#26, #11 updated). Rules updated for `person`.
+- New native deps: expo-notifications, expo-local-authentication, expo-file-system (COMMANDS §7), plus `plugins/withRecordShortcut.js`.
+- One slip merged and was fixed forward: #142's budget parser regex (fixed in #143).
+- Verified: typecheck ✓ and lint ✓ gate every PR; tsx smoke tests for describeReason, pingProvider, previousSpend, loanBalances + parser, planReminders, token usage; plugin checked with Android-only `compileModsAsync`; `npx expo export --platform android` ✓ and expo-doctor 20/20 on staging @ #149. Not yet run on a device.
+- Next (user): `npm run prebuild:clean` + rebuild, `npm run firebase:deploy`, `npm run eval`.
+
 ## 2026-11-21 — UX audit U1–U18 built
 
 PRs #116–#135 into `staging`, one per finding (see the Status list in `docs/UX_AUDIT.md`).
