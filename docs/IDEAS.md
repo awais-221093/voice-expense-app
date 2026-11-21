@@ -29,3 +29,4 @@ so they need a new dev build.
 ## Status
 - **I1** done (`feat/test-api-key`): 'Test key' per provider in Profile (pingProvider in the shared llm module).
 - **I3** done (`feat/insights-month-compare`): hero line '% less/more than <month> (same days)' and ▲/▼ per category.
+- **I4** done (`feat/category-drilldown`): category bars in Insights open Activity filtered to that month + category (route params).
