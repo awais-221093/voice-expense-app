@@ -79,3 +79,38 @@ function daysCounted(monthStart: Date, now: Date): number {
     now.getFullYear() === monthStart.getFullYear() && now.getMonth() === monthStart.getMonth();
   return isCurrent ? now.getDate() : daysInMonth;
 }
+
+export interface PreviousSpend {
+  spent: number;
+  byCategory: Map<string, number>;
+  /** True when only the same days of the month were counted (current, unfinished month). */
+  sameDays: boolean;
+}
+
+/**
+ * Expense spend of the month before `monthStart`. For the current month only the same days
+ * (1…today) are counted, so a half month is never compared with a full one.
+ */
+export function previousSpend(
+  prevEntries: Entry[],
+  monthStart: Date,
+  now = new Date(),
+): PreviousSpend {
+  const sameDays =
+    now.getFullYear() === monthStart.getFullYear() && now.getMonth() === monthStart.getMonth();
+  const lastDay = sameDays ? now.getDate() : 31;
+  const byCategory = new Map<string, number>();
+  let spent = 0;
+  for (const e of prevEntries) {
+    if (e.type !== 'expense' || e.amount === null) continue;
+    if (e.spentAt.toDate().getDate() > lastDay) continue;
+    spent += e.amount;
+    add(byCategory, e.category ?? 'other', e.amount);
+  }
+  return { spent, byCategory, sameDays };
+}
+
+/** Relative change (0.12 = 12 % more); null when there is nothing to compare with. */
+export function relativeChange(current: number, previous: number): number | null {
+  return previous > 0 ? (current - previous) / previous : null;
+}
