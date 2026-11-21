@@ -47,6 +47,12 @@
       ],
       "expo-secure-store",
       [
+        "expo-notifications",
+        {
+          "color": "#0F766E"
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {
