@@ -38,3 +38,6 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 | U16 | P3 | plan | Large text: the hero amounts (40 pt) and tab labels (fixed 12 pt) can clip at large font scales. | `adjustsFontSizeToFit` on hero amounts; cap `maxFontSizeMultiplier` on tab labels. |
 | U17 | P3 | plan | Loading uses spinners; the plan asks for skeletons. | Simple grey placeholder rows in `EntryList` while loading. |
 | U18 | P3 | polish | Sign-in: no show/hide password; Email doesn't move to Password with "Next". | `returnKeyType="next"` + focus the next field; an eye toggle. |
+
+## Status
+- **U1** done (`feat/understanding-card`): 'Understanding…' card with transcript and spinner until the result card replaces it.
