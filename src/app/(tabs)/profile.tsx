@@ -8,6 +8,7 @@ import { AppText, Button, Chip, Segmented } from '@/components/ui';
 import { describeReason } from '@/features/commands/status';
 import { pingProvider } from '@/features/llm/ping';
 import { PROVIDER_IDS, type ProviderId } from '@/features/llm/types';
+import { setAppLockEnabled, useAppLock } from '@/features/lock/appLock';
 import { useRecorder } from '@/features/recording/RecorderProvider';
 import { ensurePermission, useReminderPrefs } from '@/features/reminder/notifications';
 import { useSettings } from '@/features/settings/store';
@@ -179,6 +180,8 @@ export default function ProfileScreen() {
 
         <ReminderSection />
 
+        <LockSection />
+
         <Section title="Monthly budget">
           <SavedInput
             key={String(settings.monthlyBudget)}
@@ -254,6 +257,34 @@ export default function ProfileScreen() {
         </AppText>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** App lock with fingerprint / face / device PIN (this phone only). */
+function LockSection() {
+  const enabled = useAppLock((s) => s.enabled);
+  const { showToast } = useRecorder();
+  const toggle = async (on: boolean) => {
+    const r = await setAppLockEnabled(on);
+    if (r === 'no-lock-set')
+      showToast({
+        key: 'lock-none',
+        title: 'Set a screen lock first',
+        lines: ['Android Settings → Security → Screen lock, then turn this on again.'],
+        tone: 'review',
+      });
+  };
+  return (
+    <Section title="Security">
+      <Toggle
+        label="Lock the app with fingerprint or screen lock"
+        value={enabled}
+        onChange={toggle}
+      />
+      <AppText variant="small" muted>
+        Asks again after the app has been in the background for 30 seconds.
+      </AppText>
+    </Section>
   );
 }
 
