@@ -25,7 +25,7 @@ users/{uid}/entries/{entryId}
 | syncedAt | Timestamp \| null | serverTimestamp, audit only |
 | updatedAt | Timestamp | |
 | dismissedAt | Timestamp \| null | written as null on create; set when the user hides a failed / entry-less row (DECISIONS #7, #15) |
-| meta | `{sttEngine, locale, recordingMode, appVersion}` | `sttEngine`: `on-device` \| `online` |
+| meta | `{sttEngine, locale, recordingMode, appVersion}` | `sttEngine`: `on-device` \| `online` \| `typed`; `recordingMode`: `hold` \| `tap` \| `typed` (typed = keyboard note, added 2026-11-21) |
 
 ## entries/{entryId}
 | field | type | notes |
