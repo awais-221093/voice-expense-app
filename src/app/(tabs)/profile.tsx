@@ -102,18 +102,11 @@ export default function ProfileScreen() {
         </Section>
 
         <Section title="Sources">
-          <ListEditor
-            items={settings.knownSources}
-            onChange={(knownSources) => update({ knownSources })}
-          />
+          <ListEditor field="knownSources" />
         </Section>
 
         <Section title="Categories">
-          <ListEditor
-            items={settings.categories}
-            locked={['other']}
-            onChange={(categories) => update({ categories })}
-          />
+          <ListEditor field="categories" locked={['other']} />
         </Section>
 
         <Section title="AI provider">
@@ -232,22 +225,40 @@ function SavedInput({
   );
 }
 
-/** Add with the input, remove by tapping a chip. `locked` items can't be removed. */
+/** Add with the input, remove by tapping a chip (with Undo). `locked` items can't be removed. */
 function ListEditor({
-  items,
-  onChange,
+  field,
   locked = [],
 }: {
-  items: string[];
-  onChange: (items: string[]) => void;
+  field: 'knownSources' | 'categories';
   locked?: string[];
 }) {
   const c = useTheme();
+  const items = useSettings((s) => s.settings[field]);
+  const update = useSettings((s) => s.update);
+  const { showToast } = useRecorder();
   const [draft, setDraft] = useState('');
   const add = () => {
     const v = draft.trim().toLowerCase();
-    if (v && !items.includes(v)) onChange([...items, v]);
+    if (v && !items.includes(v)) update({ [field]: [...items, v] });
     setDraft('');
+  };
+  const remove = (item: string) => {
+    const index = items.indexOf(item);
+    update({ [field]: items.filter((i) => i !== item) });
+    showToast({
+      key: `rm-${field}-${item}-${Date.now()}`,
+      title: `Removed “${item}”`,
+      action: {
+        label: 'Undo',
+        // Read the list at Undo time, not the one captured at removal, so edits in between survive.
+        onPress: () => {
+          const now = useSettings.getState().settings[field];
+          if (!now.includes(item))
+            update({ [field]: [...now.slice(0, index), item, ...now.slice(index)] });
+        },
+      },
+    });
   };
   return (
     <>
@@ -256,9 +267,7 @@ function ListEditor({
           <Chip
             key={item}
             label={locked.includes(item) ? item : `${item}  ✕`}
-            onPress={
-              locked.includes(item) ? undefined : () => onChange(items.filter((i) => i !== item))
-            }
+            onPress={locked.includes(item) ? undefined : () => remove(item)}
           />
         ))}
       </View>
