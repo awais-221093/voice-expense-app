@@ -51,6 +51,8 @@ async function processCommand(uid: string, cmd: Command) {
 export function useProcessingQueue(uid: string, open: Command[]) {
   const openRef = useRef(open);
   const running = useRef(false);
+  /** A trigger arrived mid-run (e.g. a new command): run once more when this run ends. */
+  const rerun = useRef(false);
   /** id → updatedAt we already processed, so a stale snapshot can't trigger a second run. */
   const handled = useRef(new Map<string, number>());
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -68,7 +70,10 @@ export function useProcessingQueue(uid: string, open: Command[]) {
   };
 
   const run = async () => {
-    if (running.current) return;
+    if (running.current) {
+      rerun.current = true;
+      return;
+    }
     running.current = true;
     try {
       // Offline: don't call the LLM and don't burn attempts (DECISIONS #5).
@@ -93,6 +98,10 @@ export function useProcessingQueue(uid: string, open: Command[]) {
     } finally {
       running.current = false;
       scheduleNext();
+      if (rerun.current) {
+        rerun.current = false;
+        runRef.current();
+      }
     }
   };
 
