@@ -1,6 +1,6 @@
 // One OpenAI-compatible Chat Completions client for both Groq and OpenRouter.
 import type { ChatMessage } from './prompt';
-import type { ProviderId } from './types';
+import type { ProviderId, TokenUsage } from './types';
 
 const ENDPOINTS: Record<ProviderId, string> = {
   groq: 'https://api.groq.com/openai/v1/chat/completions',
@@ -30,7 +30,9 @@ export interface ChatRequest {
   fetchImpl?: typeof fetch;
 }
 
-export async function callChat(req: ChatRequest): Promise<{ rawText: string; model: string }> {
+export async function callChat(
+  req: ChatRequest,
+): Promise<{ rawText: string; model: string; usage: TokenUsage | null }> {
   const { provider, apiKey, model, messages, timeoutMs = 10_000, fetchImpl = fetch } = req;
 
   const body: Record<string, unknown> = {
@@ -82,7 +84,7 @@ export async function callChat(req: ChatRequest): Promise<{ rawText: string; mod
     const content: unknown = json?.choices?.[0]?.message?.content;
     if (typeof content !== 'string' || !content.trim())
       throw new LlmCallError('invalid_json', 'empty response');
-    return { rawText: content, model: json?.model ?? model };
+    return { rawText: content, model: json?.model ?? model, usage: readUsage(json?.usage) };
   }
 
   const detail = String(json?.error?.message ?? text).slice(0, 160);
@@ -99,4 +101,11 @@ export async function callChat(req: ChatRequest): Promise<{ rawText: string; mod
     throw new LlmCallError('transient', `HTTP ${status}`);
   // 400/404 here almost always means a wrong model id.
   throw new LlmCallError('fatal', `HTTP ${status}: ${detail}`);
+}
+
+function readUsage(u: unknown): TokenUsage | null {
+  const { prompt_tokens: p, completion_tokens: c } = (u ?? {}) as Record<string, unknown>;
+  return typeof p === 'number' && typeof c === 'number'
+    ? { promptTokens: p, completionTokens: c }
+    : null;
 }
