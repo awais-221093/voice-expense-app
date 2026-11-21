@@ -1,5 +1,6 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CommandRow } from '@/components/CommandRow';
@@ -10,11 +11,12 @@ import { useOpenCommands } from '@/features/commands/hooks';
 import { dismissCommand, requeueCommand } from '@/features/commands/repo';
 import { expenseTotals, useMonthEntries, useRecentEntries } from '@/features/entries/hooks';
 import { useRecorder } from '@/features/recording/RecorderProvider';
+import { useNoUsableKey } from '@/features/settings/store';
 import { auth } from '@/lib/firebase';
 import { useIsOnline } from '@/lib/network';
 import { startOfMonth } from '@/lib/time';
 import { useNow } from '@/lib/useNow';
-import { spacing, useTheme } from '@/theme';
+import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
 const RECENT = 30;
 
@@ -29,6 +31,7 @@ function Home({ uid }: { uid: string }) {
   const online = useIsOnline();
   const now = useNow();
   const { openSheet, mode } = useRecorder();
+  const noKey = useNoUsableKey();
 
   const month = useMonthEntries(uid, startOfMonth(now));
   const recent = useRecentEntries(uid, RECENT);
@@ -48,6 +51,18 @@ function Home({ uid }: { uid: string }) {
         inflow={inflow}
         online={online}
       />
+      {noKey && (
+        // Without a key every note fails; say so before the first one is spoken.
+        <Pressable
+          onPress={() => router.navigate('/profile')}
+          accessibilityRole="button"
+          accessibilityHint="Opens Profile"
+          style={[styles.banner, { backgroundColor: c.surface, borderColor: c.review }]}>
+          <MaterialCommunityIcons name="key-alert-outline" size={24} color={c.review} />
+          <AppText style={styles.flex}>Add an API key in Profile so notes can be understood.</AppText>
+          <MaterialCommunityIcons name="chevron-right" size={24} color={c.textMuted} />
+        </Pressable>
+      )}
       {open.data.length > 0 && (
         <View style={styles.attention}>
           <AppText variant="label" muted>
@@ -102,6 +117,16 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   header: { gap: spacing.lg },
   attention: { gap: spacing.sm },
+  banner: {
+    minHeight: MIN_TOUCH,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    borderWidth: 1,
+  },
+  flex: { flex: 1 },
   empty: { alignItems: 'center', padding: spacing.xxl },
   hint: { textAlign: 'center', lineHeight: 24 },
 });
