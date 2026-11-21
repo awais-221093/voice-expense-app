@@ -1,10 +1,11 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CommandRow } from '@/components/CommandRow';
+import { SkeletonRows } from '@/components/SkeletonRows';
 import { EntryList } from '@/components/EntryList';
 import { TotalsHeader } from '@/components/TotalsHeader';
 import { AppText, Button } from '@/components/ui';
@@ -100,7 +101,7 @@ function Home({ uid }: { uid: string }) {
   );
 
   const empty = recent.loading ? (
-    <ActivityIndicator style={styles.empty} color={c.textMuted} />
+    <SkeletonRows />
   ) : (
     <View style={styles.empty}>
       {recent.error ? (

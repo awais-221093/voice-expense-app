@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EntryList } from '@/components/EntryList';
 import { MonthSwitcher } from '@/components/MonthSwitcher';
+import { SkeletonRows } from '@/components/SkeletonRows';
 import { AppText, Chip } from '@/components/ui';
 import { useMonthEntries } from '@/features/entries/hooks';
 import type { Entry } from '@/features/entries/types';
@@ -84,7 +85,7 @@ function Activity({ uid }: { uid: string }) {
   );
 
   const empty = loading ? (
-    <ActivityIndicator style={styles.empty} color={c.textMuted} />
+    <SkeletonRows />
   ) : (
     <AppText muted style={styles.empty}>
       {error ? `Could not load: ${error}` : 'Nothing here for this month.'}
