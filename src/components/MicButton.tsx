@@ -57,7 +57,8 @@ export function MicButton() {
             : 'Double tap, speak, and tap again or pause to finish'
         }
         accessibilityState={{ busy: understanding }}
-        hitSlop={8}
+        // Hold-to-talk needs a confident press; presses near the edge of the 64 dp circle missed.
+        hitSlop={14}
         style={({ pressed }) => [
           styles.circle,
           {
