@@ -62,6 +62,16 @@ export default function ProfileScreen() {
     );
   const email = auth.currentUser?.email ?? '';
 
+  // Picking a language without its offline model would only fail on the next mic press; say it now.
+  const selectLanguage = (sttLocale: string) => {
+    update({ sttLocale });
+    if (installed && !matchLocale(sttLocale, installed) && !settings.allowOnlineSttFallback)
+      router.push({
+        pathname: '/speech-setup',
+        params: { problem: 'model-missing', locale: sttLocale },
+      });
+  };
+
   useEffect(() => {
     installedLocales().then(setInstalled);
   }, []);
@@ -112,7 +122,7 @@ export default function ProfileScreen() {
         <Section title="Speech language">
           <Segmented
             value={settings.sttLocale}
-            onChange={(sttLocale) => update({ sttLocale })}
+            onChange={selectLanguage}
             options={LANGUAGES.map((l) => ({
               value: l.value,
               label:
