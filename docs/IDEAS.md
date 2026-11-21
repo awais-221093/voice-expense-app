@@ -34,3 +34,4 @@ so they need a new dev build.
 - **I5** done (`feat/repeat-entry`): long-press (or TalkBack action) an entry → 'Add again today?' → copy dated now, with Undo.
 - **I8** done (`feat/monthly-budget`): settings.monthlyBudget; Home bar '₨X left of ₨Y' / '⚠ over'; Profile field (DATA_MODEL + DECISIONS #22).
 - **I9** done (`feat/loan-balances`): entries.person (loans), prompt v2, Person field, Insights 'Loan balances (all time)'; rules updated — deploy them.
+- **I6** done (`feat/daily-reminder`): expo-notifications; Profile toggle + 7–10 pm; next 7 days scheduled, today skipped once logged (DECISIONS #24). Needs a dev-build rebuild.

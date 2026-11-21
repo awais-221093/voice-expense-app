@@ -7,9 +7,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth/useAuth';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { useProcessingQueue } from '@/features/commands/queue';
+import { initNotifications } from '@/features/reminder/notifications';
+import { useReminderRuntime } from '@/features/reminder/useReminderRuntime';
 import { startSettingsSync } from '@/features/settings/store';
 
 SplashScreen.preventAutoHideAsync();
+initNotifications();
 
 export default function RootLayout() {
   const scheme = useColorScheme();
@@ -46,5 +49,6 @@ function AppRuntime({ uid }: { uid: string }) {
   useEffect(() => startSettingsSync(uid), [uid]);
   const open = useOpenCommands(uid);
   useProcessingQueue(uid, open.data);
+  useReminderRuntime(uid);
   return null;
 }

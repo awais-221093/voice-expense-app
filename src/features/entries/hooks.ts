@@ -35,6 +35,13 @@ export function useMonthEntries(uid: string | null, monthStart: Date) {
   );
 }
 
+/** The most recently created entry (deleted or not): "was anything logged today?" for the reminder. */
+export function useLatestEntry(uid: string | null) {
+  return useCollection<Entry>(`latest:${uid}`, () =>
+    uid ? query(paths.entries(uid), orderBy('createdAt', 'desc'), limit(1)) : null,
+  );
+}
+
 /** Every non-deleted loan (all time), for per-person balances. Equality-only filters: no composite index. */
 export function useLoanEntries(uid: string | null) {
   return useCollection<Entry>(`loans:${uid}`, () =>
