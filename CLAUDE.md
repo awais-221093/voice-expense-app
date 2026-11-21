@@ -9,6 +9,8 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 ## Where things are tracked (keep them current)
 | File | Purpose |
 |---|---|
+| `docs/PENDING.md` | **Pending work queue** — read it first when the user asks "what's next?" |
+| `docs/plans/` | One plan file per pending task (linked from `PENDING.md`) |
 | `docs/TASKS.md` | Live task checklist per phase — tick items as they land |
 | `docs/PROGRESS.md` | Dated log of what was done each session and how to verify it |
 | `docs/ISSUES.md` | Open problems, unknowns, things blocked on the user |
@@ -22,6 +24,12 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 | `docs/AUDIT.md` | Code audit findings (bugs, runtime/compile errors) and their fix status |
 | `docs/UX_AUDIT.md` | UX audit findings and their status |
 | `COMMANDS.md` | Every install/build/deploy command, kept runnable in order |
+
+## Pending queue
+- `docs/PENDING.md` must **always exist**, even when it's empty. When the user asks "what's next?",
+  read it and answer from it: the top open task first, then the rest in order. Don't start one until the user says so.
+- A task the user asks to save for later gets a row in `PENDING.md` and a plan in `docs/plans/`.
+  When you start it, set its status to `in progress (PR #n)`. Remove the row once its PR is merged.
 
 ## Working rules
 - **Installs and builds:** by default the user runs them — add the command to `COMMANDS.md` and
