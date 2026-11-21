@@ -27,6 +27,7 @@ The Firebase CLI is not linked to this repo; rules and indexes are set by hand i
    | Collection ID | Fields, in this order |
    |---|---|
    | `entries` | `deleted` Ascending · `spentAt` Descending |
+   | `entries` | `deleted` Ascending · `type` Ascending (loan balances) |
    | `commands` | `entryIds` Ascending · `dismissedAt` Ascending · `createdAt` Descending |
 
    The third index in `firestore.indexes.json` (`commands`: `status` + `createdAt`) is not
