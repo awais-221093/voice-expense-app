@@ -107,6 +107,9 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
   });
 
   function start() {
+    // A press while the last recording is still stopping would reset the recorder before its
+    // `end` event arrives, losing that recording's transcript.
+    if (recorder.phase !== 'idle') return;
     if (!ready?.ok) return openSetup(ready?.ok === false ? ready.problem : 'permission');
     recorder.start({
       locale: ready.locale,
