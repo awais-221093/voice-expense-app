@@ -6,7 +6,15 @@ import { formatPKR } from '@/lib/money';
 import { formatTime } from '@/lib/time';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
-export function EntryRow({ entry, onPress }: { entry: Entry; onPress: () => void }) {
+export function EntryRow({
+  entry,
+  onPress,
+  onLongPress,
+}: {
+  entry: Entry;
+  onPress: () => void;
+  onLongPress?: () => void;
+}) {
   const c = useTheme();
   const inflow = entry.direction === 'inflow';
   const amount = `${inflow ? '+' : ''}${formatPKR(entry.amount)}`;
@@ -15,6 +23,12 @@ export function EntryRow({ entry, onPress }: { entry: Entry; onPress: () => void
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
+      // Long-press isn't discoverable with TalkBack; expose it as a named action too.
+      accessibilityActions={
+        onLongPress ? [{ name: 'longpress', label: 'Add again today' }] : undefined
+      }
+      onAccessibilityAction={(e) => e.nativeEvent.actionName === 'longpress' && onLongPress?.()}
       accessibilityRole="button"
       accessibilityLabel={[
         title,
