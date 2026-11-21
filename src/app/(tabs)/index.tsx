@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -19,6 +20,8 @@ import { useNow } from '@/lib/useNow';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
 const RECENT = 30;
+/** More failed notes than this would push the entry list off screen; the rest sit behind a toggle. */
+const ATTENTION_PREVIEW = 3;
 
 export default function HomeScreen() {
   const uid = auth.currentUser?.uid;
@@ -32,6 +35,7 @@ function Home({ uid }: { uid: string }) {
   const now = useNow();
   const { openSheet, mode } = useRecorder();
   const noKey = useNoUsableKey();
+  const [showAllOpen, setShowAllOpen] = useState(false);
 
   const month = useMonthEntries(uid, startOfMonth(now));
   const recent = useRecentEntries(uid, RECENT);
@@ -59,7 +63,9 @@ function Home({ uid }: { uid: string }) {
           accessibilityHint="Opens Profile"
           style={[styles.banner, { backgroundColor: c.surface, borderColor: c.review }]}>
           <MaterialCommunityIcons name="key-alert-outline" size={24} color={c.review} />
-          <AppText style={styles.flex}>Add an API key in Profile so notes can be understood.</AppText>
+          <AppText style={styles.flex}>
+            Add an API key in Profile so notes can be understood.
+          </AppText>
           <MaterialCommunityIcons name="chevron-right" size={24} color={c.textMuted} />
         </Pressable>
       )}
@@ -68,7 +74,7 @@ function Home({ uid }: { uid: string }) {
           <AppText variant="label" muted>
             NEEDS ATTENTION
           </AppText>
-          {open.data.map((cmd) => (
+          {(showAllOpen ? open.data : open.data.slice(0, ATTENTION_PREVIEW)).map((cmd) => (
             <CommandRow
               key={cmd.id}
               command={cmd}
@@ -79,6 +85,15 @@ function Home({ uid }: { uid: string }) {
               onDismiss={() => dismissCommand(uid, cmd.id)}
             />
           ))}
+          {open.data.length > ATTENTION_PREVIEW && (
+            <Button
+              title={
+                showAllOpen ? 'Show less' : `Show ${open.data.length - ATTENTION_PREVIEW} more`
+              }
+              kind="ghost"
+              onPress={() => setShowAllOpen((v) => !v)}
+            />
+          )}
         </View>
       )}
     </View>

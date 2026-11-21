@@ -49,3 +49,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U7** done (`feat/edit-sheet-header`): edit sheet has a fixed header (✕ · title · Save); Delete stays at the bottom. Keyboard behaviour still to check on device.
 - **U8** done (`feat/date-quick-chips`): Today / Yesterday chips under the ‹ date › stepper.
 - **U9** done (`feat/search-by-type`): Activity search also matches the entry type.
+- **U10** done (`feat/collapse-attention`): Needs attention shows 3 rows, then 'Show N more' / 'Show less'.
