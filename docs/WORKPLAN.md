@@ -16,8 +16,8 @@ Each phase = one or more branches, each with its own PR into `staging` (never `m
 
 ## Phase C — Code audit (broken code, compile-time and runtime errors)
 - [x] Report in `docs/AUDIT.md`: each finding with severity, file:line, impact and proposed fix
-- [~] User confirms which findings to fix
-- [ ] One `fix/…` branch + PR per confirmed finding (or per tightly related group)
+- [x] User confirmed: fix everything that needs no decision (C1–C8); C9 is a user command; C10 waits for OK
+- [x] One branch + PR per finding: C1 #106, C2 #107, C3 #108, C4 #109, C5 #110, C6 #111, C7–C9 docs/audit-hygiene
 
 ## Phase D — UX audit
 - [x] Report in `docs/UX_AUDIT.md`: friction points, accessibility, copy, with the smallest fix for each
