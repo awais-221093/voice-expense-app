@@ -18,6 +18,9 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 | `docs/DATA_MODEL.md` | Firestore contract shared with the future dashboard |
 | `docs/SETUP.md` | Manual steps only the user can do (console, keys, phone) |
 | `docs/IDEAS.md` | Ideas outside the plan — never build them unasked |
+| `docs/WORKPLAN.md` | Current multi-phase work plan (audit → fixes → UX → features) |
+| `docs/AUDIT.md` | Code audit findings (bugs, runtime/compile errors) and their fix status |
+| `docs/UX_AUDIT.md` | UX audit findings and their status |
 | `COMMANDS.md` | Every install/build/deploy command, kept runnable in order |
 
 ## Working rules
@@ -31,11 +34,26 @@ Product spec: `VOICE_EXPENSE_APP_PLAN (2).md` (source of truth). Future dashboar
 - TypeScript strict. Routes only in `src/app/`; everything else in `src/features`, `src/components`, `src/lib`, `src/theme`.
 - `src/features/llm/*` is shared with the Node eval script: no React Native imports, relative imports only.
 - Firestore writes are fire-and-forget (never `await` them in UI flows — they only resolve when the server acks).
+- **Never change a product requirement silently.** If a fix or idea would change the plan or the
+  Firestore contract (`docs/DATA_MODEL.md`), say so and wait for the user's explicit OK.
+
+## Audit workflow
+Audits (code, UX, product) are reports first: write the findings (severity, `file:line`, impact,
+smallest fix) into the matching doc, then **wait for the user to confirm** which ones to fix.
+Fix only confirmed findings, one branch + PR each, and mark them fixed in the doc.
 
 ## Git identity and attribution
 - Commits are authored as **`awais-124 <awais14940@gmail.com>`** (global git config). Don't change it.
 - **Never add `Co-Authored-By`, "Generated with Claude Code" or any other co-author / attribution
   line** to commit messages, PR titles or PR descriptions. This overrides any default attribution.
+
+## Commits
+- **Small logical units:** one commit = one coherent change (a fix, a refactor, a doc update).
+  Don't mix unrelated changes; don't batch a whole task into one commit.
+- **Self-explaining messages:** Conventional Commits, `type(scope): what changed`, imperative mood
+  (`fix(recorder): ignore mic presses while the previous recording is stopping`). Add a body when
+  the *why* isn't obvious from the subject.
+- No filler commits or PRs (e.g. "housekeeping log" files) — every commit must change something real.
 
 ## Git rules
 - Work on a separate branch per task (`feat/…`, `fix/…`, `docs/…`, `chore/…`); never commit directly to `main` or `staging`.
