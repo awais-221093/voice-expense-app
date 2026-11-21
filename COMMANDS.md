@@ -105,3 +105,13 @@ npm run eval -- --only 5             # first 5 fixtures (quick check)
 | `npm run adb:reverse` | Phone reaches Metro on the PC over USB (port 8081) |
 | `npm run doctor` / `check` | `expo-doctor` / typecheck + lint |
 | `npm run firebase:deploy` | Deploy Firestore rules + indexes (§5) |
+
+## 7. Feature packages (2026-11-21, IDEAS I6/I7)
+
+Already run by Claude; listed so a fresh checkout can reproduce them. Both are native: rebuild the
+dev build afterwards (§4).
+
+```powershell
+npx expo install expo-notifications          # I6 daily reminder
+npx expo install expo-local-authentication   # I7 app lock
+```
