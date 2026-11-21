@@ -1,6 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from '@react-native-firebase/auth';
-import { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native';
+import { useRef, useState, type ComponentRef } from 'react';
+import { KeyboardAvoidingView, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '@/components/ui';
@@ -14,6 +15,8 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const passwordRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   async function submit() {
     setBusy(true);
@@ -47,21 +50,39 @@ export default function SignInScreen() {
           autoCapitalize="none"
           autoComplete="email"
           keyboardType="email-address"
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => passwordRef.current?.focus()}
           value={email}
           onChangeText={setEmail}
           accessibilityLabel="Email"
         />
-        <TextInput
-          style={input}
-          placeholder="Password"
-          placeholderTextColor={c.textMuted}
-          secureTextEntry
-          autoComplete="password"
-          value={password}
-          onChangeText={setPassword}
-          onSubmitEditing={submit}
-          accessibilityLabel="Password"
-        />
+        <View>
+          <TextInput
+            ref={passwordRef}
+            style={[input, styles.passwordInput]}
+            placeholder="Password"
+            placeholderTextColor={c.textMuted}
+            secureTextEntry={!showPassword}
+            autoComplete="password"
+            returnKeyType="go"
+            value={password}
+            onChangeText={setPassword}
+            onSubmitEditing={submit}
+            accessibilityLabel="Password"
+          />
+          <Pressable
+            onPress={() => setShowPassword((v) => !v)}
+            accessibilityRole="button"
+            accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+            style={styles.eye}>
+            <MaterialCommunityIcons
+              name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+              size={22}
+              color={c.textMuted}
+            />
+          </Pressable>
+        </View>
         {error && (
           <AppText color={c.danger} accessibilityLiveRegion="polite">
             {error}
@@ -100,5 +121,16 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
     fontSize: 16,
+  },
+  // Room for the show/hide button inside the field.
+  passwordInput: { paddingRight: MIN_TOUCH + spacing.sm },
+  eye: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: MIN_TOUCH,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
