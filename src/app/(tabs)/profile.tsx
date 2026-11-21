@@ -36,11 +36,30 @@ export default function ProfileScreen() {
   const { showToast } = useRecorder();
   const [installed, setInstalled] = useState<string[] | null>(null);
 
+  // Empty value = remove. The field clears after saving, so the toast is the only confirmation.
   const saveKey = (p: ProviderId, value: string) =>
-    setKey(p, value).catch((e) => {
-      log.error(`save ${p} key failed`, e);
-      showToast({ key: `key${Date.now()}`, title: "Couldn't save the API key", tone: 'review' });
-    });
+    setKey(p, value).then(
+      () =>
+        showToast({
+          key: `key-${p}-${value.trim() ? 'saved' : 'removed'}`,
+          title: `${PROVIDER_LABEL[p]} key ${value.trim() ? 'saved' : 'removed'}`,
+          tone: 'success',
+          durationMs: 2500,
+        }),
+      (e) => {
+        log.error(`save ${p} key failed`, e);
+        showToast({ key: `key${Date.now()}`, title: "Couldn't save the API key", tone: 'review' });
+      },
+    );
+  const confirmRemoveKey = (p: ProviderId) =>
+    Alert.alert(
+      `Remove the ${PROVIDER_LABEL[p]} key?`,
+      'Notes will fail on this provider until you add a key again.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Remove', style: 'destructive', onPress: () => void saveKey(p, '') },
+      ],
+    );
   const email = auth.currentUser?.email ?? '';
 
   useEffect(() => {
@@ -133,6 +152,9 @@ export default function ProfileScreen() {
                 secure
                 onSave={(v) => saveKey(p, v)}
               />
+              {keys[p] && (
+                <Button title="Remove key" kind="ghost" onPress={() => confirmRemoveKey(p)} />
+              )}
               <SavedInput
                 // Remount when the stored model changes (settings snapshot arriving after mount, or
                 // an edit elsewhere), so the field never holds — and re-saves — a stale value.
