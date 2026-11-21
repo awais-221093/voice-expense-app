@@ -20,12 +20,12 @@ Each phase = one or more branches, each with its own PR into `staging` (never `m
 - [ ] One `fix/…` branch + PR per confirmed finding (or per tightly related group)
 
 ## Phase D — UX audit
-- [ ] Report in `docs/UX_AUDIT.md`: friction points, accessibility, copy, with the smallest fix for each
-- [ ] User picks what to build → one branch + PR each
+- [x] Report in `docs/UX_AUDIT.md`: friction points, accessibility, copy, with the smallest fix for each
+- [~] User picks what to build → one branch + PR each
 
 ## Phase E — Product improvements and small side features
 - [ ] Proposals added to `docs/IDEAS.md`, each tagged *in plan* / *changes plan* / *changes data model*
-- [ ] User picks what to build → one branch + PR each
+- [~] User picks what to build → one branch + PR each
 
 ## Done criteria (every code PR)
 `npm run typecheck` and `npx expo lint` clean; `npx expo export --platform android` for UI changes;
