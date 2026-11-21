@@ -240,7 +240,8 @@
      ],
      "source": null,
      "category": "other",
-     "spent_at": null
+     "spent_at": null,
+     "person": "ali"
     }
    ]
   },
@@ -258,7 +259,8 @@
      ],
      "source": null,
      "category": "family",
-     "spent_at": null
+     "spent_at": null,
+     "person": "brother"
     }
    ]
   },
@@ -278,7 +280,8 @@
      ],
      "source": null,
      "category": "other",
-     "spent_at": null
+     "spent_at": null,
+     "person": "ali"
     }
    ]
   },
@@ -297,7 +300,8 @@
      ],
      "source": null,
      "category": "family",
-     "spent_at": null
+     "spent_at": null,
+     "person": "brother"
     }
    ]
   },
@@ -581,7 +585,8 @@
      ],
      "source": null,
      "category": "other",
-     "spent_at": null
+     "spent_at": null,
+     "person": "ali"
     }
    ]
   },
@@ -599,7 +604,8 @@
      ],
      "source": null,
      "category": "family",
-     "spent_at": null
+     "spent_at": null,
+     "person": "brother"
     }
    ]
   },
@@ -741,7 +747,8 @@
      ],
      "source": null,
      "category": "other",
-     "spent_at": null
+     "spent_at": null,
+     "person": "ahmed"
     }
    ]
   },
