@@ -37,6 +37,7 @@ users/{uid}/entries/{entryId}
 | amount | number > 0 \| null | |
 | currency | `"PKR"` | always |
 | description, source, category | string \| null | English, lowercase source |
+| person | string \| null (optional) | loans only, lowercase; absent on entries before 2026-11-21 (IDEAS I9) |
 | spentAt | Timestamp | |
 | needsReview | boolean | |
 | reviewReason | string \| null | |

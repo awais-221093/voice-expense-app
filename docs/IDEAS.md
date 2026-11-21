@@ -33,3 +33,4 @@ so they need a new dev build.
 - **I2** done (`feat/type-a-note`): keyboard button on Home → 'Type a note' sheet → same pipeline; meta 'typed' (DATA_MODEL + DECISIONS #21).
 - **I5** done (`feat/repeat-entry`): long-press (or TalkBack action) an entry → 'Add again today?' → copy dated now, with Undo.
 - **I8** done (`feat/monthly-budget`): settings.monthlyBudget; Home bar '₨X left of ₨Y' / '⚠ over'; Profile field (DATA_MODEL + DECISIONS #22).
+- **I9** done (`feat/loan-balances`): entries.person (loans), prompt v2, Person field, Insights 'Loan balances (all time)'; rules updated — deploy them.
