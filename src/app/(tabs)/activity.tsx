@@ -40,7 +40,7 @@ function Activity({ uid }: { uid: string }) {
   const entries = data.filter(
     (e) =>
       FILTERS[filter].match(e) &&
-      (!q || [e.description, e.source, e.category].some((v) => v?.toLowerCase().includes(q))),
+      (!q || [e.description, e.source, e.category, e.type].some((v) => v?.toLowerCase().includes(q))),
   );
   const spent = entries.reduce((s, e) => (e.type === 'expense' && e.amount ? s + e.amount : s), 0);
 
@@ -55,7 +55,7 @@ function Activity({ uid }: { uid: string }) {
         ]}
         value={search}
         onChangeText={setSearch}
-        placeholder="Search description, source, category"
+        placeholder="Search description, source, category, type"
         placeholderTextColor={c.textMuted}
         autoCapitalize="none"
         returnKeyType="search"
