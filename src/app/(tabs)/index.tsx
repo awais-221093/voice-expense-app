@@ -34,7 +34,7 @@ function Home({ uid }: { uid: string }) {
   const c = useTheme();
   const online = useIsOnline();
   const now = useNow();
-  const { openSheet, mode } = useRecorder();
+  const { openSheet, mode, typeNote } = useRecorder();
   const noKey = useNoUsableKey();
   const [showAllOpen, setShowAllOpen] = useState(false);
 
@@ -55,6 +55,7 @@ function Home({ uid }: { uid: string }) {
         month={totals.month}
         inflow={inflow}
         online={online}
+        onTypeNote={typeNote}
       />
       {noKey && (
         // Without a key every note fails; say so before the first one is spoken.
