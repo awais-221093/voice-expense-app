@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
 import { AppText } from '@/components/ui';
+import { useScreenReader } from '@/lib/useScreenReader';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
 export interface ToastData {
@@ -28,7 +29,9 @@ export function Toast({ toast, onHide }: { toast: ToastData | null; onHide: () =
   // Toast objects may be rebuilt every render (derived result card), so the timer restarts
   // only when the toast's identity or state (title) changes.
   const key = toast ? `${toast.key}:${toast.title}` : null;
-  const durationMs = toast?.durationMs ?? 5000;
+  // With TalkBack, reaching the Undo button takes several swipes; 5 s is often too short.
+  const screenReader = useScreenReader();
+  const durationMs = (toast?.durationMs ?? 5000) * (screenReader ? 2 : 1);
   useEffect(() => {
     if (!key) return;
     const t = setTimeout(() => hide.current(), durationMs);

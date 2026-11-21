@@ -54,3 +54,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U12** done (`feat/sign-out-confirm`): sign out asks for confirmation (native Alert).
 - **U13** done (`feat/api-key-feedback`): '<Provider> key saved/removed' toast; 'Remove key' (with confirm) when a key is set.
 - **U14** done (`feat/language-model-prompt`): picking a not-downloaded language opens speech setup (model-missing) unless online STT is allowed.
+- **U15** done (`feat/screen-reader-toasts`): toasts stay twice as long (10 s default) while a screen reader is on.
