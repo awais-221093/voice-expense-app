@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
 import { AppText } from '@/components/ui';
@@ -13,6 +13,8 @@ export interface ToastData {
   tone?: 'success' | 'review' | 'info';
   action?: { label: string; onPress: () => void };
   durationMs?: number;
+  /** Shows a spinner next to the title (work still in progress). */
+  busy?: boolean;
 }
 
 /** Result card and Undo snackbar in one: auto-dismisses, never blocks (plan §6.2). */
@@ -48,7 +50,10 @@ export function Toast({ toast, onHide }: { toast: ToastData | null; onHide: () =
       ]}
       accessibilityLiveRegion="polite">
       <View style={styles.body}>
-        <AppText variant="bodyStrong">{toast.title}</AppText>
+        <View style={styles.titleRow}>
+          {toast.busy && <ActivityIndicator size="small" color={c.textMuted} />}
+          <AppText variant="bodyStrong">{toast.title}</AppText>
+        </View>
         {toast.lines?.map((l, i) => (
           <AppText key={i} variant="small" muted numberOfLines={2}>
             {l}
@@ -85,6 +90,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   body: { flex: 1, gap: spacing.xs },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   action: {
     minHeight: MIN_TOUCH,
     minWidth: MIN_TOUCH,
