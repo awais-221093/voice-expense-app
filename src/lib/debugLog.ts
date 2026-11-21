@@ -1,4 +1,4 @@
-// In-memory ring buffer shown on the hidden debug screen (long-press the gear icon).
+// In-memory ring buffer shown on the hidden debug screen (long-press the Profile avatar).
 // Not persisted — see DECISIONS #11.
 
 export interface LogLine {

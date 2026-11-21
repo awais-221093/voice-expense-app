@@ -2,6 +2,13 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-21 — Audit fixes C1–C8
+
+PRs #106–#111 plus `docs/audit-hygiene`, all into `staging`.
+- C1 mic ignores presses while stopping · C2 readiness re-checked on press (closes ISSUES #11) · C3 setup → Profile uses `dismissTo` · C4 Profile model field stays in sync · C5 promise rejections handled · C6 queue reruns after a mid-run trigger · C7/C8 stale comments and ISSUES #6.
+- Verified: `npm run typecheck` ✓ and `npx expo lint` ✓ on every PR; `npx expo export --platform android` ✓ on the final staging. Not yet run on a device.
+- Waiting on user: C9 (`npx expo install --fix`), C10 (OK to delete filler log files).
+
 ## 2026-11-21 — Post-generation audit: plan, CLAUDE.md, code / UX / product reports
 
 PRs #101–#105 into `staging` (docs only, no code changes).
