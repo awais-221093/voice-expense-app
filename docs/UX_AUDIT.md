@@ -48,3 +48,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U6** done (`feat/mic-hit-area`): mic hitSlop 8 → 14 dp; circle size unchanged until checked on device (ISSUES #13).
 - **U7** done (`feat/edit-sheet-header`): edit sheet has a fixed header (✕ · title · Save); Delete stays at the bottom. Keyboard behaviour still to check on device.
 - **U8** done (`feat/date-quick-chips`): Today / Yesterday chips under the ‹ date › stepper.
+- **U9** done (`feat/search-by-type`): Activity search also matches the entry type.
