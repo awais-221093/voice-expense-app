@@ -31,7 +31,7 @@ Severity: **high** = loses data or breaks a core flow · **medium** = wrong beha
 | C6 | low | `src/features/commands/queue.ts:70-72` | `run()` returns early while a run is in progress, and that request is dropped. In practice a later snapshot usually re-triggers it, but that's timing-dependent: a command spoken while another is being processed can wait until the next foreground or network change. | Remember "run requested while running" and run once more in `finally`. | fixed (`fix/queue-rerun`) |
 | C7 | low | `src/app/debug.tsx:10`, `src/lib/debugLog.ts:1` | Comments say "long-press the gear", but the gear is gone; the debug log opens with a long press on the Profile avatar. | Fix the comments. | fixed (`docs/audit-hygiene`) |
 | C8 | low | `docs/ISSUES.md` #6 | Says "no git remote, PRs can't be opened". The remote exists and PRs work. | Close the issue. | fixed (`docs/audit-hygiene`) |
-| C9 | low | `package.json` | `expo-doctor`: `expo`, `expo-dev-client`, `expo-router` (+2) are one patch behind SDK 58's expected versions. | **User command:** `npx expo install --fix` (added to COMMANDS.md). | waiting on user (command in COMMANDS.md §3) |
+| C9 | low | `package.json` | `expo-doctor`: `expo`, `expo-dev-client`, `expo-router` (+2) are one patch behind SDK 58's expected versions. | **User command:** `npx expo install --fix` (added to COMMANDS.md). | fixed (`chore/expo-patch-updates`); rebuild the dev build |
 | C10 | low | `docs/PR_LOG.md`, `docs/pr-log/*.md` (77 files) | PRs #24–#100 only added "housekeeping log" files. Nothing reads them; they're filler that buries real history. | Delete the files in one `chore/` PR. History isn't rewritten. **Needs your OK.** | waiting on user OK |
 
 ## Checked and fine (no action)

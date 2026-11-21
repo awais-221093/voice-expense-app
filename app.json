@@ -7,7 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "voiceexpenseapp",
     "userInterfaceStyle": "automatic",
-    "platforms": ["android"],
+    "platforms": [
+      "android"
+    ],
     "android": {
       "package": "com.voiceexpense.app",
       "googleServicesFile": "./google-services.json",
@@ -37,7 +39,10 @@
         {
           "microphonePermission": "The microphone is used to hear your voice command. Audio is processed on your phone and never saved.",
           "speechRecognitionPermission": "Speech recognition turns your voice command into text on your phone.",
-          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox", "com.google.android.as"]
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.as"
+          ]
         }
       ],
       "expo-secure-store",
@@ -48,7 +53,8 @@
             "minSdkVersion": 33
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

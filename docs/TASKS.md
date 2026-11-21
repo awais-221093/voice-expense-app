@@ -62,7 +62,8 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 ## Post-generation audit (2026-11-21, see docs/WORKPLAN.md)
 - [x] A  Work plan, CLAUDE.md rules, code / UX / product reports
 - [x] A  AUDIT C1–C6 runtime fixes; C7–C8 doc hygiene
-- [ ] U  Run `npx expo install --fix` (AUDIT C9, COMMANDS §3), then rebuild the dev build
+- [x] A  `npx expo install --fix` (AUDIT C9) — expo-doctor 20/20
+- [ ] U  Rebuild the dev build (native `expo-dev-client` changed; COMMANDS §4)
 - [ ] U  Decide on AUDIT C10 (delete 77 housekeeping log files)
 - [ ] U  Pick UX items (docs/UX_AUDIT.md) and ideas (docs/IDEAS.md) to build
 - [ ] U  On device: verify the C1–C6 fixes (each PR has a Verify step)
