@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Timestamp, getDoc } from '@react-native-firebase/firestore';
 import { useState, type ReactNode } from 'react';
 import {
@@ -100,10 +101,21 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
       <KeyboardAvoidingView
         behavior="height"
         style={[styles.sheet, { backgroundColor: c.surface }]}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <AppText variant="title">
+        {/* Fixed above the scroll area so Close and Save stay reachable when the keyboard is up. */}
+        <View style={[styles.headerRow, { borderBottomColor: c.border }]}>
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close without saving"
+            style={styles.close}>
+            <MaterialCommunityIcons name="close" size={24} color={c.text} />
+          </Pressable>
+          <AppText variant="title" style={styles.flex} accessibilityRole="header">
             {target.kind === 'edit' ? 'Edit entry' : 'Fix manually'}
           </AppText>
+          <Button title="Save" onPress={save} disabled={!amountValid} />
+        </View>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 
           <Field label="Type">
             <Segmented
@@ -214,9 +226,8 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
             )
           )}
 
-          <View style={styles.actions}>
-            <Button title="Save" onPress={save} disabled={!amountValid} />
-            {onDelete && (
+          {onDelete && (
+            <View style={styles.actions}>
               <Button
                 title="Delete"
                 kind="danger"
@@ -225,8 +236,8 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
                   onClose();
                 }}
               />
-            )}
-          </View>
+            </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
@@ -252,6 +263,16 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: radius.lg,
     borderTopRightRadius: radius.lg,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  close: { width: MIN_TOUCH, height: MIN_TOUCH, alignItems: 'center', justifyContent: 'center' },
+  flex: { flex: 1 },
   content: { padding: spacing.xl, gap: spacing.lg },
   field: { gap: spacing.sm },
   input: {
