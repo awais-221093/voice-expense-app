@@ -10,6 +10,7 @@ import {
   type SpeechProblem,
 } from '@/features/speech/readiness';
 import { useSettings } from '@/features/settings/store';
+import { log } from '@/lib/debugLog';
 import { spacing, useTheme } from '@/theme';
 
 const COPY: Record<SpeechProblem, { title: string; body: string }> = {
@@ -39,14 +40,19 @@ export default function SpeechSetupScreen() {
   const copy = COPY[problem] ?? COPY.permission;
 
   async function retry(askPermission: boolean) {
-    const r = await checkSpeechReadiness(
-      settings.sttLocale,
-      settings.allowOnlineSttFallback,
-      askPermission,
-    );
-    if (r.ok) return router.back();
-    if (r.problem === 'permission' && !r.canAskAgain) return Linking.openSettings();
-    setStatus(r.problem === problem ? 'Still not ready.' : COPY[r.problem].title);
+    try {
+      const r = await checkSpeechReadiness(
+        settings.sttLocale,
+        settings.allowOnlineSttFallback,
+        askPermission,
+      );
+      if (r.ok) return router.back();
+      if (r.problem === 'permission' && !r.canAskAgain) return await Linking.openSettings();
+      setStatus(r.problem === problem ? 'Still not ready.' : COPY[r.problem].title);
+    } catch (e) {
+      log.error('speech setup retry failed', e);
+      setStatus('Could not check. Try again in a moment.');
+    }
   }
 
   return (
