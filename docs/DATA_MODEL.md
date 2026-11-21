@@ -49,7 +49,7 @@ users/{uid}/entries/{entryId}
 | updatedAt | Timestamp | |
 
 ## settings/app
-`knownSources, categories, llmProvider, llmModels {groq, openrouter}, fallbackEnabled, sttLocale, allowOnlineSttFallback, recordingMode, silenceTimeoutSec`. API keys are never stored here.
+`knownSources, categories, llmProvider, llmModels {groq, openrouter}, fallbackEnabled, sttLocale, allowOnlineSttFallback, recordingMode, silenceTimeoutSec, monthlyBudget` (`monthlyBudget`: PKR number or `null`, added 2026-11-21). API keys are never stored here.
 
 ## Rules for any writer (app or dashboard)
 - Never change `transcript`, `createdAt`, `commandId`, `original`; never edit/remove `llmAttempts` items.
