@@ -52,7 +52,7 @@ export async function extractEntries({
     while (true) {
       const at = new Date().toISOString();
       try {
-        const { rawText, model } = await callChat({
+        const { rawText, model, usage } = await callChat({
           provider: p.id,
           apiKey: p.apiKey,
           model: p.model,
@@ -66,6 +66,7 @@ export async function extractEntries({
           model,
           rawText,
           error: parsed.ok ? null : parsed.reason,
+          usage,
         });
         if (parsed.ok)
           return {
@@ -82,6 +83,7 @@ export async function extractEntries({
           model: p.model,
           rawText: err.rawText,
           error: err.message,
+          usage: null,
         });
         if (err.kind === 'invalid_json') {
           if (++invalid >= 2)

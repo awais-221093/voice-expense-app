@@ -15,7 +15,7 @@ users/{uid}/entries/{entryId}
 |---|---|---|
 | id | string | = doc id |
 | transcript | string | **immutable**, non-empty |
-| llmAttempts | `{at, provider, model, rawText, error}[]` | **append-only** (one or more per update) |
+| llmAttempts | `{at, provider, model, rawText, error, usage}[]` — `usage`: `{promptTokens, completionTokens}` \| null, absent before 2026-11-21 | **append-only** (one or more per update) |
 | status | `pending \| ok \| needs_review \| failed` | created as `pending` |
 | statusReason | string \| null | |
 | attemptCount | number | processing runs that reached the network |

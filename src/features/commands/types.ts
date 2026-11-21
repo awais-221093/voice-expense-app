@@ -1,6 +1,6 @@
 import type { Timestamp } from '@react-native-firebase/firestore';
 
-import type { ProviderId } from '@/features/llm/types';
+import type { ProviderId, TokenUsage } from '@/features/llm/types';
 
 export type CommandStatus = 'pending' | 'ok' | 'needs_review' | 'failed';
 
@@ -10,6 +10,8 @@ export interface LlmAttempt {
   model: string;
   rawText: string | null;
   error: string | null;
+  /** Missing on attempts written before 2026-11-21. */
+  usage?: TokenUsage | null;
 }
 
 /** users/{uid}/commands/{id} — see docs/DATA_MODEL.md */

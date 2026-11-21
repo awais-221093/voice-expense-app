@@ -54,12 +54,20 @@ export interface ParsedEntry {
 }
 
 /** Firestore-agnostic attempt record; the repo converts `at` to a Timestamp. */
+/** Token counts reported by the provider (OpenAI-compatible `usage`). */
+export interface TokenUsage {
+  promptTokens: number;
+  completionTokens: number;
+}
+
 export interface AttemptRecord {
   at: string;
   provider: ProviderId;
   model: string;
   rawText: string | null;
   error: string | null;
+  /** null when the call failed or the provider didn't report usage. */
+  usage: TokenUsage | null;
 }
 
 export type ExtractionOutcome =
