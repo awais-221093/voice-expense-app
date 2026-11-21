@@ -23,6 +23,8 @@ export interface AppSettings {
   allowOnlineSttFallback: boolean;
   recordingMode: 'hold' | 'tap';
   silenceTimeoutSec: number;
+  /** Monthly expense budget in PKR; null = no budget (IDEAS I8). */
+  monthlyBudget: number | null;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -35,6 +37,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   allowOnlineSttFallback: false,
   recordingMode: 'hold',
   silenceTimeoutSec: 3,
+  monthlyBudget: null,
 };
 
 type Keys = Record<ProviderId, string | null>;
