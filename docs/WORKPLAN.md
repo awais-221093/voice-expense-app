@@ -11,7 +11,7 @@ Each phase = one or more branches, each with its own PR into `staging` (never `m
 - [x] This file (`docs/work-plan`)
 
 ## Phase B — CLAUDE.md
-- [ ] Tighten agent rules: small logical commits with self-explanatory messages, no co-author or
+- [x] Tighten agent rules: small logical commits with self-explanatory messages, no co-author or
       attribution lines, no filler PRs, audit → confirm → fix workflow (`docs/claude-md-refresh`)
 
 ## Phase C — Code audit (broken code, compile-time and runtime errors)
