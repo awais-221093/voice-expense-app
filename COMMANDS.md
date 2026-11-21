@@ -40,6 +40,10 @@ npm run typecheck        # app + eval script
 npx expo lint            # lint
 ```
 
+**To do now (2026-11-21, AUDIT C9):** `npx expo-doctor` reports `expo`, `expo-dev-client`,
+`expo-router` and 2 more one patch behind SDK 58. Run `npx expo install --fix`, then the checks
+above, then rebuild the dev build (§4) because `expo-dev-client` is native.
+
 ## 4. Build and run on your phone (development build)
 
 Prerequisites: `google-services.json` in the repo root (see `docs/SETUP.md`), Android Studio SDK installed,
