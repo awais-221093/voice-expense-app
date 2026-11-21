@@ -48,7 +48,8 @@ service cloud.firestore {
             && (e.amount == null || (e.amount is number && e.amount > 0))
             && e.deleted is bool
             && e.edited is bool
-            && e.spentAt is timestamp;
+            && e.spentAt is timestamp
+            && (!('person' in e) || e.person == null || e.person is string);
         }
 
         allow read: if isOwner(uid);
