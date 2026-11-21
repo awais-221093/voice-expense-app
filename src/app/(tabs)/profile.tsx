@@ -124,6 +124,9 @@ export default function ProfileScreen() {
                 onSave={(v) => setKey(p, v)}
               />
               <SavedInput
+                // Remount when the stored model changes (settings snapshot arriving after mount, or
+                // an edit elsewhere), so the field never holds — and re-saves — a stale value.
+                key={settings.llmModels[p]}
                 label={`${PROVIDER_LABEL[p]} model`}
                 value={settings.llmModels[p]}
                 onSave={(v) =>
