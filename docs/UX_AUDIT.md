@@ -45,3 +45,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U3** done (`feat/first-run-speech-setup`): speech setup opens once on first run if recording isn't ready; permission copy explains TalkBack use (closes ISSUES #8).
 - **U4** done (`feat/friendly-failure-reasons`): CommandRow shows plain-language reasons (describeReason); raw reasons stay in Firestore/debug log.
 - **U5** done (`feat/retry-countdown`): pending rows that are backing off while online show 'Retrying in N min'.
+- **U6** done (`feat/mic-hit-area`): mic hitSlop 8 → 14 dp; circle size unchanged until checked on device (ISSUES #13).
