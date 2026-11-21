@@ -39,6 +39,7 @@ export function repeatEntry(uid: string, entry: Entry): string {
     description: entry.description,
     source: entry.source,
     category: entry.category,
+    person: entry.person ?? null,
     spentAt: now,
   };
   setDoc(ref, {
