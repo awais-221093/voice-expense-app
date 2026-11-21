@@ -25,7 +25,7 @@ Each phase = one or more branches, each with its own PR into `staging` (never `m
 
 ## Phase E — Product improvements and small side features
 - [x] Proposals added to `docs/IDEAS.md`, each tagged *in plan* / *changes plan* / *changes data model*
-- [ ] User asked for all 10 (2026-11-21) → one branch + PR each, deviations in DECISIONS.md
+- [x] User asked for all (2026-11-21) → I1–I10 + both developer ideas built (#137–#149), deviations in DECISIONS #21–#26
 
 ## Done criteria (every code PR)
 `npm run typecheck` and `npx expo lint` clean; `npx expo export --platform android` for UI changes;
