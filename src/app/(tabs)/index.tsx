@@ -72,6 +72,8 @@ function Home({ uid }: { uid: string }) {
             <CommandRow
               key={cmd.id}
               command={cmd}
+              online={online}
+              now={now}
               onRetry={() => requeueCommand(uid, cmd.id)}
               onFix={() => openSheet({ kind: 'manual', command: cmd })}
               onDismiss={() => dismissCommand(uid, cmd.id)}

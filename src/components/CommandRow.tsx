@@ -7,20 +7,25 @@ import { radius, spacing, useTheme } from '@/theme';
 
 interface Props {
   command: Command;
+  online: boolean;
+  /** Refreshes every minute (useNow), so the retry countdown stays current. */
+  now: Date;
   onRetry: () => void;
   onFix: () => void;
   onDismiss: () => void;
 }
 
 /** A voice command without entries yet: pending (spinner), failed (red) or needs review (amber). */
-export function CommandRow({ command, onRetry, onFix, onDismiss }: Props) {
+export function CommandRow({ command, online, now, onRetry, onFix, onDismiss }: Props) {
   const c = useTheme();
   const pending = command.status === 'pending';
   const tone = command.status === 'failed' ? c.danger : c.review;
   const label = pending
-    ? command.attemptCount > 0
-      ? 'Saved — will process when online'
-      : 'Understanding…'
+    ? command.attemptCount === 0
+      ? 'Understanding…'
+      : online && command.nextRetryAt
+        ? retryLabel(command.nextRetryAt.toMillis() - now.getTime())
+        : 'Saved — will process when online'
     : command.status === 'failed'
       ? `Couldn't process. ${describeReason(command.statusReason)}`
       : `Check this: ${command.statusReason ? describeReason(command.statusReason) : 'needs review'}`;
@@ -50,6 +55,12 @@ export function CommandRow({ command, onRetry, onFix, onDismiss }: Props) {
       )}
     </View>
   );
+}
+
+/** Backing off after a transient failure while online (e.g. rate limit), not waiting for a network. */
+function retryLabel(ms: number): string {
+  const min = Math.ceil(ms / 60_000);
+  return min <= 1 ? 'Retrying in a moment' : `Retrying in ${min} min`;
 }
 
 const styles = StyleSheet.create({
