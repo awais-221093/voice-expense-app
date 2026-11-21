@@ -13,7 +13,7 @@ import { useOpenCommands } from '@/features/commands/hooks';
 import { dismissCommand, requeueCommand } from '@/features/commands/repo';
 import { expenseTotals, useMonthEntries, useRecentEntries } from '@/features/entries/hooks';
 import { useRecorder } from '@/features/recording/RecorderProvider';
-import { useNoUsableKey } from '@/features/settings/store';
+import { useNoUsableKey, useSettings } from '@/features/settings/store';
 import { auth } from '@/lib/firebase';
 import { useIsOnline } from '@/lib/network';
 import { startOfMonth } from '@/lib/time';
@@ -36,6 +36,7 @@ function Home({ uid }: { uid: string }) {
   const now = useNow();
   const { openSheet, mode, typeNote } = useRecorder();
   const noKey = useNoUsableKey();
+  const budget = useSettings((s) => s.settings.monthlyBudget);
   const [showAllOpen, setShowAllOpen] = useState(false);
 
   const month = useMonthEntries(uid, startOfMonth(now));
@@ -56,6 +57,7 @@ function Home({ uid }: { uid: string }) {
         inflow={inflow}
         online={online}
         onTypeNote={typeNote}
+        budget={budget}
       />
       {noKey && (
         // Without a key every note fails; say so before the first one is spoken.
