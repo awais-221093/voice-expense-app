@@ -53,6 +53,14 @@ npx expo prebuild --platform android --clean   # re-run after changing app.json 
 npx expo run:android --device                  # builds, installs and starts the dev build
 ```
 
+If Gradle fails with "Failed to install the following SDK components" (e.g. a dropped connection mid-download),
+install the package from the command line — no Android Studio needed. Delete the half-downloaded folder first:
+
+```powershell
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Android\Sdk\platforms\android-37.0", "$env:LOCALAPPDATA\Android\Sdk\.temp" -ErrorAction SilentlyContinue
+& "$env:LOCALAPPDATA\Android\Sdk\cmdline-tools\latest\bin\sdkmanager.bat" --install "platforms;android-37.0" "build-tools;37.0.0"
+```
+
 Later, with only JS changes, just start the dev server:
 
 ```powershell
