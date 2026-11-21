@@ -184,7 +184,8 @@ export default function ProfileScreen() {
             placeholder="No budget"
             keyboardType="number-pad"
             onSave={(v) => {
-              const n = Number(v.replace(/[^d.]/g, ''));
+              // Keep digits and the decimal point ("20,000" → 20000).
+              const n = Number(v.replace(/[^\d.]/g, ''));
               update({ monthlyBudget: n > 0 ? Math.round(n) : null });
             }}
           />
