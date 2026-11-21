@@ -7,7 +7,6 @@ Status: **open** · **blocked (user)** · **verify (device)** · **closed**. Clo
 | 3 | verify (device) | Continuous mode on Android: unclear whether each final result is a segment or the full text so far. `mergeSegment` handles both, but check for doubled words. | Speak two sentences with a pause in hold mode. |
 | 4 | verify (device) | Exact error when the offline model is missing (assumed `language-not-supported`); readiness pre-check should catch it first. | Remove the Urdu model and try Urdu. |
 | 5 | verify | Default model `openai/gpt-oss-20b` on both providers, and OpenRouter's `reasoning` parameter. | `npm run eval`; switch model in Settings if needed. |
-| 6 | blocked (user) | No git remote, so PRs into `staging`/`main` can't be opened. | Create a GitHub repo and add it as `origin` (or ask Claude to run `gh repo create`). |
 | 7 | open | Firestore rules have no emulator tests yet (Phase 6). | Add `@firebase/rules-unit-testing` tests. |
 | 8 | open | Hold-to-talk with TalkBack needs double-tap-and-hold; tap mode is the accessible alternative. | Mention in onboarding (Phase 5). |
 | 9 | open | Home list shows the latest 100 entries; open commands are capped at 50. Full history is the dashboard's job. | Revisit if needed. |
@@ -22,3 +21,4 @@ Status: **open** · **blocked (user)** · **verify (device)** · **closed**. Clo
 | 1 | Code never typechecked/linted | 2026-11-13: packages installed; `npm run typecheck`, `npx expo lint`, `npx expo-doctor` (20/20) all pass. |
 | 2 | expo-speech-recognition SDK 58 support | Installed 58.0.1 via `npx expo install`. |
 | 11 | Releasing the mic before the first readiness check finished opened the setup screen | 2026-11-21: the mic re-checks readiness on press when the cache says not ready (AUDIT C2). |
+| 6 | No git remote, so PRs could not be opened | Remote `awais-221093/voice-expense-app` exists; PRs are created and merged with `gh` (AUDIT C8). |
