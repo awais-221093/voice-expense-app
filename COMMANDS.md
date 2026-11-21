@@ -58,7 +58,19 @@ install the package from the command line — no Android Studio needed. Delete t
 
 ```powershell
 Remove-Item -Recurse -Force "$env:LOCALAPPDATA\Android\Sdk\platforms\android-37.0", "$env:LOCALAPPDATA\Android\Sdk\.temp" -ErrorAction SilentlyContinue
-& "$env:LOCALAPPDATA\Android\Sdk\cmdline-tools\latest\bin\sdkmanager.bat" --install "platforms;android-37.0" "build-tools;37.0.0"
+& "$env:LOCALAPPDATA\Android\Sdk\cmdline-tools\latest\bin\sdkmanager.bat" --install "platforms;android-37.0" "build-tools;37.0.0" "build-tools;36.0.0"
+```
+
+Libraries without their own `buildToolsVersion` use AGP's default (36.0.0), hence both build-tools versions.
+
+If a dependency download fails with "Read timed out" (slow/tethered connection), raise Gradle's timeouts once,
+machine-wide, in `%USERPROFILE%\.gradle\gradle.properties`, then re-run the build (finished downloads are kept):
+
+```properties
+systemProp.org.gradle.internal.http.connectionTimeout=120000
+systemProp.org.gradle.internal.http.socketTimeout=300000
+systemProp.org.gradle.internal.repository.max.retries=10
+systemProp.org.gradle.internal.repository.initial.backoff=2000
 ```
 
 Later, with only JS changes, just start the dev server:
