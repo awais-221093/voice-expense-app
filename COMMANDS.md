@@ -91,3 +91,17 @@ npm run eval                         # runs both providers that have a key
 npm run eval -- --provider groq      # one provider only
 npm run eval -- --only 5             # first 5 fixtures (quick check)
 ```
+
+## npm shortcuts
+
+| Script | Runs |
+|---|---|
+| `npm run start:dev` / `start:clear` | Dev server for the dev build (`--clear` resets the Metro cache) |
+| `npm run android:device` | Build, install and start on the USB phone |
+| `npm run prebuild:android` / `prebuild:clean` | Generate / regenerate `android/` from `app.json` |
+| `npm run gradle:clean` | Clean the Gradle build (after native changes or odd build errors) |
+| `npm run gradle:stop` | Stop Gradle daemons (frees RAM, releases locked files on Windows) |
+| `npm run gradle:release` | Local release APK (`android/app/build/outputs/apk/release/`) |
+| `npm run adb:reverse` | Phone reaches Metro on the PC over USB (port 8081) |
+| `npm run doctor` / `check` | `expo-doctor` / typecheck + lint |
+| `npm run firebase:deploy` | Deploy Firestore rules + indexes (§5) |
