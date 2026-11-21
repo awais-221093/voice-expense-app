@@ -2,7 +2,7 @@
 // tab bar works from every screen, and results show wherever the user is.
 import { router } from 'expo-router';
 import { createContext, use, useEffect, useRef, useState, type ReactNode } from 'react';
-import { AppState } from 'react-native';
+import { Alert, AppState } from 'react-native';
 
 import { EditEntrySheet, type SheetTarget } from '@/components/EditEntrySheet';
 import { RecordingOverlay } from '@/components/RecordingOverlay';
@@ -12,7 +12,7 @@ import { useOpenCommands } from '@/features/commands/hooks';
 import { useInFlight } from '@/features/commands/queue';
 import { createCommand, createManualEntry } from '@/features/commands/repo';
 import { useCommandEntries } from '@/features/entries/hooks';
-import { setEntriesDeleted, updateEntry } from '@/features/entries/repo';
+import { repeatEntry, setEntriesDeleted, updateEntry } from '@/features/entries/repo';
 import type { Entry } from '@/features/entries/types';
 import { useSettings } from '@/features/settings/store';
 import { checkSpeechReadiness, type SpeechReadiness } from '@/features/speech/readiness';
@@ -46,6 +46,8 @@ interface RecorderContext {
   typeNote: () => void;
   /** Soft delete with an Undo snackbar. */
   deleteEntry: (e: Entry) => void;
+  /** Asks, then adds a copy dated now (with Undo). */
+  repeatEntry: (e: Entry) => void;
 }
 
 const Ctx = createContext<RecorderContext | null>(null);
@@ -181,6 +183,25 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     recorder.release();
   }
 
+  function repeat(entry: Entry) {
+    Alert.alert('Add again today?', describeEntry(entry), [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Add',
+        onPress: () => {
+          const id = repeatEntry(uid, entry);
+          showToast({
+            key: `again-${id}`,
+            title: 'Added again for today',
+            lines: [describeEntry(entry)],
+            tone: 'success',
+            action: { label: 'Undo', onPress: () => setEntriesDeleted(uid, [id], true) },
+          });
+        },
+      },
+    ]);
+  }
+
   function deleteEntry(entry: Entry) {
     setEntriesDeleted(uid, [entry.id], true);
     showToast({
@@ -230,6 +251,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     openSheet: setSheet,
     typeNote: () => setTyping(true),
     deleteEntry,
+    repeatEntry: repeat,
   };
 
   return (

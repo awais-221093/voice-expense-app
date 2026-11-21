@@ -27,7 +27,7 @@ export function EntryList({
   footer?: ReactElement;
   empty?: ReactElement;
 }) {
-  const { openSheet } = useRecorder();
+  const { openSheet, repeatEntry } = useRecorder();
   return (
     <SectionList
       sections={groupByDay(entries)}
@@ -52,7 +52,11 @@ export function EntryList({
         </View>
       )}
       renderItem={({ item }) => (
-        <EntryRow entry={item} onPress={() => openSheet({ kind: 'edit', entry: item })} />
+        <EntryRow
+          entry={item}
+          onPress={() => openSheet({ kind: 'edit', entry: item })}
+          onLongPress={() => repeatEntry(item)}
+        />
       )}
     />
   );
