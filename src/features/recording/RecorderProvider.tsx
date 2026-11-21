@@ -1,7 +1,7 @@
 // App-wide voice recording, result card and entry sheet. Lives above the tabs so the mic in the
 // tab bar works from every screen, and results show wherever the user is.
 import { router } from 'expo-router';
-import { createContext, use, useEffect, useState, type ReactNode } from 'react';
+import { createContext, use, useEffect, useRef, useState, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 
 import { EditEntrySheet, type SheetTarget } from '@/components/EditEntrySheet';
@@ -106,17 +106,35 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     },
   });
 
-  function start() {
+  /** Hold mode: true from press to release, so a release during the readiness check is noticed. */
+  const held = useRef(false);
+
+  async function start() {
     // A press while the last recording is still stopping would reset the recorder before its
     // `end` event arrives, losing that recording's transcript.
     if (recorder.phase !== 'idle') return;
-    if (!ready?.ok) return openSetup(ready?.ok === false ? ready.problem : 'permission');
+    held.current = true;
+    let r = ready;
+    if (!r?.ok) {
+      // The cached result can be stale (permission just granted on the setup screen, model just
+      // downloaded, first check still running), so check again before sending the user there.
+      r = await checkSpeechReadiness(sttLocale, allowOnlineSttFallback);
+      setReady(r);
+      if (!r.ok) return openSetup(r.problem);
+      // The finger lifted while we checked: don't start a hands-free recording; the next press works.
+      if (settings.recordingMode === 'hold' && !held.current) return;
+    }
     recorder.start({
-      locale: ready.locale,
-      onDevice: ready.onDevice,
+      locale: r.locale,
+      onDevice: r.onDevice,
       mode: settings.recordingMode,
       silenceTimeoutSec: settings.silenceTimeoutSec,
     });
+  }
+
+  function release() {
+    held.current = false;
+    recorder.release();
   }
 
   function deleteEntry(entry: Entry) {
@@ -162,7 +180,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     understanding: !!watchedId && inFlight.includes(watchedId),
     mode: settings.recordingMode,
     start,
-    release: recorder.release,
+    release,
     stop: recorder.stop,
     showToast,
     openSheet: setSheet,
