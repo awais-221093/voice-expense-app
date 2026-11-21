@@ -6,9 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Chip, Segmented } from '@/components/ui';
 import { PROVIDER_IDS, type ProviderId } from '@/features/llm/types';
+import { useRecorder } from '@/features/recording/RecorderProvider';
 import { useSettings } from '@/features/settings/store';
 import { installedLocales, matchLocale } from '@/features/speech/readiness';
 import { appVersion } from '@/lib/appInfo';
+import { log } from '@/lib/debugLog';
 import { auth } from '@/lib/firebase';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
@@ -23,7 +25,14 @@ const PROVIDER_LABEL: Record<ProviderId, string> = { groq: 'Groq', openrouter: '
 export default function ProfileScreen() {
   const c = useTheme();
   const { settings, keys, update, setKey } = useSettings();
+  const { showToast } = useRecorder();
   const [installed, setInstalled] = useState<string[] | null>(null);
+
+  const saveKey = (p: ProviderId, value: string) =>
+    setKey(p, value).catch((e) => {
+      log.error(`save ${p} key failed`, e);
+      showToast({ key: `key${Date.now()}`, title: "Couldn't save the API key", tone: 'review' });
+    });
   const email = auth.currentUser?.email ?? '';
 
   useEffect(() => {
@@ -121,7 +130,7 @@ export default function ProfileScreen() {
                 value={keys[p] ?? ''}
                 placeholder={keys[p] ? 'Saved' : 'Paste API key'}
                 secure
-                onSave={(v) => setKey(p, v)}
+                onSave={(v) => saveKey(p, v)}
               />
               <SavedInput
                 // Remount when the stored model changes (settings snapshot arriving after mount, or
