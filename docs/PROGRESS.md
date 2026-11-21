@@ -2,6 +2,14 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-21 — First native build: Kotlin 2.4 for Firebase
+
+Branch `fix/kotlin-version`. The first `npm run android` failed in `:react-native-firebase_auth:compileDebugKotlin`
+("compiled with an incompatible version of Kotlin … metadata is 2.4.0, expected 2.2.0").
+- `app.json` → `expo-build-properties` `android.kotlinVersion: "2.4.0"` (DECISIONS #27).
+- COMMANDS §4: Build-Tools 36.0.0 is also needed; Gradle timeouts for slow/tethered connections.
+- Verify (user): `npx expo prebuild --platform android` → `android/gradle.properties` has `android.kotlinVersion=2.4.0` → `npm run android` passes `compileDebugKotlin`.
+
 ## 2026-11-21 — All IDEAS built (I1–I10 + developer ideas)
 
 PRs #137–#149 into `staging`, one per idea (Status list in `docs/IDEAS.md`).
