@@ -15,8 +15,8 @@ Each phase = one or more branches, each with its own PR into `staging` (never `m
       attribution lines, no filler PRs, audit → confirm → fix workflow (`docs/claude-md-refresh`)
 
 ## Phase C — Code audit (broken code, compile-time and runtime errors)
-- [ ] Report in `docs/AUDIT.md`: each finding with severity, file:line, impact and proposed fix
-- [ ] User confirms which findings to fix
+- [x] Report in `docs/AUDIT.md`: each finding with severity, file:line, impact and proposed fix
+- [~] User confirms which findings to fix
 - [ ] One `fix/…` branch + PR per confirmed finding (or per tightly related group)
 
 ## Phase D — UX audit
