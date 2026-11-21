@@ -24,7 +24,7 @@ Each phase = one or more branches, each with its own PR into `staging` (never `m
 - [~] User picks what to build → one branch + PR each
 
 ## Phase E — Product improvements and small side features
-- [ ] Proposals added to `docs/IDEAS.md`, each tagged *in plan* / *changes plan* / *changes data model*
+- [x] Proposals added to `docs/IDEAS.md`, each tagged *in plan* / *changes plan* / *changes data model*
 - [~] User picks what to build → one branch + PR each
 
 ## Done criteria (every code PR)
