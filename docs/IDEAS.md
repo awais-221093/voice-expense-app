@@ -25,3 +25,6 @@ fields, so `DATA_MODEL.md` and the future dashboard are affected. Size: S ≈ < 
 ## Suggested order if you want some
 I1 → I3 → I4 → I2: all small, no new native dependencies. I6 and I7 each add a native module,
 so they need a new dev build.
+
+## Status
+- **I1** done (`feat/test-api-key`): 'Test key' per provider in Profile (pingProvider in the shared llm module).
