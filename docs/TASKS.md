@@ -32,7 +32,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [x] A  Rules + indexes
 - [~] A  Command create → batch result write; listeners; home list; totals; result card + Undo
 - [~] A  Edit sheet, soft delete + Undo, Retry / Fix manually / Dismiss
-- [ ] U  Deploy rules + indexes (COMMANDS §5)
+- [ ] U  Deploy rules + indexes in the Firebase console (SETUP §3)
 - [ ] U  End-to-end test on phone
 
 ## Phase 4 — Offline and reliability
@@ -68,7 +68,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [x] A  UX audit U1–U18 built (#116–#135)
 - [x] A  Ideas I1–I10 + developer ideas (#137–#149)
 - [ ] U  `npm run prebuild:clean` then rebuild the dev build: new native modules (notifications, local-authentication, file-system) and the launcher-shortcut plugin
-- [ ] U  Deploy Firestore rules (`npm run firebase:deploy`): entries.person (I9)
+- [ ] U  Paste the current rules in the Firebase console (SETUP §3): entries.person (I9)
 - [ ] U  `npm run eval` on both providers: prompt v2 adds `person` (I9)
 - [ ] U  On device: check the UX changes (each PR has a Verify step)
 - [ ] U  On device: verify the C1–C6 fixes (each PR has a Verify step)
