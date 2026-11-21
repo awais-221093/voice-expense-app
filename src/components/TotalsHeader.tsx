@@ -37,6 +37,8 @@ export function TotalsHeader({
         <AppText
           variant="hero"
           color={c.primaryText}
+          numberOfLines={1}
+          adjustsFontSizeToFit
           accessibilityLabel={`Spent today ${formatPKR(today)}`}>
           {formatPKR(today)}
         </AppText>

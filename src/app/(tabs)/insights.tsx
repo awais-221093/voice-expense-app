@@ -41,7 +41,7 @@ function Insights({ uid }: { uid: string }) {
               <AppText variant="label" color={c.primaryText}>
                 SPENT
               </AppText>
-              <AppText variant="hero" color={c.primaryText}>
+              <AppText variant="hero" color={c.primaryText} numberOfLines={1} adjustsFontSizeToFit>
                 {formatPKR(ins.spent)}
               </AppText>
               <AppText color={c.primaryText}>
