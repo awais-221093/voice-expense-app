@@ -2,6 +2,14 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-21 — Post-generation audit: plan, CLAUDE.md, code / UX / product reports
+
+PRs #101–#105 into `staging` (docs only, no code changes).
+- `docs/WORKPLAN.md`: phases A–E. `CLAUDE.md`: commit rules, audit workflow, no silent requirement changes.
+- `docs/AUDIT.md`: typecheck, lint and the Android bundle export are clean, so there are no compile errors. 10 runtime/hygiene findings (C1–C10); fixes wait for confirmation.
+- `docs/UX_AUDIT.md`: 18 findings (U1–U18). `docs/IDEAS.md`: 10 tagged feature proposals (I1–I10).
+- Verify: read the four docs; next step is the user choosing which findings to fix.
+
 ## 2026-11-13 — Package rename + bottom tab navigation
 
 Branches: `chore/rename-package` → `feat/tab-navigation` (stacked on `chore/install-deps`).
