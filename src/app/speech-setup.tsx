@@ -16,7 +16,9 @@ import { spacing, useTheme } from '@/theme';
 const COPY: Record<SpeechProblem, { title: string; body: string }> = {
   permission: {
     title: 'Microphone access needed',
-    body: 'The app listens only while you hold the button. Speech is turned into text on your phone and no audio is saved.',
+    body: 'The app listens only while you hold the button. Speech is turned into text on your phone and no audio is saved.
+
+With TalkBack: double-tap and hold the mic, or switch to "Tap to talk" in Profile.',
   },
   'model-missing': {
     title: 'Download the offline speech model',
