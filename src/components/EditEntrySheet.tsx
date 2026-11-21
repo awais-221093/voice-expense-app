@@ -50,6 +50,7 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
           description: target.command.transcript,
           source: null,
           category: 'other',
+          person: null,
           spentAt: target.command.createdAt,
         };
 
@@ -59,6 +60,7 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
   const [description, setDescription] = useState(initial.description ?? '');
   const [source, setSource] = useState(initial.source ?? '');
   const [category, setCategory] = useState(initial.category ?? 'other');
+  const [person, setPerson] = useState(initial.person ?? '');
   const [spentAt, setSpentAt] = useState(initial.spentAt.toDate());
   const [said, setSaid] = useState<string | null>(
     target.kind === 'manual' ? target.command.transcript : null,
@@ -101,6 +103,7 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
       description: description.trim() || null,
       source: source.trim().toLowerCase() || null,
       category,
+      person: type === 'loan' ? person.trim().toLowerCase() || null : null,
       spentAt: Timestamp.fromDate(spentAt),
     });
     onClose();
@@ -165,6 +168,20 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
               accessibilityLabel="Amount in rupees"
             />
           </Field>
+
+          {type === 'loan' && (
+            <Field label="Person">
+              <TextInput
+                style={input}
+                value={person}
+                onChangeText={setPerson}
+                placeholder="who gave or got the loan, e.g. ali"
+                placeholderTextColor={c.textMuted}
+                autoCapitalize="none"
+                accessibilityLabel="Person"
+              />
+            </Field>
+          )}
 
           <Field label="Description">
             <TextInput
