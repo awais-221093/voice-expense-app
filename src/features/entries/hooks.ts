@@ -35,6 +35,15 @@ export function useMonthEntries(uid: string | null, monthStart: Date) {
   );
 }
 
+/** Every non-deleted loan (all time), for per-person balances. Equality-only filters: no composite index. */
+export function useLoanEntries(uid: string | null) {
+  return useCollection<Entry>(`loans:${uid}`, () =>
+    uid
+      ? query(paths.entries(uid), where('deleted', '==', false), where('type', '==', 'loan'))
+      : null,
+  );
+}
+
 /** Entries created from one command — drives the result card. Single-field index only. */
 export function useCommandEntries(uid: string, commandId: string | null) {
   return useCollection<Entry>(`cmd:${uid}:${commandId}`, () =>
