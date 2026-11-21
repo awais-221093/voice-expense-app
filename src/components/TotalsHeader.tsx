@@ -13,7 +13,10 @@ export function TotalsHeader({
   online,
   now,
   onTypeNote,
+  budget,
 }: {
+  /** Monthly expense budget, or null for none. */
+  budget: number | null;
   onTypeNote: () => void;
   now: Date;
   today: number;
@@ -58,7 +61,33 @@ export function TotalsHeader({
           <Stat label="This month" value={formatPKR(month)} color={c.primaryText} />
           <Stat label="Money in" value={`+${formatPKR(inflow)}`} color={c.primaryText} />
         </View>
+        {budget !== null && <BudgetBar spent={month} budget={budget} color={c.primaryText} />}
       </View>
+    </View>
+  );
+}
+
+/** Progress toward the monthly budget. The text says "left" or "over", so colour is never the only signal. */
+function BudgetBar({ spent, budget, color }: { spent: number; budget: number; color: string }) {
+  const left = budget - spent;
+  const text =
+    left >= 0
+      ? `${formatPKR(left)} left of ${formatPKR(budget)}`
+      : `⚠ ${formatPKR(-left)} over the ${formatPKR(budget)} budget`;
+  return (
+    <View style={styles.budget} accessible accessibilityLabel={`Budget: ${text}`}>
+      <View style={styles.track}>
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: color, opacity: 0.25 }]} />
+        <View
+          style={[
+            styles.fill,
+            { backgroundColor: color, width: `${Math.min(spent / budget, 1) * 100}%` },
+          ]}
+        />
+      </View>
+      <AppText variant="small" color={color} style={styles.dim}>
+        {text}
+      </AppText>
     </View>
   );
 }
@@ -95,4 +124,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', marginTop: spacing.md, gap: spacing.xl },
   stat: { gap: 2 },
   dim: { opacity: 0.85 },
+  budget: { gap: spacing.xs, marginTop: spacing.md },
+  track: { height: 8, borderRadius: 4, overflow: 'hidden' },
+  fill: { height: 8, borderRadius: 4 },
 });
