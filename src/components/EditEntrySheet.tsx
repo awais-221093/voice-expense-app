@@ -17,7 +17,7 @@ import type { Entry, EntryFields } from '@/features/entries/types';
 import { ENTRY_TYPES, type EntryType } from '@/features/llm/types';
 import { useSettings } from '@/features/settings/store';
 import { paths } from '@/lib/firebase';
-import { formatDayHeading } from '@/lib/time';
+import { formatDayHeading, localISODate } from '@/lib/time';
 import { MIN_TOUCH, radius, spacing, useTheme } from '@/theme';
 
 export type SheetTarget = { kind: 'edit'; entry: Entry } | { kind: 'manual'; command: Command };
@@ -31,6 +31,10 @@ interface Props {
 }
 
 const DAY_MS = 86_400_000;
+const QUICK_DAYS = [
+  { label: 'Today', daysAgo: 0 },
+  { label: 'Yesterday', daysAgo: 1 },
+];
 
 /** Edit an entry, or create one by hand from a failed command (plan §6.4). Mount with a `key` per target. */
 export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props) {
@@ -61,6 +65,19 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
   );
   // Captured once when the sheet opens; render must stay pure (no Date.now() in JSX).
   const [openedAt] = useState(() => Date.now());
+
+  /** Same clock time on the day `daysAgo` before the sheet opened, but never in the future. */
+  const onDay = (daysAgo: number) => {
+    const d = new Date(openedAt - daysAgo * DAY_MS);
+    const t = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      spentAt.getHours(),
+      spentAt.getMinutes(),
+    );
+    return new Date(Math.min(t.getTime(), openedAt));
+  };
 
   const parsedAmount = Number(amount.replace(/,/g, ''));
   const amountValid = amount === '' || (Number.isFinite(parsedAmount) && parsedAmount > 0);
@@ -116,7 +133,6 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
           <Button title="Save" onPress={save} disabled={!amountValid} />
         </View>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-
           <Field label="Type">
             <Segmented
               value={type}
@@ -212,6 +228,18 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
                 onPress={() => setSpentAt(new Date(spentAt.getTime() + DAY_MS))}
                 accessibilityHint="Next day"
               />
+            </View>
+            <View style={styles.chips}>
+              {QUICK_DAYS.map(({ label, daysAgo }) => (
+                <Chip
+                  key={label}
+                  label={label}
+                  selected={
+                    localISODate(spentAt) === localISODate(new Date(openedAt - daysAgo * DAY_MS))
+                  }
+                  onPress={() => setSpentAt(onDay(daysAgo))}
+                />
+              ))}
             </View>
           </Field>
 
