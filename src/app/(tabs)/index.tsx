@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -12,6 +12,7 @@ import { AppText, Button } from '@/components/ui';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { dismissCommand, requeueCommand } from '@/features/commands/repo';
 import { expenseTotals, useMonthEntries, useRecentEntries } from '@/features/entries/hooks';
+import { useAppLock } from '@/features/lock/appLock';
 import { useRecorder } from '@/features/recording/RecorderProvider';
 import { useNoUsableKey, useSettings } from '@/features/settings/store';
 import { auth } from '@/lib/firebase';
@@ -34,7 +35,16 @@ function Home({ uid }: { uid: string }) {
   const c = useTheme();
   const online = useIsOnline();
   const now = useNow();
-  const { openSheet, mode, typeNote } = useRecorder();
+  const { openSheet, mode, typeNote, startHandsFree } = useRecorder();
+
+  // Launcher shortcut → /record → here with ?record=1. Never listen behind the app lock.
+  const { record } = useLocalSearchParams<{ record?: string }>();
+  const locked = useAppLock((s) => s.locked || !s.loaded);
+  useEffect(() => {
+    if (record !== '1' || locked) return;
+    router.setParams({ record: undefined });
+    startHandsFree();
+  }, [record, locked, startHandsFree]);
   const noKey = useNoUsableKey();
   const budget = useSettings((s) => s.settings.monthlyBudget);
   const [showAllOpen, setShowAllOpen] = useState(false);
