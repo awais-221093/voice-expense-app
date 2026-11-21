@@ -14,8 +14,27 @@ Things only you can do (console clicks, keys, phone). Commands referenced here a
 3. Download **`google-services.json`** and put it in the repo root (`D:\DEVELOPMENT\RN\voice-expense-app\google-services.json`). It is git-ignored.
 4. SHA-1 is not needed (no Google sign-in).
 
-## 3. Deploy rules and indexes
-`COMMANDS.md` §5. Indexes take a few minutes to build; the app shows a loading state until they are ready.
+## 3. Deploy rules and indexes (Firebase console, no CLI)
+The Firebase CLI is not linked to this repo; rules and indexes are set by hand in the console.
+**Pending task (2026-11-21):** do this before the first device run, and again whenever
+`firebase/firestore.rules` or `firebase/firestore.indexes.json` changes.
+
+1. **Rules:** Firestore → **Rules** → replace everything with the contents of
+   `firebase/firestore.rules` → **Publish**. (The current version allows the optional loan
+   `person` field; without it, new loan entries are rejected.)
+2. **Indexes:** Firestore → **Indexes** → **Composite** → **Create index**, scope *Collection*:
+
+   | Collection ID | Fields, in this order |
+   |---|---|
+   | `entries` | `deleted` Ascending · `spentAt` Descending |
+   | `commands` | `entryIds` Ascending · `dismissedAt` Ascending · `createdAt` Descending |
+
+   The third index in `firestore.indexes.json` (`commands`: `status` + `createdAt`) is not
+   queried by the app and can be skipped. All other queries use automatic indexes.
+3. Indexes take a few minutes to build; lists show a loading state until then. A missing index
+   shows up in the debug log (long-press the Profile avatar) with a link that creates it.
+
+CLI alternative, if the project is ever linked: `COMMANDS.md` §5 (`npm run firebase:deploy`).
 
 ## 4. LLM API keys
 - **Groq:** https://console.groq.com/keys → Create API key.
