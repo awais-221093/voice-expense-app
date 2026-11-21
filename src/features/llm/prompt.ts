@@ -6,12 +6,12 @@ export interface ChatMessage {
 }
 
 /** Bump when the prompt changes, so llmAttempts can be compared across versions. */
-export const PROMPT_VERSION = 'v1';
+export const PROMPT_VERSION = 'v2';
 
 function systemPrompt(ctx: ExtractionContext): string {
   return `You turn one short spoken money note into structured records for a personal money log in Pakistan.
 Reply with JSON only (no prose, no markdown) in exactly this shape:
-{"entries":[{"type":string,"direction":string,"amount":number|null,"description":string|null,"source":string|null,"category":string|null,"spent_at":string|null,"confidence":number}],"notes":string|null}
+{"entries":[{"type":string,"direction":string,"amount":number|null,"description":string|null,"source":string|null,"category":string|null,"person":string|null,"spent_at":string|null,"confidence":number}],"notes":string|null}
 
 Rules:
 - One entry per distinct amount/item. "100 for eggs and 50 for bread" = 2 entries.
@@ -29,6 +29,7 @@ Rules:
 - description: short English noun phrase, lowercase, even if the note is Urdu or mixed. Put the person's name for loans (e.g. "loan to ali"). null if nothing to describe.
 - source: where the money came from / went through. Prefer one of: ${JSON.stringify(ctx.knownSources)}; otherwise a short lowercase English word; null if not said.
 - category: one of ${JSON.stringify(ctx.categories)}; use "other" if none fit. For non-expense types use "other" unless one clearly fits.
+- person: for loans only, the other person as a short lowercase English word or name ("ali", "brother"); null for every other type or if no one is named.
 - spent_at: "YYYY-MM-DD" only if the user said a date ("yesterday", "on Monday", "kal", "parson"); otherwise null. Resolve relative to "Now" given in the message. "kal" about spending means yesterday.
 - confidence: 0 to 1, your certainty about the whole entry.
 - notes: null unless something could not be placed or a non-PKR currency was said.
@@ -51,7 +52,19 @@ const e = (
   category: string,
   spent_at: string | null = null,
   confidence = 0.95,
-) => ({ type, direction, amount, description, source, category, spent_at, confidence });
+) => ({
+  type,
+  direction,
+  amount,
+  description,
+  source,
+  category,
+  person: null as string | null,
+  spent_at,
+  confidence,
+});
+/** A loan few-shot with the other person filled in. */
+const loan = (entry: ReturnType<typeof e>, person: string) => ({ ...entry, person });
 
 const FEW_SHOTS: FewShot[] = [
   {
@@ -73,13 +86,16 @@ const FEW_SHOTS: FewShot[] = [
   {
     now: '2026-03-04 Wednesday',
     transcript: 'gave ali 5000 loan',
-    output: { entries: [e('loan', 'outflow', 5000, 'loan to ali', null, 'other')], notes: null },
+    output: {
+      entries: [loan(e('loan', 'outflow', 5000, 'loan to ali', null, 'other'), 'ali')],
+      notes: null,
+    },
   },
   {
     now: '2026-03-04 Wednesday',
     transcript: 'took 10000 loan from brother',
     output: {
-      entries: [e('loan', 'inflow', 10000, 'loan from brother', null, 'family')],
+      entries: [loan(e('loan', 'inflow', 10000, 'loan from brother', null, 'family'), 'brother')],
       notes: null,
     },
   },
@@ -87,7 +103,9 @@ const FEW_SHOTS: FewShot[] = [
     now: '2026-03-04 Wednesday',
     transcript: 'ali returned 2000',
     output: {
-      entries: [e('loan', 'inflow', 2000, 'repayment from ali', null, 'other', null, 0.85)],
+      entries: [
+        loan(e('loan', 'inflow', 2000, 'repayment from ali', null, 'other', null, 0.85), 'ali'),
+      ],
       notes: null,
     },
   },
