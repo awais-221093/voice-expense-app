@@ -35,6 +35,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="speech-setup" options={{ presentation: 'modal' }} />
             <Stack.Screen name="debug" options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="record" options={{ animation: 'none' }} />
           </Stack.Protected>
           <Stack.Protected guard={!user}>
             <Stack.Screen name="sign-in" />

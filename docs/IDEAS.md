@@ -36,3 +36,4 @@ so they need a new dev build.
 - **I9** done (`feat/loan-balances`): entries.person (loans), prompt v2, Person field, Insights 'Loan balances (all time)'; rules updated — deploy them.
 - **I6** done (`feat/daily-reminder`): expo-notifications; Profile toggle + 7–10 pm; next 7 days scheduled, today skipped once logged (DECISIONS #24). Needs a dev-build rebuild.
 - **I7** done (`feat/app-lock`): expo-local-authentication; Profile → Security toggle; locks on start and after 30 s away; PIN fallback (DECISIONS #25). Needs a dev-build rebuild.
+- **I10** done (`feat/record-shortcut`): launcher shortcut 'Record a note' (config plugin) → /record → hands-free recording; instead of a widget/tile (DECISIONS #26). Needs prebuild + rebuild.

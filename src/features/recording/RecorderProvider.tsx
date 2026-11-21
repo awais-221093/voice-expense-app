@@ -38,6 +38,8 @@ interface RecorderContext {
   understanding: boolean;
   mode: 'hold' | 'tap';
   start: () => void;
+  /** Tap-mode recording regardless of the setting (launcher shortcut: no finger is holding). */
+  startHandsFree: () => void;
   release: () => void;
   stop: () => void;
   showToast: (t: ToastData) => void;
@@ -145,7 +147,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
   /** Hold mode: true from press to release, so a release during the readiness check is noticed. */
   const held = useRef(false);
 
-  async function start() {
+  async function start(mode = settings.recordingMode) {
     // A press while the last recording is still stopping would reset the recorder before its
     // `end` event arrives, losing that recording's transcript.
     if (recorder.phase !== 'idle') return;
@@ -168,12 +170,12 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
       setReady(r);
       if (!r.ok) return openSetup(r.problem);
       // The finger lifted while we checked: don't start a hands-free recording; the next press works.
-      if (settings.recordingMode === 'hold' && !held.current) return;
+      if (mode === 'hold' && !held.current) return;
     }
     recorder.start({
       locale: r.locale,
       onDevice: r.onDevice,
-      mode: settings.recordingMode,
+      mode,
       silenceTimeoutSec: settings.silenceTimeoutSec,
     });
   }
@@ -244,7 +246,8 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     phase: recorder.phase,
     understanding: !!watchedId && inFlight.includes(watchedId),
     mode: settings.recordingMode,
-    start,
+    start: () => void start(),
+    startHandsFree: () => void start('tap'),
     release,
     stop: recorder.stop,
     showToast,
