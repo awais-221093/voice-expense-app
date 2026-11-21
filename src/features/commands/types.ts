@@ -27,9 +27,10 @@ export interface Command {
   updatedAt: Timestamp;
   dismissedAt: Timestamp | null;
   meta: {
-    sttEngine: 'on-device' | 'online';
+    /** 'typed' = entered with the keyboard instead of speech (IDEAS I2). */
+    sttEngine: 'on-device' | 'online' | 'typed';
     locale: string;
-    recordingMode: 'hold' | 'tap';
+    recordingMode: 'hold' | 'tap' | 'typed';
     appVersion: string;
   };
 }
