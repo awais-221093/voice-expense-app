@@ -247,7 +247,8 @@ function ListEditor({
     const index = items.indexOf(item);
     update({ [field]: items.filter((i) => i !== item) });
     showToast({
-      key: `rm-${field}-${item}-${Date.now()}`,
+      // No Date.now() here (React Compiler purity rule); the toast hides on Undo, so a repeat key still restarts.
+      key: `rm-${field}-${item}`,
       title: `Removed “${item}”`,
       action: {
         label: 'Undo',
