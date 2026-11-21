@@ -49,7 +49,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 
 ## Phase 5 — Polish
 - [ ] A  App icon + splash artwork
-- [ ] A  Onboarding: first-run permission + model check flow review
+- [~] A  Onboarding: first-run permission + model check flow review (speech setup opens once on first run)
 - [ ] A  Copy review, reduced-motion and large-text pass
 - [ ] U  Measure end-of-speech → result card (< 2 s target)
 

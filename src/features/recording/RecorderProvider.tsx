@@ -17,6 +17,7 @@ import { useSettings } from '@/features/settings/store';
 import { checkSpeechReadiness, type SpeechReadiness } from '@/features/speech/readiness';
 import { useVoiceRecorder, type RecorderPhase } from '@/features/speech/useVoiceRecorder';
 import { log, logOnFail } from '@/lib/debugLog';
+import { isFirstTime } from '@/lib/firstRun';
 import { haptics } from '@/lib/haptics';
 import { formatPKR } from '@/lib/money';
 import { useIsOnline } from '@/lib/network';
@@ -79,6 +80,20 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     const sub = AppState.addEventListener('change', (s) => s === 'active' && check());
     return () => sub.remove();
   }, [sttLocale, allowOnlineSttFallback]);
+
+  // First run (plan §6.6): fix permission / offline model before the first note, not on first press.
+  const firstRunChecked = useRef(false);
+  useEffect(() => {
+    if (!ready || firstRunChecked.current) return;
+    firstRunChecked.current = true;
+    isFirstTime('first_run_speech_setup').then((first) => {
+      if (first && !ready.ok)
+        router.push({
+          pathname: '/speech-setup',
+          params: { problem: ready.problem, locale: sttLocale },
+        });
+    }, logOnFail('first-run speech check'));
+  }, [ready, sttLocale]);
 
   const showToast = (t: ToastData) => {
     setWatching(null);
