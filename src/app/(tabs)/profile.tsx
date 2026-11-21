@@ -1,7 +1,7 @@
 import { signOut } from '@react-native-firebase/auth';
 import { router } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Chip, Segmented } from '@/components/ui';
@@ -18,6 +18,14 @@ const LANGUAGES = [
   { value: 'en-US', label: 'English' },
   { value: 'ur-PK', label: 'Urdu' },
 ] as const;
+
+/** One tap on a danger button shouldn't end the session; signing back in needs the password. */
+function confirmSignOut() {
+  Alert.alert('Sign out?', 'You will need your email and password to sign in again.', [
+    { text: 'Cancel', style: 'cancel' },
+    { text: 'Sign out', style: 'destructive', onPress: () => void signOut(auth) },
+  ]);
+}
 
 const PROVIDER_LABEL: Record<ProviderId, string> = { groq: 'Groq', openrouter: 'OpenRouter' };
 
@@ -148,7 +156,7 @@ export default function ProfileScreen() {
         </Section>
 
         <Section title="Account">
-          <Button title="Sign out" kind="danger" onPress={() => signOut(auth)} />
+          <Button title="Sign out" kind="danger" onPress={confirmSignOut} />
         </Section>
         <AppText variant="small" muted style={styles.version}>
           Voice Expense {appVersion}
