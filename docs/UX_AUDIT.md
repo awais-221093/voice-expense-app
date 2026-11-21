@@ -52,3 +52,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U10** done (`feat/collapse-attention`): Needs attention shows 3 rows, then 'Show N more' / 'Show less'.
 - **U11** done (`feat/list-remove-undo`): removing a source/category shows an Undo toast that restores it in place.
 - **U12** done (`feat/sign-out-confirm`): sign out asks for confirmation (native Alert).
+- **U13** done (`feat/api-key-feedback`): '<Provider> key saved/removed' toast; 'Remove key' (with confirm) when a key is set.
