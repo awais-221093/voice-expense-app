@@ -57,3 +57,4 @@ Priority: P1 hurts the core "speak → saved" loop · P2 noticeable friction · 
 - **U15** done (`feat/screen-reader-toasts`): toasts stay twice as long (10 s default) while a screen reader is on.
 - **U16** done (`feat/large-text`): hero amounts (Home, Insights) shrink to fit; tab labels capped at 1.3× font scale.
 - **U17** done (`feat/skeleton-rows`): Home and Activity show static skeleton rows while loading (no shimmer, reduced-motion safe).
+- **U18** done (`feat/sign-in-fields`): Email 'Next' focuses Password; Password has a show/hide button and 'Go' submits.
