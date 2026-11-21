@@ -65,5 +65,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [x] A  `npx expo install --fix` (AUDIT C9) — expo-doctor 20/20
 - [ ] U  Rebuild the dev build (native `expo-dev-client` changed; COMMANDS §4)
 - [x] A  AUDIT C10: filler housekeeping log files removed (user OK 2026-11-21)
-- [ ] U  Pick UX items (docs/UX_AUDIT.md) and ideas (docs/IDEAS.md) to build
+- [x] A  UX audit U1–U18 built (#116–#135)
+- [ ] A  Ideas I1–I10 (docs/IDEAS.md)
+- [ ] U  On device: check the UX changes (each PR has a Verify step)
 - [ ] U  On device: verify the C1–C6 fixes (each PR has a Verify step)

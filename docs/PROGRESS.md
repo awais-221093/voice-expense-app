@@ -2,6 +2,12 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-21 — UX audit U1–U18 built
+
+PRs #116–#135 into `staging`, one per finding (see the Status list in `docs/UX_AUDIT.md`).
+- Two slips merged and were fixed forward right away: #118 broke a string literal (fixed in #119), #127 had a lint error (fixed in #128). Every PR is now gated on typecheck + lint before it is opened.
+- Verified: typecheck ✓, lint ✓, `npx expo export --platform android` ✓ on staging @ #135. Not yet run on a device.
+
 ## 2026-11-21 — Audit fixes C1–C8
 
 PRs #106–#111 plus `docs/audit-hygiene`, all into `staging`.
