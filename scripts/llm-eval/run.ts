@@ -24,6 +24,8 @@ interface Expected {
   description: string[] | null;
   source: string | null;
   category: string;
+  /** Optional: checked only when the fixture states it. */
+  person?: string | null;
   spent_at: string | null;
 }
 interface FixtureFile {
@@ -110,6 +112,7 @@ function compare(expected: Expected[], actual: ParsedEntry[]): string[] {
     check('source', exp.source, got.source);
     check('category', exp.category, got.category);
     check('spent_at', exp.spent_at, got.spentAt);
+    if (exp.person !== undefined) check('person', exp.person, got.person);
     const ok =
       exp.description === null
         ? got.description === null

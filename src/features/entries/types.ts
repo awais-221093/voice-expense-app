@@ -10,6 +10,8 @@ export interface EntryFields {
   description: string | null;
   source: string | null;
   category: string | null;
+  /** Loans only (IDEAS I9). Missing on entries written before 2026-11-21. */
+  person?: string | null;
   spentAt: Timestamp;
 }
 

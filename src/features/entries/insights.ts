@@ -114,3 +114,25 @@ export function previousSpend(
 export function relativeChange(current: number, previous: number): number | null {
   return previous > 0 ? (current - previous) / previous : null;
 }
+
+export interface LoanBalance {
+  person: string;
+  /** > 0: they owe you · < 0: you owe them. */
+  balance: number;
+}
+
+/**
+ * All-time loan balance per person, from the user's side: money out (lent, or repaid to them)
+ * counts +, money in (borrowed, or repaid to you) counts −. Settled people are left out.
+ */
+export function loanBalances(entries: Entry[]): LoanBalance[] {
+  const map = new Map<string, number>();
+  for (const e of entries) {
+    if (e.type !== 'loan' || e.amount === null) continue;
+    add(map, e.person ?? 'not named', e.direction === 'outflow' ? e.amount : -e.amount);
+  }
+  return [...map.entries()]
+    .map(([person, balance]) => ({ person, balance }))
+    .filter((b) => Math.abs(b.balance) >= 0.01)
+    .sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
+}

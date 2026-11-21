@@ -5,8 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MonthSwitcher } from '@/components/MonthSwitcher';
 import { AppText } from '@/components/ui';
-import { useMonthEntries } from '@/features/entries/hooks';
+import { useLoanEntries, useMonthEntries } from '@/features/entries/hooks';
 import {
+  loanBalances,
   monthInsights,
   previousSpend,
   relativeChange,
@@ -32,6 +33,8 @@ function Insights({ uid }: { uid: string }) {
   const { data, loading } = useMonthEntries(uid, month);
   const ins = monthInsights(data, month, now);
   const net = ins.total.inflow - ins.total.outflow;
+
+  const balances = loanBalances(useLoanEntries(uid).data);
 
   const prevStart = addMonths(month, -1);
   const prevMonth = useMonthEntries(uid, prevStart);
@@ -113,6 +116,29 @@ function Insights({ uid }: { uid: string }) {
                   </View>
                 );
               })}
+            </Card>
+
+            <Card title="Loan balances (all time)">
+              {balances.length ? (
+                balances.map((b) => {
+                  const text =
+                    b.balance > 0
+                      ? `owes you ${formatPKR(b.balance)}`
+                      : `you owe ${formatPKR(-b.balance)}`;
+                  return (
+                    <View
+                      key={b.person}
+                      style={styles.typeRow}
+                      accessible
+                      accessibilityLabel={`${b.person} ${text}`}>
+                      <AppText style={styles.flex}>{b.person}</AppText>
+                      <AppText color={b.balance > 0 ? c.inflow : c.danger}>{text}</AppText>
+                    </View>
+                  );
+                })
+              ) : (
+                <AppText muted>No open loans.</AppText>
+              )}
             </Card>
           </>
         )}

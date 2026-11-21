@@ -69,6 +69,7 @@ export function commitProcessingResult(
       description: e.description,
       source: e.source,
       category: e.category,
+      person: e.person,
       spentAt: e.spentAt ? Timestamp.fromDate(dateWithTimeOf(e.spentAt, createdAt)) : cmd.createdAt,
     };
     batch.set(paths.entry(uid, entryIds[i]), {
