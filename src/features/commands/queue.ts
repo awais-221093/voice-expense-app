@@ -44,6 +44,13 @@ async function processCommand(uid: string, cmd: Command) {
     `command ${cmd.id} → ${plan.status}`,
     plan.statusReason ?? `${plan.entries.length} entries`,
   );
+  // Per-attempt token counts for the debug screen (cost / prompt-size checks).
+  for (const a of attempts) {
+    const tokens = a.usage
+      ? `${a.usage.promptTokens} in · ${a.usage.completionTokens} out`
+      : 'no usage';
+    log.info(`  attempt ${a.provider}/${a.model}: ${a.error ?? 'ok'} (${tokens})`);
+  }
   commitProcessingResult(uid, cmd, attempts, plan);
 }
 
