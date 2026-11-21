@@ -176,6 +176,23 @@ export default function ProfileScreen() {
           <ListEditor field="categories" locked={['other']} />
         </Section>
 
+        <Section title="Monthly budget">
+          <SavedInput
+            key={String(settings.monthlyBudget)}
+            label="Monthly budget in rupees"
+            value={settings.monthlyBudget ? String(settings.monthlyBudget) : ''}
+            placeholder="No budget"
+            keyboardType="number-pad"
+            onSave={(v) => {
+              const n = Number(v.replace(/[^d.]/g, ''));
+              update({ monthlyBudget: n > 0 ? Math.round(n) : null });
+            }}
+          />
+          <AppText variant="small" muted>
+            Expenses only. Shown as a bar on Home; leave empty for no budget.
+          </AppText>
+        </Section>
+
         <Section title="AI provider">
           <Segmented
             value={settings.llmProvider}
@@ -272,12 +289,14 @@ function SavedInput({
   onSave,
   placeholder,
   secure,
+  keyboardType,
 }: {
   label: string;
   value: string;
   onSave: (v: string) => void;
   placeholder?: string;
   secure?: boolean;
+  keyboardType?: 'default' | 'number-pad';
 }) {
   const c = useTheme();
   // Secret values are never shown back; the field starts empty and "Saved" is the placeholder.
@@ -296,6 +315,7 @@ function SavedInput({
       placeholder={placeholder}
       placeholderTextColor={c.textMuted}
       secureTextEntry={secure}
+      keyboardType={keyboardType}
       autoCapitalize="none"
       autoCorrect={false}
       accessibilityLabel={label}
