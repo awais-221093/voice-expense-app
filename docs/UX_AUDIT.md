@@ -99,3 +99,4 @@ Suggested order: U21 → U19 → U20 → U26 → U29 (P1s), then the P2s.
 - **U19** done (`fix/speech-service-unavailable`): `service-not-allowed` opens a 'Speech service not available' setup screen instead of 'Microphone access needed'.
 - **U20** done (`feat/speech-setup-way-out`): model-missing / unsupported / service screens offer 'Use online recognition' (one tap, explained) and 'Type a note instead' (Home `?type=1`).
 - **U26** done (`feat/result-card-reason`): failed / nothing-found result cards show the plain reason; key or model problems get a 'Fix' → Profile action, others 'Open' → Home; backing off while online says 'will retry shortly'.
+- **U29** done (`fix/app-lock-lockout`): with no screen lock left on the phone, Unlock turns the app lock off and explains it; failed unlocks show a reason (cancel stays silent). Still to check on device.
