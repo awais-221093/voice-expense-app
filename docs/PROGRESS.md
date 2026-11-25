@@ -2,6 +2,14 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-25 — App icon, splash and logo
+
+Branch `feat/app-icon-splash` (plan: `docs/plans/APP_ICON_SPLASH_PLAN.md`).
+- `scripts/brand/generate-icons.ts` + `npm run icons`: one SVG mark (gold-coin mic with sound waves on teal), rendered with `@resvg/resvg-js` into icon, adaptive foreground/background, monochrome (themed), splash and a 512 px logo.
+- Splash uses the mark at `imageWidth` 200; the sign-in screen shows the logo. Unused Expo template assets removed.
+- COMMANDS §8 (icons) and §9 (standalone release APK, arm64 only).
+- Verified: preview sheet reviewed (circle, squircle, mono, 48 px, splash); typecheck ✓, lint ✓, `npx expo export --platform android` ✓. Device check after a rebuild (ISSUES #10).
+
 ## 2026-11-25 — UX audit 2 built; sign-up, password reset, theme
 
 PRs #158–#174 into `staging`, one per finding or task (Status list in `docs/UX_AUDIT.md`).

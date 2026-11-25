@@ -150,3 +150,33 @@ npx expo install expo-notifications          # I6 daily reminder
 npx expo install expo-local-authentication   # I7 app lock
 npx expo install expo-file-system            # persisted debug log (native)
 ```
+
+## 8. App icon, splash and logo (2026-11-25)
+
+All PNGs in `assets/images/` come from one script (`scripts/brand/generate-icons.ts`). Edit the SVG there,
+then regenerate. Icons and the splash are native resources, so rebuild afterwards.
+
+```powershell
+npm i -D @resvg/resvg-js                       # once (already done 2026-11-25)
+npm run icons                                  # writes icon, adaptive layers, monochrome, splash, logo
+npm run icons -- --preview <some folder>       # optional: preview.png with masks and small sizes
+npm run prebuild:clean                         # then rebuild (§4); uninstall first if the launcher keeps the old icon
+```
+
+## 9. Standalone APK (install without the dev server)
+
+A release APK with the JS bundled in: it runs without Metro or the PC. It is signed with the debug key
+(fine for your own phone; Play Store would need a real keystore). Building only `arm64-v8a` (every
+current phone) is about 4× faster and lighter on RAM than all four ABIs.
+
+```powershell
+npx expo prebuild --platform android --clean
+cd android
+.\gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a
+.\gradlew --stop                               # frees ~2 GB RAM held by the Gradle daemon
+cd ..
+```
+
+The APK is `android\app\build\outputs\apk\release\app-release.apk`. Install it over USB with
+`adb install -r android\app\build\outputs\apk\release\app-release.apk`, or copy it to the phone and open it
+(allow "Install unknown apps" for your file manager). It replaces the dev build (same package and key).
