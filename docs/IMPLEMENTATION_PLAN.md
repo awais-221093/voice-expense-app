@@ -8,7 +8,7 @@ Package installs and builds are run by the user from `COMMANDS.md`.
 ```
 src/app/                 Expo Router routes only
   _layout.tsx            providers, auth gate (Stack.Protected), queue runner
-  sign-in.tsx            email/password
+  sign-in.tsx            email/password sign-in + create account
   (tabs)/_layout.tsx     JS tabs + custom AppTabBar, wrapped in RecorderProvider
   (tabs)/index.tsx       Home: totals hero, needs attention, latest entries
   (tabs)/activity.tsx    month history, filters, search

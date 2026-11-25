@@ -125,7 +125,7 @@ interface LlmProvider {
 
 ### 3.3 Firebase — rules
 - **React Native Firebase** with its Expo config plugin; `google-services.json` from the Firebase console (git-ignored). Native Firestore offline persistence is on by default: writes made offline are stored on disk and sent when online, including after an app restart. Verify this in Phase 4.
-- Auth: **email/password** sign-in for the single user. Sessions persist natively. No Google sign-in, no anonymous auth (anonymous data is lost on reinstall).
+- Auth: **email/password**, with in-app sign-up (each account sees only its own data; DECISIONS #28). Sessions persist natively. No Google sign-in, no anonymous auth (anonymous data is lost on reinstall).
 - Security rules restrict all access to the owner UID and enforce data integrity (Section 4).
 
 ---
@@ -350,8 +350,8 @@ Screen reader labels (including hold-to-talk instructions), minimum 48dp targets
 
 ### Phase 0 — Setup
 - Create Expo SDK 58 TypeScript project with Expo Router; ESLint + Prettier; env handling.
-- Add React Native Firebase (app, auth, firestore) with its config plugin; email/password sign-in screen.
-- `SETUP.md` listing every manual step: create Firebase project, register the Android app, download `google-services.json`, enable Email/Password auth and create the user, deploy rules and indexes, get Groq/OpenRouter keys (with OpenRouter spending limit), install the dev build on the phone.
+- Add React Native Firebase (app, auth, firestore) with its config plugin; email/password sign-in / sign-up screen.
+- `SETUP.md` listing every manual step: create Firebase project, register the Android app, download `google-services.json`, enable Email/Password auth, deploy rules and indexes, get Groq/OpenRouter keys (with OpenRouter spending limit), install the dev build on the phone.
 - **Done when:** app runs as a development build on the user's Android 16 phone, connects to Firebase, and the user can sign in and stays signed in after restart.
 
 ### Phase 1 — On-device speech
@@ -396,7 +396,7 @@ Screen reader labels (including hold-to-talk instructions), minimum 48dp targets
 2. Work phase by phase; at the end of each phase, summarise what was done and how to verify it.
 3. Do not invent features outside this document. Put ideas in `/docs/IDEAS.md`.
 4. When a manual step is needed from the user (Firebase console, API keys, device testing, downloading offline speech packs), stop and list the exact steps in `SETUP.md` rather than guessing.
-5. Ask the user only for: `google-services.json` / Firebase setup, Groq/OpenRouter keys, and the sign-in email.
+5. Ask the user only for: `google-services.json` / Firebase setup, and Groq/OpenRouter keys.
 6. Record any deviation from this plan, with the reason, in `DECISIONS.md`.
 
 ---
