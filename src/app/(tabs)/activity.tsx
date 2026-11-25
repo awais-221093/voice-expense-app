@@ -106,7 +106,7 @@ function Activity({ uid }: { uid: string }) {
     <SkeletonRows />
   ) : (
     <AppText muted style={styles.empty}>
-      {error ? `Could not load: ${error}` : 'Nothing here for this month.'}
+      {error ?? 'Nothing here for this month.'}
     </AppText>
   );
 
