@@ -22,6 +22,10 @@ const COPY: Record<SpeechProblem, { title: string; body: string }> = {
     title: 'Download the offline speech model',
     body: 'Your phone needs its offline speech pack for this language, so your voice never leaves the device.\n\nTap "Download" below. If nothing opens: Settings → System → Languages → Speech / On-device recognition → add the language.',
   },
+  service: {
+    title: 'Speech service not available',
+    body: "Android's speech service didn't start on this phone. Check that the Google app is installed and turned on (Settings → Apps → Google), then try the mic again.",
+  },
   unsupported: {
     title: 'On-device speech not available',
     body: 'This phone has no on-device speech recognition. You can allow online recognition in Settings (your voice is then sent to Google for transcription).',

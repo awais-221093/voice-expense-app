@@ -141,7 +141,7 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
         durationMs: 4000,
       }),
     onError: (kind, message) => {
-      if (kind === 'permission' || kind === 'model-missing') openSetup(kind);
+      if (kind === 'permission' || kind === 'model-missing' || kind === 'service') openSetup(kind);
       else
         showToast({
           key: `err${Date.now()}`,
