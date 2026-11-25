@@ -29,7 +29,7 @@
         {
           "backgroundColor": "#0F766E",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 200
         }
       ],
       "@react-native-firebase/app",
