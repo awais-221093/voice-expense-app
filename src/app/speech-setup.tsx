@@ -52,15 +52,24 @@ export default function SpeechSetupScreen() {
   const settings = useSettings((s) => s.settings);
   const update = useSettings((s) => s.update);
   const [status, setStatus] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const copy = COPY[problem] ?? COPY.permission;
   const offerOnline = ONLINE_HELPS.includes(problem) && !settings.allowOnlineSttFallback;
 
   async function retry(askPermission: boolean, allowOnline = settings.allowOnlineSttFallback) {
     try {
       const r = await checkSpeechReadiness(settings.sttLocale, allowOnline, askPermission);
-      if (r.ok) return router.back();
+      if (r.ok) {
+        // Say it worked before closing, so the user knows the mic is ready now.
+        setReady(true);
+        setTimeout(() => router.back(), 1200);
+        return;
+      }
       if (r.problem === 'permission' && !r.canAskAgain) return await Linking.openSettings();
-      setStatus(r.problem === problem ? 'Still not ready.' : COPY[r.problem].title);
+      if (r.problem === problem) return setStatus('Still not ready.');
+      // A different blocker (e.g. mic allowed, model missing): switch the whole screen to it.
+      setStatus(null);
+      router.setParams({ problem: r.problem });
     } catch (e) {
       log.error('speech setup retry failed', e);
       setStatus('Could not check. Try again in a moment.');
@@ -90,6 +99,11 @@ export default function SpeechSetupScreen() {
           </AppText>
         )}
         {status && <AppText color={c.review}>{status}</AppText>}
+        {ready && (
+          <AppText color={c.inflow} accessibilityLiveRegion="polite">
+            Ready. {settings.recordingMode === 'hold' ? 'Hold' : 'Tap'} the mic to talk.
+          </AppText>
+        )}
       </View>
       <View style={styles.actions}>
         {problem === 'permission' && (
