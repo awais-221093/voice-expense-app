@@ -28,9 +28,12 @@ const COPY: Record<SpeechProblem, { title: string; body: string }> = {
   },
   unsupported: {
     title: 'On-device speech not available',
-    body: 'This phone has no on-device speech recognition. You can allow online recognition in Settings (your voice is then sent to Google for transcription).',
+    body: 'This phone has no on-device speech recognition.',
   },
 };
+
+/** Problems where Google's online recognizer is a working way out. */
+const ONLINE_HELPS: SpeechProblem[] = ['model-missing', 'unsupported', 'service'];
 
 /** One clear explanation screen for anything that blocks recording (plan §6.2). */
 export default function SpeechSetupScreen() {
@@ -40,16 +43,14 @@ export default function SpeechSetupScreen() {
     locale: string;
   }>();
   const settings = useSettings((s) => s.settings);
+  const update = useSettings((s) => s.update);
   const [status, setStatus] = useState<string | null>(null);
   const copy = COPY[problem] ?? COPY.permission;
+  const offerOnline = ONLINE_HELPS.includes(problem) && !settings.allowOnlineSttFallback;
 
-  async function retry(askPermission: boolean) {
+  async function retry(askPermission: boolean, allowOnline = settings.allowOnlineSttFallback) {
     try {
-      const r = await checkSpeechReadiness(
-        settings.sttLocale,
-        settings.allowOnlineSttFallback,
-        askPermission,
-      );
+      const r = await checkSpeechReadiness(settings.sttLocale, allowOnline, askPermission);
       if (r.ok) return router.back();
       if (r.problem === 'permission' && !r.canAskAgain) return await Linking.openSettings();
       setStatus(r.problem === problem ? 'Still not ready.' : COPY[r.problem].title);
@@ -59,11 +60,22 @@ export default function SpeechSetupScreen() {
     }
   }
 
+  // Plan §3.1: never fall back silently. This is the user's explicit choice, same as the Profile toggle.
+  function switchToOnline() {
+    update({ allowOnlineSttFallback: true });
+    void retry(false, true);
+  }
+
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: c.background }]}>
       <View style={styles.body}>
         <AppText variant="title">{copy.title}</AppText>
         <AppText muted>{copy.body}</AppText>
+        {offerOnline && (
+          <AppText muted>
+            Or use online recognition: your voice is sent to Google to be turned into text.
+          </AppText>
+        )}
         {status && <AppText color={c.review}>{status}</AppText>}
       </View>
       <View style={styles.actions}>
@@ -76,10 +88,21 @@ export default function SpeechSetupScreen() {
             onPress={async () => setStatus(`Download: ${await triggerModelDownload(locale)}`)}
           />
         )}
-        {problem === 'unsupported' && (
-          <Button title="Open settings" onPress={() => router.dismissTo('/profile')} />
+        {offerOnline && (
+          <Button
+            title="Use online recognition"
+            kind={problem === 'model-missing' ? 'secondary' : 'primary'}
+            onPress={switchToOnline}
+          />
         )}
         <Button title="Try again" kind="secondary" onPress={() => retry(false)} />
+        {problem !== 'permission' && (
+          <Button
+            title="Type a note instead"
+            kind="ghost"
+            onPress={() => router.dismissTo({ pathname: '/', params: { type: '1' } })}
+          />
+        )}
         <Button title="Close" kind="ghost" onPress={() => router.back()} />
       </View>
     </SafeAreaView>
