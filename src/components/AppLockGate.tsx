@@ -12,7 +12,7 @@ import { spacing, useTheme } from '@/theme';
  */
 export function AppLockGate() {
   const c = useTheme();
-  const { loaded, locked } = useAppLock();
+  const { loaded, locked, message } = useAppLock();
   const leftAt = useRef<number | null>(null);
 
   useEffect(() => {
@@ -41,6 +41,11 @@ export function AppLockGate() {
           <>
             <MaterialCommunityIcons name="lock-outline" size={56} color={c.primary} />
             <AppText variant="title">Voice Expense is locked</AppText>
+            {message && (
+              <AppText color={c.review} accessibilityLiveRegion="polite">
+                {message}
+              </AppText>
+            )}
             <Button title="Unlock" onPress={() => void unlock()} style={styles.button} />
           </>
         )}
