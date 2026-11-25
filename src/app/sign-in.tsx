@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from '@react-native-firebase/auth';
 import { useRef, useState, type ComponentRef } from 'react';
@@ -25,12 +26,15 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Non-error feedback, e.g. "reset link sent". */
+  const [notice, setNotice] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const passwordRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   async function submit() {
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
       if (creating) await createUserWithEmailAndPassword(auth, email.trim(), password);
       else await signInWithEmailAndPassword(auth, email.trim(), password);
@@ -42,6 +46,22 @@ export default function SignInScreen() {
       setError(friendlyAuthError(code, creating));
     } finally {
       setBusy(false);
+    }
+  }
+
+  // Without this, a forgotten password could only be reset from the Firebase console.
+  async function resetPassword() {
+    setError(null);
+    setNotice(null);
+    if (!email.trim()) return setError('Type your email above, then tap Forgot password.');
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      // Same text whether or not the account exists (Firebase may not say, and we shouldn't either).
+      setNotice(
+        `If an account exists for ${email.trim()}, a reset link is on its way. Check your inbox.`,
+      );
+    } catch (e) {
+      setError(friendlyAuthError(authCode(e), false));
     }
   }
 
@@ -101,6 +121,11 @@ export default function SignInScreen() {
             />
           </Pressable>
         </View>
+        {notice && (
+          <AppText color={c.inflow} accessibilityLiveRegion="polite">
+            {notice}
+          </AppText>
+        )}
         {error && (
           <AppText color={c.danger} accessibilityLiveRegion="polite">
             {error}
@@ -119,12 +144,14 @@ export default function SignInScreen() {
           onPress={submit}
           disabled={busy || !email || !password}
         />
+        {!creating && <Button title="Forgot password?" kind="ghost" onPress={resetPassword} />}
         <Button
           title={creating ? 'Have an account? Sign in' : 'New here? Create an account'}
           kind="ghost"
           onPress={() => {
             setMode(creating ? 'sign-in' : 'create');
             setError(null);
+            setNotice(null);
           }}
         />
       </KeyboardAvoidingView>
