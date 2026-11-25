@@ -104,3 +104,4 @@ Suggested order: U21 → U19 → U20 → U26 → U29 (P1s), then the P2s.
 - **U23** done (`fix/model-download-status`): download statuses read 'Downloaded. Tap Try again', 'Download queued (may wait for Wi-Fi)…', 'Finish in the dialog…' or a plain failure (raw result logged).
 - **U27** done (`fix/offline-command-row`): offline rows say 'Saved — will process when online' (no spinner); online rows show 'Understanding…' or the retry countdown.
 - **U28** done (`fix/friendly-load-errors`): listener errors are mapped once in `useCollection` (refused access / missing index / connection); Insights shows the error instead of zeros, and the loan card says 'Loading…' while loading.
+- **U30** done (`feat/api-key-help`): providers without a key show a 'Get a (free) key at …' link; saving a key runs Test key and reports 'saved and works' or the failure.
