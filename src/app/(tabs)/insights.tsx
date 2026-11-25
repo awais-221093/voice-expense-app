@@ -30,11 +30,12 @@ function Insights({ uid }: { uid: string }) {
   const c = useTheme();
   const now = useNow();
   const [month, setMonth] = useState(() => startOfMonth());
-  const { data, loading } = useMonthEntries(uid, month);
+  const { data, loading, error } = useMonthEntries(uid, month);
   const ins = monthInsights(data, month, now);
   const net = ins.total.inflow - ins.total.outflow;
 
-  const balances = loanBalances(useLoanEntries(uid).data);
+  const loans = useLoanEntries(uid);
+  const balances = loanBalances(loans.data);
 
   const prevStart = addMonths(month, -1);
   const prevMonth = useMonthEntries(uid, prevStart);
@@ -50,6 +51,11 @@ function Insights({ uid }: { uid: string }) {
 
         {loading ? (
           <ActivityIndicator color={c.textMuted} style={styles.loading} />
+        ) : error ? (
+          // Never show Rs 0 as if it were true when the data didn't load.
+          <AppText color={c.danger} style={styles.loading}>
+            {error}
+          </AppText>
         ) : (
           <>
             <View style={[styles.hero, { backgroundColor: c.primary }]}>
@@ -137,7 +143,9 @@ function Insights({ uid }: { uid: string }) {
                   );
                 })
               ) : (
-                <AppText muted>No open loans.</AppText>
+                <AppText muted color={loans.error ? c.danger : undefined}>
+                  {loans.error ?? (loans.loading ? 'Loading…' : 'No open loans.')}
+                </AppText>
               )}
             </Card>
           </>

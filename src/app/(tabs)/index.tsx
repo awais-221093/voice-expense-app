@@ -124,7 +124,7 @@ function Home({ uid }: { uid: string }) {
   ) : (
     <View style={styles.empty}>
       {recent.error ? (
-        <AppText color={c.danger}>Could not load entries: {recent.error}</AppText>
+        <AppText color={c.danger}>{recent.error}</AppText>
       ) : (
         <AppText muted style={styles.hint}>
           {mode === 'hold' ? 'Hold' : 'Tap'} the mic below and say:{'\n'}

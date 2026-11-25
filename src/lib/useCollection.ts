@@ -25,7 +25,7 @@ export function useCollection<T>(key: string, makeQuery: () => Query | null) {
       (e) => {
         // Most likely a missing composite index right after deploy, or rules.
         log.error(`listener ${key}`, e);
-        setSnap({ key, data: [], error: e.message });
+        setSnap({ key, data: [], error: friendlyLoadError(e) });
       },
     );
     // makeQuery is intentionally keyed by `key`.
@@ -39,3 +39,13 @@ export function useCollection<T>(key: string, makeQuery: () => Query | null) {
 }
 
 const EMPTY: never[] = [];
+
+/** What the user can do about a failed listener; the raw error is in the debug log. */
+function friendlyLoadError(e: unknown): string {
+  const code = (e as { code?: string })?.code ?? '';
+  if (code.includes('permission-denied'))
+    return 'Access to your data was refused. Sign out and sign in again.';
+  if (code.includes('failed-precondition'))
+    return 'The database needs an update (a missing index). Details are in the debug log.';
+  return "Couldn't load your data. Check your connection, then reopen the app.";
+}
