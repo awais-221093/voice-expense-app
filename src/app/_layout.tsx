@@ -12,21 +12,26 @@ import { initNotifications } from '@/features/reminder/notifications';
 import { startDebugLogPersistence } from '@/lib/debugLogFile';
 import { useReminderRuntime } from '@/features/reminder/useReminderRuntime';
 import { startSettingsSync } from '@/features/settings/store';
+import { loadThemeMode, useThemeMode } from '@/features/settings/themeMode';
 
 SplashScreen.preventAutoHideAsync();
 initNotifications();
 startDebugLogPersistence();
+void loadThemeMode();
 
 export default function RootLayout() {
   const scheme = useColorScheme();
   const { user, initializing } = useAuth();
+  const themeLoaded = useThemeMode((s) => s.loaded);
+  const starting = initializing || !themeLoaded;
 
   useEffect(() => {
-    if (!initializing) SplashScreen.hideAsync();
-  }, [initializing]);
+    if (!starting) SplashScreen.hideAsync();
+  }, [starting]);
 
-  // Keep the splash up until Firebase restores the session, so sign-in never flashes.
-  if (initializing) return null;
+  // Keep the splash up until Firebase restores the session (so sign-in never flashes) and the
+  // saved theme is applied (so the wrong theme never flashes).
+  if (starting) return null;
 
   return (
     <SafeAreaProvider>
