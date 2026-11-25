@@ -11,6 +11,7 @@ import type { ToastData } from '@/components/Toast';
 import { useOpenCommands } from '@/features/commands/hooks';
 import { useInFlight } from '@/features/commands/queue';
 import { createCommand, createManualEntry } from '@/features/commands/repo';
+import { describeReason, isSetupProblem } from '@/features/commands/status';
 import { useCommandEntries } from '@/features/entries/hooks';
 import { repeatEntry, setEntriesDeleted, updateEntry } from '@/features/entries/repo';
 import type { Entry } from '@/features/entries/types';
@@ -308,7 +309,9 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
 function resultCard(
   w: Watching,
   entries: Entry[],
-  cmd: { status: string; attemptCount: number; transcript: string } | undefined,
+  cmd:
+    | { status: string; statusReason: string | null; attemptCount: number; transcript: string }
+    | undefined,
   processing: boolean,
   online: boolean,
   uid: string,
@@ -333,11 +336,26 @@ function resultCard(
   }
   const waiting = cmd && !processing;
   if (waiting && (cmd.status !== 'pending' || cmd.attemptCount > 0 || !online || w.timedOut)) {
+    if (cmd.status === 'pending')
+      return {
+        key: w.id,
+        // Online but backing off (rate limit, timeout): "when online" would be wrong.
+        title: online ? 'Saved — will retry shortly' : 'Saved — will process when online',
+        tone: 'review',
+        lines: [`“${cmd.transcript}”`],
+      };
+    // Failed or nothing found: say why, and where to fix it (the Home row has Retry / Fix manually).
+    const setup = isSetupProblem(cmd.statusReason);
     return {
       key: w.id,
-      title: cmd.status === 'pending' ? 'Saved — will process when online' : 'Saved — check later',
+      title:
+        cmd.status === 'failed' ? "Saved, but couldn't process it" : 'Saved — check it on Home',
       tone: 'review',
-      lines: [`“${cmd.transcript}”`],
+      lines: [describeReason(cmd.statusReason), `“${cmd.transcript}”`],
+      action: setup
+        ? { label: 'Fix', onPress: () => router.navigate('/profile') }
+        : { label: 'Open', onPress: () => router.navigate('/') },
+      durationMs: 8000,
     };
   }
   // Between release and the result (plan §6.2), so it never looks like nothing happened.
