@@ -1,7 +1,16 @@
 import { signOut } from '@react-native-firebase/auth';
 import { router } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Chip, Segmented } from '@/components/ui';
@@ -33,6 +42,12 @@ function confirmSignOut() {
 
 const PROVIDER_LABEL: Record<ProviderId, string> = { groq: 'Groq', openrouter: 'OpenRouter' };
 
+/** Where a first-time user gets a key (the Home banner sends them here). */
+const KEY_HELP: Record<ProviderId, { text: string; url: string }> = {
+  groq: { text: 'Get a free key at console.groq.com/keys', url: 'https://console.groq.com/keys' },
+  openrouter: { text: 'Get a key at openrouter.ai/keys', url: 'https://openrouter.ai/keys' },
+};
+
 /** Account + every setting from plan §6.5. Long-press the avatar for the debug log. */
 export default function ProfileScreen() {
   const c = useTheme();
@@ -41,23 +56,25 @@ export default function ProfileScreen() {
   const [installed, setInstalled] = useState<string[] | null>(null);
 
   // Empty value = remove. The field clears after saving, so the toast is the only confirmation.
+  // A new key is tested right away: a typo should show up here, not on the first spoken note.
   const saveKey = (p: ProviderId, value: string) =>
     setKey(p, value).then(
       () =>
-        showToast({
-          key: `key-${p}-${value.trim() ? 'saved' : 'removed'}`,
-          title: `${PROVIDER_LABEL[p]} key ${value.trim() ? 'saved' : 'removed'}`,
-          tone: 'success',
-          durationMs: 2500,
-        }),
+        value.trim()
+          ? testKey(p, value.trim(), true)
+          : showToast({
+              key: `key-${p}-removed`,
+              title: `${PROVIDER_LABEL[p]} key removed`,
+              tone: 'success',
+              durationMs: 2500,
+            }),
       (e) => {
         log.error(`save ${p} key failed`, e);
         showToast({ key: `key${Date.now()}`, title: "Couldn't save the API key", tone: 'review' });
       },
     );
   const [testing, setTesting] = useState<ProviderId | null>(null);
-  const testKey = async (p: ProviderId) => {
-    const key = keys[p];
+  const testKey = async (p: ProviderId, key = keys[p], justSaved = false) => {
     if (!key) return;
     setTesting(p);
     const r = await pingProvider(p, key, settings.llmModels[p]);
@@ -66,13 +83,13 @@ export default function ProfileScreen() {
       r.ok
         ? {
             key: `test-${p}-ok`,
-            title: `${PROVIDER_LABEL[p]} works`,
+            title: `${PROVIDER_LABEL[p]} ${justSaved ? 'key saved and works' : 'works'}`,
             lines: [r.model],
             tone: 'success',
           }
         : {
             key: `test-${p}-fail`,
-            title: `${PROVIDER_LABEL[p]} test failed`,
+            title: `${PROVIDER_LABEL[p]} ${justSaved ? 'key saved, but the test failed' : 'test failed'}`,
             lines: [
               r.kind === 'transient'
                 ? `Couldn't reach ${PROVIDER_LABEL[p]} (${r.message}). Try again.`
@@ -209,6 +226,16 @@ export default function ProfileScreen() {
           {PROVIDER_IDS.map((p) => (
             <View key={p} style={styles.provider}>
               <AppText variant="bodyStrong">{PROVIDER_LABEL[p]}</AppText>
+              {!keys[p] && (
+                <Pressable
+                  onPress={() => void Linking.openURL(KEY_HELP[p].url)}
+                  accessibilityRole="link"
+                  style={styles.link}>
+                  <AppText variant="small" color={c.primary}>
+                    {KEY_HELP[p].text} ›
+                  </AppText>
+                </Pressable>
+              )}
               <SavedInput
                 label={`${PROVIDER_LABEL[p]} API key`}
                 value={keys[p] ?? ''}
@@ -475,6 +502,7 @@ const styles = StyleSheet.create({
   section: { padding: spacing.lg, borderRadius: radius.md, gap: spacing.md },
   provider: { gap: spacing.sm },
   keyActions: { flexDirection: 'row', gap: spacing.sm },
+  link: { minHeight: MIN_TOUCH, justifyContent: 'center' },
   toggle: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: MIN_TOUCH },
   flex: { flex: 1 },
   input: {
