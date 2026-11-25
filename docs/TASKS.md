@@ -72,3 +72,8 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [ ] U  `npm run eval` on both providers: prompt v2 adds `person` (I9)
 - [ ] U  On device: check the UX changes (each PR has a Verify step)
 - [ ] U  On device: verify the C1–C6 fixes (each PR has a Verify step)
+- [x] A  UX audit 2 (first run and failures) U19–U32 built (#158–#171, #173)
+- [x] A  In-app sign-up (#172) and Light / Dark / Device theme (#174)
+- [ ] U  `npm i -D @resvg/resvg-js`, then the app icon + splash task (PENDING #1)
+- [ ] U  `npm run prebuild:clean` + rebuild: `app.json` permission texts changed (U25)
+- [ ] U  On device: check the audit-2 fixes, sign-up and theme (ISSUES #15)

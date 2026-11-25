@@ -1,6 +1,6 @@
 # Plan: in-app sign-up with automatic sign-in
 
-Status: **planned, not started** (2026-11-21). Branch: `feat/sign-up` → PR into `staging`.
+Status: **done** (PR #172, 2026-11-25; "Forgot password?" followed in #173). Branch: `feat/sign-up` → PR into `staging`.
 Branch from the tip of `feat/app-icon-splash` if that PR is still open (both touch `sign-in.tsx`).
 
 > **Requirement change (user-requested 2026-11-21):** the spec had a single user whose account is

@@ -1,6 +1,6 @@
 # Plan: in-app theme choice (Light · Dark · Device)
 
-Status: **planned, not started** (2026-11-21). Branch: `feat/theme-setting` → PR into `staging`.
+Status: **done** (PR #174, 2026-11-25). Branch: `feat/theme-setting` → PR into `staging`.
 
 ## Goal
 The app stops simply following the phone's theme. **Profile → Appearance** offers three options:
