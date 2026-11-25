@@ -141,15 +141,18 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
         tone: 'info',
         durationMs: 4000,
       }),
-    onError: (kind, message) => {
-      if (kind === 'permission' || kind === 'model-missing' || kind === 'service') openSetup(kind);
-      else
-        showToast({
-          key: `err${Date.now()}`,
-          title: 'Speech recognition stopped',
-          lines: [message],
-          tone: 'review',
-        });
+    // The raw native message is already in the debug log; the toast says what to do.
+    onError: (kind) => {
+      if (kind === 'permission' || kind === 'model-missing' || kind === 'service')
+        return openSetup(kind);
+      const copy = SPEECH_ERROR_COPY[kind];
+      showToast({
+        key: `err${Date.now()}`,
+        title: copy.title,
+        lines: [copy.line],
+        tone: 'review',
+        action: copy.offerTyping ? { label: 'Type', onPress: () => setTyping(true) } : undefined,
+      });
     },
   });
 
@@ -305,6 +308,32 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
     </Ctx>
   );
 }
+
+const SPEECH_ERROR_COPY: Record<
+  'network' | 'audio' | 'busy' | 'other',
+  { title: string; line: string; offerTyping: boolean }
+> = {
+  network: {
+    title: 'No internet for speech recognition',
+    line: 'Online recognition needs a connection. Type the note instead.',
+    offerTyping: true,
+  },
+  audio: {
+    title: 'The microphone is in use',
+    line: "A call or another app is using it. Try again when it's free.",
+    offerTyping: false,
+  },
+  busy: {
+    title: 'Speech service is busy',
+    line: 'Try again in a moment.',
+    offerTyping: false,
+  },
+  other: {
+    title: 'Speech recognition stopped',
+    line: 'Try again, or type the note instead.',
+    offerTyping: true,
+  },
+};
 
 function resultCard(
   w: Watching,

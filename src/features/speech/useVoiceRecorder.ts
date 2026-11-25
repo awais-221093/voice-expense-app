@@ -5,7 +5,8 @@ import { log } from '@/lib/debugLog';
 import { haptics } from '@/lib/haptics';
 
 export type RecorderPhase = 'idle' | 'listening' | 'stopping';
-export type RecorderError = 'permission' | 'model-missing' | 'service' | 'busy' | 'other';
+export type RecorderError =
+  'permission' | 'model-missing' | 'service' | 'network' | 'audio' | 'busy' | 'other';
 
 export interface StartOptions {
   locale: string;
@@ -138,9 +139,13 @@ export function useVoiceRecorder(callbacks: Callbacks) {
           ? 'service'
           : code === 'language-not-supported'
             ? 'model-missing'
-            : code === 'busy'
-              ? 'busy'
-              : 'other';
+            : code === 'network'
+              ? 'network'
+              : code === 'audio-capture'
+                ? 'audio'
+                : code === 'busy'
+                  ? 'busy'
+                  : 'other';
     cb.current.onError(kind, e.message);
   });
 
