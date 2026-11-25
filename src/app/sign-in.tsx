@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -74,6 +75,13 @@ export default function SignInScreen() {
     <SafeAreaView style={[styles.root, { backgroundColor: c.background }]}>
       <KeyboardAvoidingView behavior="height" style={styles.body}>
         <View style={styles.header}>
+          {/* Same mark as the app icon and splash (npm run icons). */}
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+            accessibilityIgnoresInvertColors
+            accessible={false}
+          />
           <AppText variant="hero">Voice Expense</AppText>
           <AppText muted>
             {creating
@@ -186,6 +194,7 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   body: { flex: 1, justifyContent: 'center', padding: spacing.xl, gap: spacing.md },
   header: { gap: spacing.sm, marginBottom: spacing.xl },
+  logo: { width: 72, height: 72, marginBottom: spacing.sm },
   input: {
     minHeight: MIN_TOUCH,
     borderWidth: 1,
