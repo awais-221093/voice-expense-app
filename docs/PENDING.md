@@ -7,6 +7,5 @@ This file must always exist, even when the queue is empty.
 
 | # | Task | Plan | Branch | Status |
 |---|---|---|---|---|
-| 1 | App icon + splash screen, generated from one SVG (the talking coin); same mark on the splash and the sign-in screen | [`plans/APP_ICON_SPLASH_PLAN.md`](plans/APP_ICON_SPLASH_PLAN.md) | `feat/app-icon-splash` | blocked (user): run `npm i -D @resvg/resvg-js` first (the generator script needs it to typecheck and run) |
 
 Status values: `planned` → `in progress (PR #n)` → removed once merged.

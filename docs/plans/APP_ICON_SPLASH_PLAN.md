@@ -1,6 +1,6 @@
 # Plan: app icon + splash screen (generated from one SVG)
 
-Status: **planned, not started** (2026-11-21). Closes `ISSUES.md` #10 and the `TASKS.md` item
+Status: **done** (2026-11-25, `feat/app-icon-splash`). Closes `ISSUES.md` #10 and the `TASKS.md` item
 "App icon + splash artwork". Branch: `feat/app-icon-splash` → PR into `staging`.
 
 ## 1. Concept: "the talking coin"

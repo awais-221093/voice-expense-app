@@ -48,7 +48,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [ ] U  Check on device: holding the tab-bar mic feels right; overlay never hides important content
 
 ## Phase 5 — Polish
-- [ ] A  App icon + splash artwork
+- [x] A  App icon + splash artwork (talking coin, `npm run icons`)
 - [~] A  Onboarding: first-run permission + model check flow review (speech setup opens once on first run)
 - [ ] A  Copy review, reduced-motion and large-text pass
 - [ ] U  Measure end-of-speech → result card (< 2 s target)
@@ -74,6 +74,7 @@ Owner: **A** = agent (code), **U** = user (installs, console, phone).
 - [ ] U  On device: verify the C1–C6 fixes (each PR has a Verify step)
 - [x] A  UX audit 2 (first run and failures) U19–U32 built (#158–#171, #173)
 - [x] A  In-app sign-up (#172) and Light / Dark / Device theme (#174)
-- [ ] U  `npm i -D @resvg/resvg-js`, then the app icon + splash task (PENDING #1)
+- [x] U  `npm i -D @resvg/resvg-js` (then the icon task was built)
+- [ ] U  Standalone APK when wanted (COMMANDS §9)
 - [ ] U  `npm run prebuild:clean` + rebuild: `app.json` permission texts changed (U25)
 - [ ] U  On device: check the audit-2 fixes, sign-up and theme (ISSUES #15)

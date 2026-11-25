@@ -9,7 +9,7 @@ Status: **open** · **blocked (user)** · **verify (device)** · **closed**. Clo
 | 5 | verify | Default model `openai/gpt-oss-20b` on both providers, and OpenRouter's `reasoning` parameter. | `npm run eval`; switch model in Settings if needed. |
 | 7 | open | Firestore rules have no emulator tests yet (Phase 6). | Add `@firebase/rules-unit-testing` tests. |
 | 9 | open | Home list shows the latest 100 entries; open commands are capped at 50. Full history is the dashboard's job. | Revisit if needed. |
-| 10 | blocked (user) | App icon and splash are still Expo defaults (colour updated to teal). Planned in `plans/APP_ICON_SPLASH_PLAN.md`. | Run `npm i -D @resvg/resvg-js`, then ask for the icon task. |
+| 10 | verify (device) | Talking-coin icon, splash and sign-in logo generated (`npm run icons`). Splash `imageWidth` 200 dp chosen from the 288 dp canvas / 192 dp crop. | After `prebuild:clean` + rebuild: check the launcher icon (circle, squircle, themed) and the cold-start splash. |
 | 15 | verify (device) | UX audit 2 fixes (#159–#174): app lock with the screen lock removed (U29), `service-not-allowed` → service screen (U19), online-recognition switch on the setup screen (U20), sign-up / password reset, theme switch without a flash. | Follow each PR's Verify step. |
 | 12 | open | npm 12 blocked postinstall scripts for `@firebase/util`, `protobufjs` (web Firebase SDK, not used on Android) and `esbuild` (tsx still works). | Only act if a build or `npm run eval` fails: `npm install-scripts approve <pkg>`. |
 | 13 | verify (device) | Hold-to-talk on the tab-bar mic: the 64 dp button is smaller than the old 112 dp one. hitSlop raised 8 → 14 dp (UX U6). | Try it one-handed; enlarge the circle if presses still miss. |
