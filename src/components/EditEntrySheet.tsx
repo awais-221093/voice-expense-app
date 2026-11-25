@@ -167,6 +167,12 @@ export function EditEntrySheet({ uid, target, onSave, onDelete, onClose }: Props
               placeholderTextColor={c.textMuted}
               accessibilityLabel="Amount in rupees"
             />
+            {/* A red border alone doesn't say why Save is disabled. */}
+            {!amountValid && (
+              <AppText variant="small" color={c.danger} accessibilityLiveRegion="polite">
+                Enter an amount above 0, or leave it empty.
+              </AppText>
+            )}
           </Field>
 
           {type === 'loan' && (
