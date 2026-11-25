@@ -43,6 +43,7 @@
     "zustand": "^5.1.0"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^24.19.2",
     "@types/react": "~19.3.0",
     "eslint": "^9.0.0",
@@ -58,6 +59,7 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit && tsc -p scripts",
     "eval": "tsx scripts/llm-eval/run.ts",
+    "icons": "tsx scripts/brand/generate-icons.ts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"scripts/**/*.ts\"",
     "start:dev": "expo start --dev-client",
     "start:clear": "expo start --dev-client --clear",
