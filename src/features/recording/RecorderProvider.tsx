@@ -132,6 +132,14 @@ export function RecorderProvider({ uid, children }: { uid: string; children: Rea
         tone: 'info',
         durationMs: 2500,
       }),
+    onTooShort: () =>
+      showToast({
+        key: `short${Date.now()}`,
+        title: 'Hold the mic while you speak',
+        lines: ['Release when you are done. Or switch to Tap to talk in Profile.'],
+        tone: 'info',
+        durationMs: 4000,
+      }),
     onError: (kind, message) => {
       if (kind === 'permission' || kind === 'model-missing') openSetup(kind);
       else

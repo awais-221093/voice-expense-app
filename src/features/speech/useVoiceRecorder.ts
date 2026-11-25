@@ -17,6 +17,8 @@ export interface StartOptions {
 interface Callbacks {
   onFinal: (transcript: string, opts: StartOptions) => void;
   onEmpty: () => void;
+  /** Hold mode: released before MIN_HOLD_MS — almost always a tap by someone expecting tap-to-talk. */
+  onTooShort: () => void;
   onError: (error: RecorderError, message: string) => void;
 }
 
@@ -102,10 +104,12 @@ export function useVoiceRecorder(callbacks: Callbacks) {
     [stop],
   );
 
-  /** Hold mode release: very short presses are treated as accidental touches. */
+  /** Hold mode release: a very short press is discarded, but says why (a silent tap looks broken). */
   const release = useCallback(() => {
-    if (Date.now() - startedAt.current < MIN_HOLD_MS) cancel();
-    else stop();
+    if (Date.now() - startedAt.current < MIN_HOLD_MS) {
+      cancel();
+      cb.current.onTooShort();
+    } else stop();
   }, [cancel, stop]);
 
   useSpeechRecognitionEvent('result', (e) => {
