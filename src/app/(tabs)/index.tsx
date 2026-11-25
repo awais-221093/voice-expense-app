@@ -38,13 +38,19 @@ function Home({ uid }: { uid: string }) {
   const { openSheet, mode, typeNote, startHandsFree } = useRecorder();
 
   // Launcher shortcut → /record → here with ?record=1. Never listen behind the app lock.
-  const { record } = useLocalSearchParams<{ record?: string }>();
+  // Speech setup → "Type a note instead" → here with ?type=1.
+  const { record, type } = useLocalSearchParams<{ record?: string; type?: string }>();
   const locked = useAppLock((s) => s.locked || !s.loaded);
   useEffect(() => {
     if (record !== '1' || locked) return;
     router.setParams({ record: undefined });
     startHandsFree();
   }, [record, locked, startHandsFree]);
+  useEffect(() => {
+    if (type !== '1' || locked) return;
+    router.setParams({ type: undefined });
+    typeNote();
+  }, [type, locked, typeNote]);
   const noKey = useNoUsableKey();
   const budget = useSettings((s) => s.settings.monthlyBudget);
   const [showAllOpen, setShowAllOpen] = useState(false);
