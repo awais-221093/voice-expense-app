@@ -1,6 +1,7 @@
 import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
 
-export type SpeechProblem = 'permission' | 'unsupported' | 'model-missing';
+/** `service` only comes from a recording error: the readiness checks can't detect it up front. */
+export type SpeechProblem = 'permission' | 'unsupported' | 'model-missing' | 'service';
 
 export type SpeechReadiness =
   | { ok: true; locale: string; onDevice: boolean }

@@ -5,7 +5,7 @@ import { log } from '@/lib/debugLog';
 import { haptics } from '@/lib/haptics';
 
 export type RecorderPhase = 'idle' | 'listening' | 'stopping';
-export type RecorderError = 'permission' | 'model-missing' | 'busy' | 'other';
+export type RecorderError = 'permission' | 'model-missing' | 'service' | 'busy' | 'other';
 
 export interface StartOptions {
   locale: string;
@@ -131,13 +131,16 @@ export function useVoiceRecorder(callbacks: Callbacks) {
     errored.current = true;
     log.warn('speech error', { error: code, message: e.message });
     const kind: RecorderError =
-      code === 'not-allowed' || code === 'service-not-allowed'
+      code === 'not-allowed'
         ? 'permission'
-        : code === 'language-not-supported'
-          ? 'model-missing'
-          : code === 'busy'
-            ? 'busy'
-            : 'other';
+        : // "Recognizer is unavailable": the speech service itself is missing or disabled, not the mic.
+          code === 'service-not-allowed'
+          ? 'service'
+          : code === 'language-not-supported'
+            ? 'model-missing'
+            : code === 'busy'
+              ? 'busy'
+              : 'other';
     cb.current.onError(kind, e.message);
   });
 
