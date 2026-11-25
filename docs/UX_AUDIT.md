@@ -97,3 +97,4 @@ Suggested order: U21 → U19 → U20 → U26 → U29 (P1s), then the P2s.
 - **U18** done (`feat/sign-in-fields`): Email 'Next' focuses Password; Password has a show/hide button and 'Go' submits.
 - **U21** done (`fix/hold-tap-hint`): a press shorter than 300 ms in hold mode shows 'Hold the mic while you speak' (with the Tap-to-talk tip) instead of doing nothing.
 - **U19** done (`fix/speech-service-unavailable`): `service-not-allowed` opens a 'Speech service not available' setup screen instead of 'Microphone access needed'.
+- **U20** done (`feat/speech-setup-way-out`): model-missing / unsupported / service screens offer 'Use online recognition' (one tap, explained) and 'Type a note instead' (Home `?type=1`).
