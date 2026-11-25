@@ -65,7 +65,7 @@ Bottom tabs, with the mic in the middle so recording is one thumb-press away fro
 - **Insights** — where the money went: spending by category and by source, daily average,
   money in vs out, totals per type.
 - **Profile** — account and settings: hold-to-talk or tap-to-talk, speech language
-  (English / Urdu), sources, categories, AI provider and keys.
+  (English / Urdu), sources, categories, AI provider and keys, theme (Light · Dark · Device).
 
 ## How it works
 

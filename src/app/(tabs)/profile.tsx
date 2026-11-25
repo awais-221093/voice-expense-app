@@ -21,6 +21,7 @@ import { setAppLockEnabled, useAppLock } from '@/features/lock/appLock';
 import { useRecorder } from '@/features/recording/RecorderProvider';
 import { ensurePermission, useReminderPrefs } from '@/features/reminder/notifications';
 import { useSettings } from '@/features/settings/store';
+import { setThemeMode, useThemeMode } from '@/features/settings/themeMode';
 import { installedLocales, matchLocale } from '@/features/speech/readiness';
 import { appVersion } from '@/lib/appInfo';
 import { log } from '@/lib/debugLog';
@@ -54,6 +55,7 @@ export default function ProfileScreen() {
   const { settings, keys, update, setKey } = useSettings();
   const { showToast } = useRecorder();
   const [installed, setInstalled] = useState<string[] | null>(null);
+  const themeMode = useThemeMode((s) => s.mode);
 
   // Empty value = remove. The field clears after saving, so the toast is the only confirmation.
   // A new key is tested right away: a typo should show up here, not on the first spoken note.
@@ -202,6 +204,18 @@ export default function ProfileScreen() {
         <ReminderSection />
 
         <LockSection />
+
+        <Section title="Appearance">
+          <Segmented
+            value={themeMode}
+            onChange={setThemeMode}
+            options={[
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+              { value: 'system', label: 'Device' },
+            ]}
+          />
+        </Section>
 
         <Section title="Monthly budget">
           <SavedInput
