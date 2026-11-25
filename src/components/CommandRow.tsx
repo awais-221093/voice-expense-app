@@ -20,12 +20,13 @@ export function CommandRow({ command, online, now, onRetry, onFix, onDismiss }: 
   const c = useTheme();
   const pending = command.status === 'pending';
   const tone = command.status === 'failed' ? c.danger : c.review;
+  // Offline comes first: a note made offline has 0 attempts but nothing is working on it yet.
   const label = pending
-    ? command.attemptCount === 0
-      ? 'Understanding…'
-      : online && command.nextRetryAt
+    ? !online
+      ? 'Saved — will process when online'
+      : command.attemptCount > 0 && command.nextRetryAt
         ? retryLabel(command.nextRetryAt.toMillis() - now.getTime())
-        : 'Saved — will process when online'
+        : 'Understanding…'
     : command.status === 'failed'
       ? `Couldn't process. ${describeReason(command.statusReason)}`
       : `Check this: ${command.statusReason ? describeReason(command.statusReason) : 'needs review'}`;
@@ -38,7 +39,7 @@ export function CommandRow({ command, online, now, onRetry, onFix, onDismiss }: 
       ]}
       accessibilityLabel={`Voice note: ${command.transcript}. ${label}`}>
       <View style={styles.top}>
-        {pending && <ActivityIndicator size="small" color={c.textMuted} />}
+        {pending && online && <ActivityIndicator size="small" color={c.textMuted} />}
         <AppText style={styles.transcript} numberOfLines={3}>
           “{command.transcript}”
         </AppText>
