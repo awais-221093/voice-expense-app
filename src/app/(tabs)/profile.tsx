@@ -181,10 +181,14 @@ export default function ProfileScreen() {
             }))}
           />
           <Toggle
-            label="Allow online recognition if the offline model is missing"
+            label="Use online recognition when on-device isn't available"
             value={settings.allowOnlineSttFallback}
             onChange={(allowOnlineSttFallback) => update({ allowOnlineSttFallback })}
           />
+          <AppText variant="small" muted>
+            Online, your voice is sent to Google to be turned into text. On-device is always used
+            when it works.
+          </AppText>
         </Section>
 
         <Section title="Sources">

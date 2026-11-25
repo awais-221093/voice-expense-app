@@ -37,8 +37,8 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "The microphone is used to hear your voice command. Audio is processed on your phone and never saved.",
-          "speechRecognitionPermission": "Speech recognition turns your voice command into text on your phone.",
+          "microphonePermission": "The microphone is used to hear your voice command. Audio is never saved.",
+          "speechRecognitionPermission": "Speech recognition turns your voice command into text, on your phone when possible.",
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox",
             "com.google.android.as"
