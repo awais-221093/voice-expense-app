@@ -108,3 +108,4 @@ Suggested order: U21 → U19 → U20 → U26 → U29 (P1s), then the P2s.
 - **U24** done (`fix/speech-setup-recheck`): Try again switches the screen to a newly found problem via `setParams`; success shows 'Ready. Hold/Tap the mic to talk.' for 1.2 s, then closes.
 - **U25** done (`fix/online-stt-copy`): permission copy says 'on your phone when it can be'; toggle reads 'Use online recognition when on-device isn't available' with a note that the voice then goes to Google; app.json permission texts updated (next prebuild).
 - **U32** done (`fix/edit-amount-hint`): an invalid amount shows 'Enter an amount above 0, or leave it empty.' under the field.
+- **U31** done (`feat/forgot-password`, after `feat/sign-up`): 'Forgot password?' sends Firebase's reset email for the typed address; DECISIONS #29.
