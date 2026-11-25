@@ -135,7 +135,9 @@ npm run eval -- --only 5             # first 5 fixtures (quick check)
 | `npm run prebuild:android` / `prebuild:clean` | Generate / regenerate `android/` from `app.json` |
 | `npm run gradle:clean` | Clean the Gradle build (after native changes or odd build errors) |
 | `npm run gradle:stop` | Stop Gradle daemons (frees RAM, releases locked files on Windows) |
-| `npm run gradle:release` | Local release APK (`android/app/build/outputs/apk/release/`) |
+| `npm run gradle:release` | Local release APK, all ABIs (`android/app/build/outputs/apk/release/`) |
+| `npm run apk` / `apk:build` / `apk:install` | Standalone APK: prebuild + build / build only (arm64) / install on the USB phone (§9) |
+| `npm run icons` | Regenerate the icon, splash and logo PNGs (§8) |
 | `npm run adb:reverse` | Phone reaches Metro on the PC over USB (port 8081) |
 | `npm run doctor` / `check` | `expo-doctor` / typecheck + lint |
 | `npm run firebase:deploy` | Deploy Firestore rules + indexes (§5) |
@@ -170,13 +172,11 @@ A release APK with the JS bundled in: it runs without Metro or the PC. It is sig
 current phone) is about 4× faster and lighter on RAM than all four ABIs.
 
 ```powershell
-npx expo prebuild --platform android --clean
-cd android
-.\gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a
-.\gradlew --stop                               # frees ~2 GB RAM held by the Gradle daemon
-cd ..
+npm run apk            # prebuild --clean, then apk:build. Use after app.json / native changes (icons, plugins)
+npm run apk:build      # release APK, arm64 only, then stops Gradle (frees ~2 GB RAM). Enough for JS-only changes
+npm run apk:install    # installs it on the USB phone (adb install -r)
 ```
 
-The APK is `android\app\build\outputs\apk\release\app-release.apk`. Install it over USB with
-`adb install -r android\app\build\outputs\apk\release\app-release.apk`, or copy it to the phone and open it
-(allow "Install unknown apps" for your file manager). It replaces the dev build (same package and key).
+The APK is `android\app\build\outputs\apk\release\app-release.apk`. Instead of `apk:install` you can copy it
+to the phone and open it (allow "Install unknown apps" for your file manager). It replaces the dev build
+(same package and key).
