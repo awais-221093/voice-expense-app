@@ -2,6 +2,7 @@
 // The on/off flag is device-local (SecureStore): a lock protects this phone, not the account.
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
 import { create } from 'zustand';
 
 import { log } from '@/lib/debugLog';
@@ -14,12 +15,15 @@ interface LockState {
   loaded: boolean;
   enabled: boolean;
   locked: boolean;
+  /** Why the last unlock failed (shown under the Unlock button); null after a cancel or success. */
+  message: string | null;
 }
 
 export const useAppLock = create<LockState>()(() => ({
   loaded: false,
   enabled: false,
   locked: false,
+  message: null,
 }));
 
 /** Cold start: locked straight away when the lock is on, so content never flashes. */
@@ -37,19 +41,42 @@ export function lockNow() {
   if (useAppLock.getState().enabled) useAppLock.setState({ locked: true });
 }
 
-/** Shows the system prompt (biometric, or the device PIN/pattern as fallback). */
-async function authenticate(promptMessage: string): Promise<boolean> {
+/** Shows the system prompt (biometric, or the device PIN/pattern as fallback). Null = success. */
+async function authenticate(promptMessage: string): Promise<string | null> {
   try {
     const r = await LocalAuthentication.authenticateAsync({ promptMessage, cancelLabel: 'Cancel' });
-    return r.success;
+    return r.success ? null : r.error;
   } catch (e) {
     log.error('authenticate failed', e);
-    return false;
+    return 'unknown';
   }
 }
 
 export async function unlock() {
-  if (await authenticate('Unlock Voice Expense')) useAppLock.setState({ locked: false });
+  useAppLock.setState({ message: null });
+  // The phone's screen lock was removed after the app lock was turned on: no check can ever
+  // pass, so staying locked would shut the user out of their own data for good.
+  const level = await LocalAuthentication.getEnrolledLevelAsync().catch(() => null);
+  if (level === LocalAuthentication.SecurityLevel.NONE) {
+    useAppLock.setState({ enabled: false, locked: false });
+    await SecureStore.setItemAsync(KEY, '0').catch((e) => log.error('save app lock failed', e));
+    Alert.alert(
+      'App lock turned off',
+      'This phone no longer has a screen lock. Set one in Android Settings, then turn the app lock on again in Profile.',
+    );
+    return;
+  }
+  const error = await authenticate('Unlock Voice Expense');
+  if (!error) return useAppLock.setState({ locked: false });
+  // Cancelling is a choice, not a failure: no message.
+  if (error === 'user_cancel' || error === 'system_cancel' || error === 'app_cancel') return;
+  log.warn('unlock failed', { error });
+  useAppLock.setState({
+    message:
+      error === 'lockout'
+        ? 'Too many attempts. Wait a little, then tap Unlock.'
+        : "Couldn't check your fingerprint or screen lock. Tap Unlock to try again.",
+  });
 }
 
 export type EnableResult = 'ok' | 'no-lock-set' | 'cancelled';
@@ -66,8 +93,7 @@ export async function setAppLockEnabled(on: boolean): Promise<EnableResult> {
     if (level === LocalAuthentication.SecurityLevel.NONE) return 'no-lock-set';
   }
   // Turning it off asks too, so someone holding an unlocked phone can't quietly disable it.
-  if (!(await authenticate(`Confirm to turn ${on ? 'on' : 'off'} the app lock`)))
-    return 'cancelled';
+  if (await authenticate(`Confirm to turn ${on ? 'on' : 'off'} the app lock`)) return 'cancelled';
   useAppLock.setState({ enabled: on, locked: false });
   await SecureStore.setItemAsync(KEY, on ? '1' : '0').catch((e) =>
     log.error('save app lock failed', e),
