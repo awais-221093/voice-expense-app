@@ -2,6 +2,15 @@
 
 Newest first. Each entry: what changed, which branch, how to verify.
 
+## 2026-11-25 — UX audit 2 built; sign-up, password reset, theme
+
+PRs #158–#174 into `staging`, one per finding or task (Status list in `docs/UX_AUDIT.md`).
+- #158 the audit report (U19–U32: first run and failure messages).
+- Fixes: U21 short-press hint · U19 speech-service screen · U20 online / type way out on speech setup · U26 failure reason + Fix on the result card · U29 app-lock lock-out · U22 plain speech errors · U23 download status · U27 offline command row · U28 plain load errors, Insights no zeros · U30 key link + auto-test · U24 setup re-check · U25 online-STT copy · U32 amount hint · U31 Forgot password (DECISIONS #29).
+- Pending tasks: in-app sign-up (#172, DECISIONS #28), theme setting (#174, DECISIONS #30). The app icon is blocked on a dev-dependency install (PENDING #1).
+- Verified: typecheck ✓, lint ✓ on the full chain, `npx expo export --platform android` ✓ (5.5 MB bundle). Not yet run on a device.
+- Next (user): `npm run prebuild:clean` + rebuild (permission texts), device checks (ISSUES #15).
+
 ## 2026-11-21 — First native build: Kotlin 2.4 for Firebase
 
 Branch `fix/kotlin-version`. The first `npm run android` failed in `:react-native-firebase_auth:compileDebugKotlin`
