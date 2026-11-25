@@ -32,6 +32,13 @@ const COPY: Record<SpeechProblem, { title: string; body: string }> = {
   },
 };
 
+/** Android's download statuses, in words. Anything else is an error (raw text goes to the debug log). */
+const DOWNLOAD_STATUS: Record<string, string> = {
+  download_success: 'Downloaded. Tap Try again.',
+  download_scheduled: "Download queued (it may wait for Wi-Fi). Tap Try again when it's done.",
+  opened_dialog: 'Finish in the dialog that opened, then tap Try again.',
+};
+
 /** Problems where Google's online recognizer is a working way out. */
 const ONLINE_HELPS: SpeechProblem[] = ['model-missing', 'unsupported', 'service'];
 
@@ -60,6 +67,12 @@ export default function SpeechSetupScreen() {
     }
   }
 
+  async function download() {
+    const result = await triggerModelDownload(locale);
+    if (!DOWNLOAD_STATUS[result]) log.warn('model download', { result });
+    setStatus(DOWNLOAD_STATUS[result] ?? "Couldn't start the download. Use the steps above.");
+  }
+
   // Plan §3.1: never fall back silently. This is the user's explicit choice, same as the Profile toggle.
   function switchToOnline() {
     update({ allowOnlineSttFallback: true });
@@ -82,12 +95,7 @@ export default function SpeechSetupScreen() {
         {problem === 'permission' && (
           <Button title="Allow microphone" onPress={() => retry(true)} />
         )}
-        {problem === 'model-missing' && (
-          <Button
-            title="Download"
-            onPress={async () => setStatus(`Download: ${await triggerModelDownload(locale)}`)}
-          />
-        )}
+        {problem === 'model-missing' && <Button title="Download" onPress={download} />}
         {offerOnline && (
           <Button
             title="Use online recognition"
