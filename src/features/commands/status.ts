@@ -75,6 +75,11 @@ const PROVIDER_NAME: Record<string, string> = { groq: 'Groq', openrouter: 'OpenR
 const providerIn = (reason: string) =>
   PROVIDER_NAME[reason.match(/\b(groq|openrouter)\b/)?.[1] ?? ''] ?? 'the AI provider';
 
+/** True when the fix is in Profile (API key or model name), not in the note itself. */
+export function isSetupProblem(reason: string | null): boolean {
+  return !!reason && (/API key/.test(reason) || /HTTP (400|404)/.test(reason));
+}
+
 /**
  * Plain-language version of a stored `statusReason` for the UI. The raw reason stays in
  * Firestore and the debug log; LLM notes (already human text) pass through unchanged.
@@ -82,12 +87,14 @@ const providerIn = (reason: string) =>
 export function describeReason(reason: string | null): string {
   if (!reason) return 'Something went wrong.';
   const provider = providerIn(reason);
-  if (/no (groq|openrouter) API key/.test(reason)) return `Add your ${provider} API key in Profile.`;
+  if (/no (groq|openrouter) API key/.test(reason))
+    return `Add your ${provider} API key in Profile.`;
   if (reason.includes('invalid API key'))
     return `Your ${provider} API key was rejected. Check it in Profile.`;
   if (/HTTP (400|404)/.test(reason))
     return `The ${provider} model name looks wrong. Check it in Profile.`;
-  if (reason.startsWith('gave up after')) return "Couldn't reach the AI service after several tries.";
+  if (reason.startsWith('gave up after'))
+    return "Couldn't reach the AI service after several tries.";
   if (reason === 'invalid JSON' || reason === 'invalid JSON shape')
     return "The AI's reply couldn't be read. Retry or fix it manually.";
   if (reason === 'no entries found') return 'No amount or item was found in this note.';
