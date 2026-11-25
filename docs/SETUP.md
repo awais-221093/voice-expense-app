@@ -6,7 +6,7 @@ Things only you can do (console clicks, keys, phone). Commands referenced here a
 1. https://console.firebase.google.com → **Add project** (Analytics not needed).
 2. **Build → Firestore Database → Create database** → production mode → region close to you (e.g. `asia-south1`).
 3. **Build → Authentication → Get started → Email/Password → Enable**.
-4. **Authentication → Users → Add user**: your email + a strong password. This is the only account the app uses.
+4. **Authentication → Settings → User actions**: keep **Enable create (sign-up)** ticked (on by default). Accounts are created in the app. Untick it later if only you should be able to sign up.
 
 ## 2. Register the Android app
 1. Project settings → **Add app → Android**.
@@ -50,4 +50,4 @@ CLI alternative, if the project is ever linked: `COMMANDS.md` §5 (`npm run fire
 3. Build and install: `COMMANDS.md` §4.
 
 ## 6. First run
-Sign in → allow microphone + speech recognition → hold the mic and say "add 100 rupees for eggs from salary".
+Create an account (or sign in) → allow microphone + speech recognition → hold the mic and say "add 100 rupees for eggs from salary".
