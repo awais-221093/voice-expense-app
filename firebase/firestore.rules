@@ -31,12 +31,16 @@ service cloud.firestore {
           && request.resource.data.entryIds == [];
 
         // transcript and createdAt are immutable; llmAttempts is append-only
-        // (grows by one or more, existing items unchanged — DECISIONS #4).
+        // (grows by zero or more — empty commands skip the 0:0 slice which Rules rejects).
         allow update: if isOwner(uid)
           && unchanged(['id', 'transcript', 'createdAt'])
           && request.resource.data.status in ['pending', 'ok', 'needs_review', 'failed']
+          && request.resource.data.llmAttempts is list
           && request.resource.data.llmAttempts.size() >= resource.data.llmAttempts.size()
-          && request.resource.data.llmAttempts[0:resource.data.llmAttempts.size()] == resource.data.llmAttempts;
+          && (
+            resource.data.llmAttempts.size() == 0
+            || request.resource.data.llmAttempts[0:resource.data.llmAttempts.size()] == resource.data.llmAttempts
+          );
       }
 
       match /entries/{entryId} {
